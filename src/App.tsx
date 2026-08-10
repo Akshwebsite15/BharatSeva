@@ -11,11 +11,16 @@ import { ServicesTab } from './components/ServicesTab';
 import { ScholarshipsTab } from './components/ScholarshipsTab';
 import { SchemesTab } from './components/SchemesTab';
 import { JobsTab } from './components/JobsTab';
+import { JobsForYouSection } from './components/JobsForYouSection';
 import { ExamsTab } from './components/ExamsTab';
 import { DeadlinesTab } from './components/DeadlinesTab';
 import { DashboardTab } from './components/DashboardTab';
+import { CurrentAffairsTab } from './components/CurrentAffairsTab';
+import { BharatSevaBiharTab } from './components/BharatSevaBiharTab';
+import { SearchIntentHubTab } from './components/SearchIntentHubTab';
 import { DetailModal } from './components/DetailModal';
 import { AiAssistantModal } from './components/AiAssistantModal';
+import { ExamLifecycleHub } from './components/ExamLifecycleHub';
 
 import {
   JurisdictionState,
@@ -35,6 +40,8 @@ import {
   initialSavedItems,
   initialApplications,
 } from './data/portalData';
+
+import { examHubDataList } from './data/examHubData';
 
 import { CheckCircle2, AlertCircle } from 'lucide-react';
 
@@ -61,6 +68,7 @@ export default function App() {
   const [aiModalOpen, setAiModalOpen] = useState(false);
   const [detailService, setDetailService] = useState<CitizenService | null>(null);
   const [detailJob, setDetailJob] = useState<GovJob | null>(null);
+  const [activeExamHubTitle, setActiveExamHubTitle] = useState<string | null>(null);
 
   // Notification Toast State
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -149,6 +157,24 @@ export default function App() {
           />
         )}
 
+        {activeTab === 'current-affairs' && (
+          <CurrentAffairsTab
+            onSaveItem={(title, type) => handleSaveItem(title, type)}
+          />
+        )}
+
+        {activeTab === 'bharatseva-bihar' && (
+          <BharatSevaBiharTab
+            onSaveItem={(title, type) => handleSaveItem(title, type)}
+          />
+        )}
+
+        {activeTab === 'search-intent-hub' && (
+          <SearchIntentHubTab
+            onSaveItem={(title, type) => handleSaveItem(title, type)}
+          />
+        )}
+
         {activeTab === 'services' && (
           <ServicesTab
             services={services}
@@ -167,20 +193,36 @@ export default function App() {
 
         {activeTab === 'schemes' && <SchemesTab schemes={schemes} />}
 
+        {activeTab === 'jobs-for-you' && (
+          <JobsForYouSection
+            jobs={jobs}
+            onViewJob={(job) => setDetailJob(job)}
+            onSaveJob={(title) => handleSaveItem(title, 'Job')}
+          />
+        )}
+
         {activeTab === 'jobs' && (
           <JobsTab
             jobs={jobs}
             selectedJurisdiction={selectedJurisdiction}
             onViewJob={(job) => setDetailJob(job)}
             onSaveJob={(title) => handleSaveItem(title, 'Job')}
+            onSwitchToJobsForYou={() => setActiveTab('jobs-for-you')}
           />
         )}
 
-        {activeTab === 'exams' && <ExamsTab exams={exams} />}
+        {activeTab === 'exams' && (
+          <ExamsTab
+            exams={exams}
+            onOpenExamHub={(title) => setActiveExamHubTitle(title)}
+          />
+        )}
 
         {activeTab === 'deadlines' && (
           <DeadlinesTab
-            deadlines={deadlines}
+            jobs={jobs}
+            onViewJob={(job) => setDetailJob(job)}
+            onSaveJob={(title) => handleSaveItem(title, 'Job')}
             onSetReminder={handleSetReminder}
           />
         )}
@@ -218,6 +260,20 @@ export default function App() {
         isOpen={aiModalOpen}
         onClose={() => setAiModalOpen(false)}
       />
+
+      {/* Exam Lifecycle Hub Permanent Page Modal */}
+      {activeExamHubTitle && (
+        <ExamLifecycleHub
+          examHub={
+            examHubDataList.find(
+              (h) => h.title.toLowerCase().includes(activeExamHubTitle.toLowerCase()) ||
+                     activeExamHubTitle.toLowerCase().includes(h.title.toLowerCase())
+            ) || examHubDataList[0]
+          }
+          onClose={() => setActiveExamHubTitle(null)}
+          onSaveExam={(title) => handleSaveItem(title, 'Exam')}
+        />
+      )}
 
       {/* Footer */}
       <Footer

@@ -1,35 +1,72 @@
 import React, { useState, useMemo } from 'react';
-import { PenSquare, Calendar, ExternalLink, ShieldCheck, Clock } from 'lucide-react';
+import {
+  PenSquare,
+  Calendar,
+  ExternalLink,
+  ShieldCheck,
+  Clock,
+  BookOpen,
+  Sparkles,
+  Layers,
+  ChevronRight,
+} from 'lucide-react';
 import { GovExam } from '../types';
 
 interface ExamsTabProps {
   exams: GovExam[];
+  onOpenExamHub?: (examTitle: string) => void;
 }
 
-export const ExamsTab: React.FC<ExamsTabProps> = ({ exams }) => {
+export const ExamsTab: React.FC<ExamsTabProps> = ({ exams, onOpenExamHub }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
 
-  const categories = ['All', 'BPSC', 'BSSC', 'Bihar Police', 'Bihar Teacher', 'UPSC', 'Banking'];
+  const categories = ['All', 'SSC', 'BPSC', 'Bihar Police', 'Railway / RRB', 'UPSC'];
 
   const filteredExams = useMemo(() => {
     if (selectedCategory === 'All') return exams;
     return exams.filter(
-      (e) => e.category.toLowerCase() === selectedCategory.toLowerCase()
+      (e) => e.category.toLowerCase().includes(selectedCategory.toLowerCase()) ||
+             e.title.toLowerCase().includes(selectedCategory.toLowerCase())
     );
   }, [exams, selectedCategory]);
 
   return (
     <div className="space-y-8">
+      {/* Permanent Exam Lifecycle Hub Header Banner */}
+      <div className="bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-blue-800/40 relative overflow-hidden">
+        <div className="relative z-10 space-y-3">
+          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-teal-400 text-slate-950 font-black text-xs uppercase tracking-wider">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Complete Permanent Exam Lifecycle Hubs</span>
+          </div>
+
+          <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+            Single Hub for Every Government Examination
+          </h1>
+
+          <p className="text-xs sm:text-sm text-slate-300 max-w-3xl leading-relaxed">
+            Stop visiting 10 broken websites! Access the complete 14-stage exam lifecycle for every major government recruitment: 
+            <strong> Notification • Eligibility • Vacancies • Salary & Perks • Syllabus • Exam Pattern • PYQs • Category Cutoffs • Application • Admit Card • Exam Schedule • Answer Keys • Results • Document Verification</strong>.
+          </p>
+
+          <div className="pt-2 flex flex-wrap gap-2 text-xs">
+            <span className="px-3 py-1 bg-white/10 rounded-lg text-teal-300 font-bold">✓ Live 3-Year Cutoff Trends</span>
+            <span className="px-3 py-1 bg-white/10 rounded-lg text-amber-300 font-bold">✓ Interactive PYQ & Solutions</span>
+            <span className="px-3 py-1 bg-white/10 rounded-lg text-emerald-300 font-bold">✓ Post-Wise Vacancy Quota</span>
+          </div>
+        </div>
+      </div>
+
       {/* Header */}
       <div>
         <span className="text-teal-600 font-extrabold uppercase tracking-wider text-xs">
           COMPETITIVE EXAMINATIONS
         </span>
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">
-          Government Exams Milestones & Timeline
-        </h1>
+        <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 mt-1">
+          Government Exam Hubs & Schedules
+        </h2>
         <p className="text-slate-600 text-xs sm:text-sm mt-1">
-          Track official exam schedules, admit card release dates, answer keys, and result announcements for BPSC, BSSC, UPSC & State Commissions.
+          Track official exam timelines, syllabus patterns, cutoff history, and admit card release status.
         </p>
       </div>
 
@@ -91,15 +128,26 @@ export const ExamsTab: React.FC<ExamsTabProps> = ({ exams }) => {
               </div>
             </div>
 
-            <a
-              href={exam.website}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full bg-slate-100 hover:bg-blue-900 hover:text-white text-slate-800 font-bold py-3 rounded-xl text-xs transition flex items-center justify-center space-x-2 cursor-pointer"
-            >
-              <span>Commission Website</span>
-              <ExternalLink className="w-3.5 h-3.5" />
-            </a>
+            <div className="space-y-2">
+              <button
+                onClick={() => onOpenExamHub && onOpenExamHub(exam.title)}
+                className="w-full bg-slate-900 hover:bg-slate-800 text-white font-extrabold py-3 px-4 rounded-xl text-xs transition flex items-center justify-center space-x-2 cursor-pointer shadow-xs"
+              >
+                <Layers className="w-4 h-4 text-teal-400" />
+                <span>Open Exam Lifecycle Hub</span>
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
+
+              <a
+                href={exam.website}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 rounded-xl text-xs transition flex items-center justify-center space-x-2 cursor-pointer"
+              >
+                <span>Commission Website</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </a>
+            </div>
           </div>
         ))}
       </div>

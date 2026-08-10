@@ -14,6 +14,8 @@ import {
   X,
   MapPin,
   Sparkles,
+  Newspaper,
+  Layers,
 } from 'lucide-react';
 import { JurisdictionState } from '../types';
 
@@ -36,6 +38,10 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   const navItems = [
     { id: 'home', label: 'Home', icon: House },
+    { id: 'current-affairs', label: "Today's Current Affairs", icon: Newspaper, highlight: true },
+    { id: 'bharatseva-bihar', label: 'BharatSeva Bihar', icon: Landmark },
+    { id: 'search-intent-hub', label: 'Intent Search Pages', icon: Layers },
+    { id: 'jobs-for-you', label: 'Jobs For You', icon: Sparkles },
     { id: 'services', label: 'Services', icon: FileCheck },
     { id: 'scholarships', label: 'Scholarships', icon: GraduationCap },
     { id: 'schemes', label: 'Schemes', icon: Building2 },
@@ -81,14 +87,21 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button
                 key={item.id}
                 onClick={() => handleTabClick(item.id)}
-                className={`px-3 py-2 rounded-xl font-semibold text-xs transition-all flex items-center space-x-1.5 ${
+                className={`px-3 py-2 rounded-xl font-bold text-xs transition-all flex items-center space-x-1.5 ${
                   isActive
                     ? 'text-blue-900 bg-blue-50 border border-blue-200 shadow-2xs'
+                    : item.highlight
+                    ? 'text-teal-900 bg-teal-50 border border-teal-200 hover:bg-teal-100'
                     : 'text-slate-600 hover:text-blue-900 hover:bg-slate-100'
                 }`}
               >
-                <Icon className="w-4 h-4" />
+                <Icon className={`w-4 h-4 ${item.highlight ? 'text-teal-600 animate-pulse' : ''}`} />
                 <span>{item.label}</span>
+                {item.highlight && (
+                  <span className="bg-teal-600 text-white text-[9px] px-1.5 py-0.2 rounded-full uppercase tracking-wider font-extrabold">
+                    NEW
+                  </span>
+                )}
               </button>
             );
           })}

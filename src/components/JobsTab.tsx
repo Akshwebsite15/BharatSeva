@@ -10,14 +10,22 @@ import {
   IndianRupee,
   Users,
   Award,
+  Sparkles,
+  Clock,
 } from 'lucide-react';
 import { GovJob, JurisdictionState } from '../types';
+import {
+  getDeadlineBadgeInfo,
+  calculateDaysRemaining,
+  DeadlineCategory,
+} from '../utils/deadlineUtils';
 
 interface JobsTabProps {
   jobs: GovJob[];
   selectedJurisdiction: JurisdictionState;
   onViewJob: (job: GovJob) => void;
   onSaveJob: (title: string, type: 'Job') => void;
+  onSwitchToJobsForYou?: () => void;
 }
 
 export const JobsTab: React.FC<JobsTabProps> = ({
@@ -25,10 +33,20 @@ export const JobsTab: React.FC<JobsTabProps> = ({
   selectedJurisdiction,
   onViewJob,
   onSaveJob,
+  onSwitchToJobsForYou,
 }) => {
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState<string>('All');
   const [qualFilter, setQualFilter] = useState<string>('All');
+  const [deadlineFilter, setDeadlineFilter] = useState<DeadlineCategory>('All');
+
+  const deadlineCategories: DeadlineCategory[] = [
+    'All',
+    'Closing Today',
+    'Closing Tomorrow',
+    'Closing This Week',
+    'Recently Opened',
+  ];
 
   const filteredJobs = useMemo(() => {
     return jobs.filter((j) => {
@@ -37,12 +55,46 @@ export const JobsTab: React.FC<JobsTabProps> = ({
         j.organization.toLowerCase().includes(search.toLowerCase());
       const matchType = typeFilter === 'All' || j.type === typeFilter;
       const matchQual = qualFilter === 'All' || j.qualification.includes(qualFilter);
-      return matchSearch && matchType && matchQual;
+
+      const daysLeft = calculateDaysRemaining(j.deadlineDate);
+      let matchDeadline = true;
+      if (deadlineFilter === 'Closing Today') matchDeadline = daysLeft === 0;
+      else if (deadlineFilter === 'Closing Tomorrow') matchDeadline = daysLeft === 1;
+      else if (deadlineFilter === 'Closing This Week') matchDeadline = daysLeft <= 7;
+      else if (deadlineFilter === 'Recently Opened') matchDeadline = daysLeft > 7;
+
+      return matchSearch && matchType && matchQual && matchDeadline;
     });
-  }, [jobs, search, typeFilter, qualFilter]);
+  }, [jobs, search, typeFilter, qualFilter, deadlineFilter]);
 
   return (
     <div className="space-y-8">
+      {/* Top Banner to switch to Jobs For You */}
+      {onSwitchToJobsForYou && (
+        <div className="bg-gradient-to-r from-teal-900 to-blue-950 text-white rounded-3xl p-5 sm:p-6 shadow-md border border-teal-500/30 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-2xl bg-teal-400 text-slate-950 flex items-center justify-center font-black shrink-0">
+              <Sparkles className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="font-extrabold text-sm sm:text-base text-white">
+                Want automatic 🟢 Eligible / 🔴 Not Eligible matching?
+              </h3>
+              <p className="text-xs text-slate-300">
+                Use our Smart Match Engine to filter jobs based on your DOB, Category, Branch, and Physical height.
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={onSwitchToJobsForYou}
+            className="w-full sm:w-auto bg-teal-400 hover:bg-teal-300 text-slate-950 font-black px-5 py-2.5 rounded-xl text-xs transition cursor-pointer shrink-0 flex items-center justify-center space-x-1.5"
+          >
+            <span>Open "Jobs For You"</span>
+            <ArrowRight className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+
       {/* Header */}
       <div>
         <span className="text-teal-600 font-extrabold uppercase tracking-wider text-xs">
@@ -105,6 +157,7 @@ export const JobsTab: React.FC<JobsTabProps> = ({
               setSearch('');
               setTypeFilter('All');
               setQualFilter('All');
+              setDeadlineFilter('All');
             }}
             className="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 rounded-xl text-xs transition cursor-pointer"
           >
@@ -113,70 +166,107 @@ export const JobsTab: React.FC<JobsTabProps> = ({
         </div>
       </div>
 
+      {/* Quick Deadline Category Filter Pills */}
+      <div className="flex items-center space-x-2 overflow-x-auto pb-1 scrollbar-none">
+        <span className="text-xs font-extrabold text-slate-500 uppercase tracking-wider shrink-0 mr-1 flex items-center">
+          <Clock className="w-3.5 h-3.5 mr-1 text-rose-600" /> Deadline Filter:
+        </span>
+        {deadlineCategories.map((cat) => {
+          const isActive = deadlineFilter === cat;
+          return (
+            <button
+              key={cat}
+              onClick={() => setDeadlineFilter(cat)}
+              className={`px-3.5 py-2 rounded-xl text-xs font-extrabold whitespace-nowrap transition cursor-pointer ${
+                isActive
+                  ? 'bg-rose-900 text-white shadow-xs'
+                  : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-100'
+              }`}
+            >
+              {cat}
+            </button>
+          );
+        })}
+      </div>
+
       {/* Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredJobs.map((job) => (
-          <div
-            key={job.id}
-            className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-xs hover:shadow-md hover:border-teal-500 transition-all flex flex-col justify-between"
-          >
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-100">
-                  {job.type} Job
-                </span>
-                <span className="text-xs font-bold text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded-full">
-                  {job.qualification}
-                </span>
+        {filteredJobs.map((job) => {
+          const badge = getDeadlineBadgeInfo(job.deadlineDate);
+
+          return (
+            <div
+              key={job.id}
+              className={`bg-white rounded-3xl p-6 border transition-all flex flex-col justify-between hover:shadow-md ${badge.borderClass}`}
+            >
+              <div>
+                {/* Prominent Deadline Badge */}
+                <div className="mb-3">
+                  <div
+                    className={`inline-flex items-center space-x-1 px-3 py-1 rounded-xl text-[11px] font-black uppercase tracking-wide border ${badge.bgClass} ${badge.colorClass} ${badge.borderClass}`}
+                  >
+                    <Clock className="w-3.5 h-3.5 shrink-0" />
+                    <span>{badge.text}</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between mb-2">
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-50 text-emerald-800 border border-emerald-100">
+                    {job.type} Job
+                  </span>
+                  <span className="text-[10px] font-extrabold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full">
+                    {job.qualification}
+                  </span>
+                </div>
+
+                <h3 className="text-base sm:text-lg font-extrabold text-slate-900 mb-1 leading-snug">
+                  {job.title}
+                </h3>
+                <p className="text-xs text-slate-500 mb-4 font-semibold">{job.organization}</p>
+
+                <div className="space-y-2 text-xs text-slate-600 mb-6 bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
+                  <div className="flex justify-between items-center">
+                    <span className="text-slate-500 flex items-center">
+                      <Users className="w-3.5 h-3.5 mr-1 text-blue-600" /> Total Vacancies:
+                    </span>
+                    <strong className="text-slate-900 font-extrabold">{job.vacancy}</strong>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-slate-500 flex items-center">
+                      <Award className="w-3.5 h-3.5 mr-1 text-purple-600" /> Age Limit:
+                    </span>
+                    <strong className="text-slate-900 font-bold">{job.age}</strong>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-slate-500 flex items-center">
+                      <IndianRupee className="w-3.5 h-3.5 mr-1 text-emerald-600" /> Pay Scale:
+                    </span>
+                    <strong className="text-emerald-700 font-bold">{job.salary}</strong>
+                  </div>
+                </div>
               </div>
 
-              <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-1 leading-snug">
-                {job.title}
-              </h3>
-              <p className="text-xs text-slate-500 mb-4 font-semibold">{job.organization}</p>
+              <div className="flex items-center space-x-2 pt-2 border-t border-slate-100">
+                <button
+                  onClick={() => onViewJob(job)}
+                  className="flex-grow bg-slate-100 hover:bg-blue-900 hover:text-white text-slate-800 font-bold py-3 px-4 rounded-xl text-xs transition flex items-center justify-center space-x-1.5 cursor-pointer"
+                >
+                  <span>Job Details</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
 
-              <div className="space-y-2 text-xs text-slate-600 mb-6 bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
-                <div className="flex justify-between items-center">
-                  <span className="text-slate-500 flex items-center">
-                    <Users className="w-3.5 h-3.5 mr-1 text-blue-600" /> Total Vacancies:
-                  </span>
-                  <strong className="text-slate-900 font-extrabold">{job.vacancy}</strong>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-slate-500 flex items-center">
-                    <Award className="w-3.5 h-3.5 mr-1 text-purple-600" /> Age Limit:
-                  </span>
-                  <strong className="text-slate-900 font-bold">{job.age}</strong>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-slate-500 flex items-center">
-                    <IndianRupee className="w-3.5 h-3.5 mr-1 text-emerald-600" /> Pay Scale:
-                  </span>
-                  <strong className="text-emerald-700 font-bold">{job.salary}</strong>
-                </div>
+                <button
+                  onClick={() => onSaveJob(job.title, 'Job')}
+                  aria-label="Bookmark Job"
+                  title="Bookmark Job"
+                  className="p-3 bg-slate-100 hover:bg-teal-50 text-slate-600 hover:text-teal-700 rounded-xl transition cursor-pointer shrink-0"
+                >
+                  <Bookmark className="w-4 h-4" />
+                </button>
               </div>
             </div>
-
-            <div className="flex items-center space-x-2 pt-2 border-t border-slate-100">
-              <button
-                onClick={() => onViewJob(job)}
-                className="flex-grow bg-slate-100 hover:bg-blue-900 hover:text-white text-slate-800 font-bold py-3 px-4 rounded-xl text-xs transition flex items-center justify-center space-x-1.5 cursor-pointer"
-              >
-                <span>Job Details</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-
-              <button
-                onClick={() => onSaveJob(job.title, 'Job')}
-                aria-label="Bookmark Job"
-                title="Bookmark Job"
-                className="p-3 bg-slate-100 hover:bg-teal-50 text-slate-600 hover:text-teal-700 rounded-xl transition cursor-pointer shrink-0"
-              >
-                <Bookmark className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

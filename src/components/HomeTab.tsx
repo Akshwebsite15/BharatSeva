@@ -15,6 +15,9 @@ import {
   Users,
   CheckCircle2,
   Bell,
+  Newspaper,
+  Landmark,
+  Layers,
 } from 'lucide-react';
 import { JurisdictionState } from '../types';
 
@@ -44,6 +47,30 @@ export const HomeTab: React.FC<HomeTabProps> = ({
   };
 
   const serviceCards = [
+    {
+      id: 'current-affairs',
+      title: "Today's Current Affairs",
+      subtitle: 'Read → Quiz → Save → Share',
+      icon: Newspaper,
+      color: 'bg-teal-50 text-teal-800 hover:bg-teal-700 hover:text-white',
+      badge: '🇮🇳 10 Categories',
+    },
+    {
+      id: 'bharatseva-bihar',
+      title: 'BharatSeva Bihar',
+      subtitle: 'BPSC, BSSC, Police, RTPS, Board',
+      icon: Landmark,
+      color: 'bg-amber-50 text-amber-900 hover:bg-amber-700 hover:text-white',
+      badge: '15 Modules',
+    },
+    {
+      id: 'search-intent-hub',
+      title: 'Search Intent Hub',
+      subtitle: '10th/12th Jobs, CGL Syllabus',
+      icon: Layers,
+      color: 'bg-indigo-50 text-indigo-800 hover:bg-indigo-700 hover:text-white',
+      badge: 'High SEO Query',
+    },
     {
       id: 'services',
       title: 'Certificates & RTPS',
@@ -230,6 +257,47 @@ export const HomeTab: React.FC<HomeTabProps> = ({
               </div>
             );
           })}
+        </div>
+      </section>
+
+      {/* Featured Feature Spotlight: Jobs For You */}
+      <section className="max-w-7xl mx-auto px-2 sm:px-4">
+        <div className="bg-gradient-to-r from-teal-900 via-blue-950 to-slate-900 rounded-3xl p-6 sm:p-10 text-white shadow-xl border border-teal-500/30 flex flex-col lg:flex-row items-center justify-between gap-8 relative overflow-hidden">
+          <div className="space-y-4 max-w-2xl relative z-10">
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-black bg-teal-400 text-slate-950 uppercase tracking-widest">
+              <Sparkles className="w-3.5 h-3.5 mr-1" /> Killer Feature • Match Engine
+            </span>
+
+            <h2 className="text-2xl sm:text-4xl font-black text-white leading-tight">
+              Personalised "Jobs For You" Eligibility Engine
+            </h2>
+
+            <p className="text-slate-300 text-xs sm:text-base leading-relaxed">
+              Never waste hours reading complex PDF recruitment rules. Enter your Age, State, Category, Degree (B.Tech CSE, BA, ITI), Percentages, and Physical Height. BharatSeva automatically tags every vacancy as:
+            </p>
+
+            <div className="flex flex-wrap gap-2 text-xs font-extrabold pt-1">
+              <span className="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-3 py-1.5 rounded-xl">
+                🟢 100% Eligible
+              </span>
+              <span className="bg-amber-500/20 text-amber-300 border border-amber-500/40 px-3 py-1.5 rounded-xl">
+                🟡 Possibly Eligible (Check Notice)
+              </span>
+              <span className="bg-rose-500/20 text-rose-300 border border-rose-500/40 px-3 py-1.5 rounded-xl">
+                🔴 Not Eligible
+              </span>
+            </div>
+          </div>
+
+          <div className="shrink-0 w-full lg:w-auto relative z-10">
+            <button
+              onClick={() => setActiveTab('jobs-for-you')}
+              className="w-full lg:w-auto bg-teal-400 hover:bg-teal-300 text-slate-950 font-black px-8 py-5 rounded-2xl shadow-xl transition-all transform hover:scale-105 cursor-pointer flex items-center justify-center space-x-3 text-sm sm:text-base"
+            >
+              <span>Test My Eligibility Now</span>
+              <ArrowRight className="w-5 h-5" />
+            </button>
+          </div>
         </div>
       </section>
 

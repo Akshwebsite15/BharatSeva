@@ -21,6 +21,8 @@ import { SearchIntentHubTab } from './components/SearchIntentHubTab';
 import { DetailModal } from './components/DetailModal';
 import { AiAssistantModal } from './components/AiAssistantModal';
 import { ExamLifecycleHub } from './components/ExamLifecycleHub';
+import { PwaInstallModal } from './components/PwaInstallModal';
+import { LegalNoticeModal } from './components/LegalNoticeModal';
 
 import {
   JurisdictionState,
@@ -66,9 +68,17 @@ export default function App() {
 
   // Modal States
   const [aiModalOpen, setAiModalOpen] = useState(false);
+  const [installModalOpen, setInstallModalOpen] = useState(false);
+  const [legalModalOpen, setLegalModalOpen] = useState(false);
+  const [legalModalTab, setLegalModalTab] = useState<'privacy' | 'terms' | 'disclaimer'>('disclaimer');
   const [detailService, setDetailService] = useState<CitizenService | null>(null);
   const [detailJob, setDetailJob] = useState<GovJob | null>(null);
   const [activeExamHubTitle, setActiveExamHubTitle] = useState<string | null>(null);
+
+  const handleOpenLegalModal = (tab: 'privacy' | 'terms' | 'disclaimer' = 'disclaimer') => {
+    setLegalModalTab(tab);
+    setLegalModalOpen(true);
+  };
 
   // Notification Toast State
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -145,6 +155,8 @@ export default function App() {
         selectedJurisdiction={selectedJurisdiction}
         setSelectedJurisdiction={setSelectedJurisdiction}
         onOpenAiModal={() => setAiModalOpen(true)}
+        onOpenInstallModal={() => setInstallModalOpen(true)}
+        onOpenLegalModal={handleOpenLegalModal}
       />
 
       {/* Main Container */}
@@ -275,10 +287,23 @@ export default function App() {
         />
       )}
 
+      <PwaInstallModal
+        isOpen={installModalOpen}
+        onClose={() => setInstallModalOpen(false)}
+      />
+
+      <LegalNoticeModal
+        isOpen={legalModalOpen}
+        onClose={() => setLegalModalOpen(false)}
+        defaultSubTab={legalModalTab}
+      />
+
       {/* Footer */}
       <Footer
         setActiveTab={setActiveTab}
         onOpenAiModal={() => setAiModalOpen(true)}
+        onOpenInstallModal={() => setInstallModalOpen(true)}
+        onOpenLegalModal={handleOpenLegalModal}
       />
     </div>
   );

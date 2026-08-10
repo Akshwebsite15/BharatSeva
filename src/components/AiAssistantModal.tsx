@@ -1,15 +1,23 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Bot, X, Send, Sparkles, User, Loader2 } from 'lucide-react';
+import { Bot, X, Send, Sparkles, User, Loader2, Zap, Gift } from 'lucide-react';
 import { ChatMessage } from '../types';
 
 interface AiAssistantModalProps {
   isOpen: boolean;
   onClose: () => void;
+  aiCredits?: number;
+  setAiCredits?: React.Dispatch<React.SetStateAction<number>>;
+  unlimitedPassUntil?: number | null;
+  onOpenDailyRewards?: () => void;
 }
 
 export const AiAssistantModal: React.FC<AiAssistantModalProps> = ({
   isOpen,
   onClose,
+  aiCredits = 5,
+  setAiCredits,
+  unlimitedPassUntil,
+  onOpenDailyRewards,
 }) => {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
@@ -23,6 +31,8 @@ export const AiAssistantModal: React.FC<AiAssistantModalProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const chatBottomRef = useRef<HTMLDivElement>(null);
 
+  const isUnlimitedActive = unlimitedPassUntil && unlimitedPassUntil > Date.now();
+
   useEffect(() => {
     if (isOpen) {
       chatBottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -35,6 +45,17 @@ export const AiAssistantModal: React.FC<AiAssistantModalProps> = ({
     const text = (textToSend || inputValue).trim();
     if (!text || isLoading) return;
 
+    if (!isUnlimitedActive && aiCredits <= 0) {
+      const lockMsg: ChatMessage = {
+        id: `lock-${Date.now()}`,
+        sender: 'assistant',
+        text: `🔒 You have 0 AI Assistant credits remaining for today.\n\nClaim your free Daily Check-in Reward or solve today's GK Quiz to get instant AI credits!`,
+        timestamp: 'Just now',
+      };
+      setMessages((prev) => [...prev, lockMsg]);
+      return;
+    }
+
     const userMsg: ChatMessage = {
       id: `user-${Date.now()}`,
       sender: 'user',
@@ -45,6 +66,10 @@ export const AiAssistantModal: React.FC<AiAssistantModalProps> = ({
     setMessages((prev) => [...prev, userMsg]);
     if (!textToSend) setInputValue('');
     setIsLoading(true);
+
+    if (!isUnlimitedActive && setAiCredits) {
+      setAiCredits((prev) => Math.max(0, prev - 1));
+    }
 
     try {
       const conversationHistory = messages.map((m) => ({
@@ -115,13 +140,53 @@ export const AiAssistantModal: React.FC<AiAssistantModalProps> = ({
             </div>
           </div>
 
-          <button
-            onClick={onClose}
-            aria-label="Close AI Assistant"
-            className="text-white hover:text-teal-200 p-2 rounded-xl hover:bg-white/10 transition cursor-pointer"
-          >
-            <X className="w-6 h-6" />
-          </button>
+          <div className="flex items-center space-x-2">
+            {onOpenDailyRewards && (
+              <button
+                onClick={() => {
+                  onClose();
+                  onOpenDailyRewards();
+                }}
+                className="px-2.5 py-1.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs rounded-xl transition cursor-pointer flex items-center space-x-1 shadow-xs"
+                title="Claim Free Daily Rewards"
+              >
+                <Gift className="w-3.5 h-3.5 text-slate-950" />
+                <span className="hidden sm:inline">Daily Rewards</span>
+              </button>
+            )}
+
+            <button
+              onClick={onClose}
+              aria-label="Close AI Assistant"
+              className="text-white hover:text-teal-200 p-2 rounded-xl hover:bg-white/10 transition cursor-pointer"
+            >
+              <X className="w-6 h-6" />
+            </button>
+          </div>
+        </div>
+
+        {/* AI Credit Balance Sub-Header */}
+        <div className="bg-teal-950 text-teal-100 px-4 py-2 text-xs flex items-center justify-between border-b border-teal-800 shrink-0">
+          <div className="flex items-center space-x-1.5 font-bold">
+            <Zap className="w-3.5 h-3.5 text-amber-300 fill-amber-300" />
+            <span>
+              {isUnlimitedActive
+                ? '🏆 24-Hour Unlimited AI Pass Unlocked'
+                : `⚡ Balance: ${aiCredits} AI Query Credits Remaining`}
+            </span>
+          </div>
+
+          {!isUnlimitedActive && onOpenDailyRewards && (
+            <button
+              onClick={() => {
+                onClose();
+                onOpenDailyRewards();
+              }}
+              className="text-amber-300 hover:underline font-black text-[11px] cursor-pointer"
+            >
+              Get Free Credits →
+            </button>
+          )}
         </div>
 
         {/* Messages Body */}
@@ -143,10 +208,27 @@ export const AiAssistantModal: React.FC<AiAssistantModalProps> = ({
                 className={`p-4 rounded-2xl shadow-2xs text-xs sm:text-sm max-w-[85%] sm:max-w-[80%] leading-relaxed ${
                   msg.sender === 'user'
                     ? 'bg-blue-900 text-white font-medium rounded-br-xs'
+                    : msg.text.startsWith('🔒')
+                    ? 'bg-amber-50 border-2 border-amber-300 text-amber-950 rounded-bl-xs space-y-2'
                     : 'bg-white border border-slate-200 text-slate-800 rounded-bl-xs'
                 }`}
               >
                 <div className="whitespace-pre-line">{msg.text}</div>
+
+                {msg.text.startsWith('🔒') && onOpenDailyRewards && (
+                  <div className="pt-2">
+                    <button
+                      onClick={() => {
+                        onClose();
+                        onOpenDailyRewards();
+                      }}
+                      className="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-2 px-3 rounded-xl text-xs transition cursor-pointer flex items-center justify-center space-x-1.5 shadow-xs"
+                    >
+                      <Gift className="w-4 h-4 text-slate-950" />
+                      <span>Claim Free Daily Rewards Now</span>
+                    </button>
+                  </div>
+                )}
                 <div
                   className={`text-[9px] mt-1.5 font-sans ${
                     msg.sender === 'user' ? 'text-blue-200 text-right' : 'text-slate-400'

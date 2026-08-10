@@ -25,6 +25,7 @@ import { PwaInstallModal } from './components/PwaInstallModal';
 import { LegalNoticeModal } from './components/LegalNoticeModal';
 import { AdmitCardsTab } from './components/AdmitCardsTab';
 import { JobAlertModal } from './components/JobAlertModal';
+import { DailyRewardsModal } from './components/DailyRewardsModal';
 
 import {
   JurisdictionState,
@@ -73,14 +74,117 @@ export default function App() {
   const [installModalOpen, setInstallModalOpen] = useState(false);
   const [legalModalOpen, setLegalModalOpen] = useState(false);
   const [jobAlertModalOpen, setJobAlertModalOpen] = useState(false);
+  const [dailyRewardsModalOpen, setDailyRewardsModalOpen] = useState(false);
   const [legalModalTab, setLegalModalTab] = useState<'privacy' | 'terms' | 'disclaimer'>('disclaimer');
   const [detailService, setDetailService] = useState<CitizenService | null>(null);
   const [detailJob, setDetailJob] = useState<GovJob | null>(null);
   const [activeExamHubTitle, setActiveExamHubTitle] = useState<string | null>(null);
 
+  // Daily Rewards & Unlocks State
+  const [coins, setCoins] = React.useState<number>(120);
+  const [aiCredits, setAiCredits] = React.useState<number>(5);
+  const [streakDays, setStreakDays] = React.useState<number>(3);
+  const [hasClaimedToday, setHasClaimedToday] = React.useState<boolean>(false);
+  const [unlimitedPassUntil, setUnlimitedPassUntil] = React.useState<number | null>(null);
+
+  // Sync Browser Back Button (popstate listener)
+  React.useEffect(() => {
+    // Set initial history state
+    if (!window.history.state) {
+      window.history.replaceState({ tab: 'home', modal: null }, '');
+    }
+
+    const handlePopState = (event: PopStateEvent) => {
+      // Priority 1: If any modal is active, close the active modal first
+      if (
+        aiModalOpen ||
+        dailyRewardsModalOpen ||
+        jobAlertModalOpen ||
+        legalModalOpen ||
+        installModalOpen ||
+        detailService ||
+        detailJob ||
+        activeExamHubTitle
+      ) {
+        setAiModalOpen(false);
+        setDailyRewardsModalOpen(false);
+        setJobAlertModalOpen(false);
+        setLegalModalOpen(false);
+        setInstallModalOpen(false);
+        setDetailService(null);
+        setDetailJob(null);
+        setActiveExamHubTitle(null);
+        return;
+      }
+
+      // Priority 2: Restore tab from history state or fallback to 'home'
+      if (event.state && event.state.tab) {
+        setActiveTab(event.state.tab);
+      } else {
+        setActiveTab('home');
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [
+    aiModalOpen,
+    dailyRewardsModalOpen,
+    jobAlertModalOpen,
+    legalModalOpen,
+    installModalOpen,
+    detailService,
+    detailJob,
+    activeExamHubTitle,
+  ]);
+
+  // History-aware navigation helper
+  const changeTab = (tab: string) => {
+    setActiveTab(tab);
+    window.history.pushState({ tab, modal: null }, '');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // History-aware modal triggers
+  const handleOpenAiModal = () => {
+    setAiModalOpen(true);
+    window.history.pushState({ tab: activeTab, modal: 'ai' }, '');
+  };
+
+  const handleOpenDailyRewardsModal = () => {
+    setDailyRewardsModalOpen(true);
+    window.history.pushState({ tab: activeTab, modal: 'rewards' }, '');
+  };
+
+  const handleOpenJobAlertModal = () => {
+    setJobAlertModalOpen(true);
+    window.history.pushState({ tab: activeTab, modal: 'alerts' }, '');
+  };
+
+  const handleOpenInstallModal = () => {
+    setInstallModalOpen(true);
+    window.history.pushState({ tab: activeTab, modal: 'install' }, '');
+  };
+
   const handleOpenLegalModal = (tab: 'privacy' | 'terms' | 'disclaimer' = 'disclaimer') => {
     setLegalModalTab(tab);
     setLegalModalOpen(true);
+    window.history.pushState({ tab: activeTab, modal: 'legal' }, '');
+  };
+
+  const handleOpenDetailService = (service: CitizenService) => {
+    setDetailService(service);
+    window.history.pushState({ tab: activeTab, modal: 'service' }, '');
+  };
+
+  const handleOpenDetailJob = (job: GovJob) => {
+    setDetailJob(job);
+    window.history.pushState({ tab: activeTab, modal: 'job' }, '');
+  };
+
+  const handleOpenExamHub = (title: string) => {
+    setActiveExamHubTitle(title);
+    window.history.pushState({ tab: activeTab, modal: 'exam-hub' }, '');
   };
 
   // Notification Toast State
@@ -154,20 +258,23 @@ export default function App() {
       {/* Navbar */}
       <Navbar
         activeTab={activeTab}
-        setActiveTab={setActiveTab}
+        setActiveTab={changeTab}
         selectedJurisdiction={selectedJurisdiction}
         setSelectedJurisdiction={setSelectedJurisdiction}
-        onOpenAiModal={() => setAiModalOpen(true)}
-        onOpenInstallModal={() => setInstallModalOpen(true)}
+        onOpenAiModal={handleOpenAiModal}
+        onOpenInstallModal={handleOpenInstallModal}
         onOpenLegalModal={handleOpenLegalModal}
-        onOpenAlertModal={() => setJobAlertModalOpen(true)}
+        onOpenAlertModal={handleOpenJobAlertModal}
+        coins={coins}
+        streakDays={streakDays}
+        onOpenDailyRewards={handleOpenDailyRewardsModal}
       />
 
       {/* Main Container */}
       <main className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
         {activeTab === 'home' && (
           <HomeTab
-            setActiveTab={setActiveTab}
+            setActiveTab={changeTab}
             selectedJurisdiction={selectedJurisdiction}
             onGlobalSearch={handleGlobalSearch}
           />
@@ -195,7 +302,7 @@ export default function App() {
           <ServicesTab
             services={services}
             selectedJurisdiction={selectedJurisdiction}
-            onViewService={(srv) => setDetailService(srv)}
+            onViewService={handleOpenDetailService}
             onSaveService={(title) => handleSaveItem(title, 'Service')}
           />
         )}
@@ -212,7 +319,7 @@ export default function App() {
         {activeTab === 'jobs-for-you' && (
           <JobsForYouSection
             jobs={jobs}
-            onViewJob={(job) => setDetailJob(job)}
+            onViewJob={handleOpenDetailJob}
             onSaveJob={(title) => handleSaveItem(title, 'Job')}
           />
         )}
@@ -221,32 +328,32 @@ export default function App() {
           <JobsTab
             jobs={jobs}
             selectedJurisdiction={selectedJurisdiction}
-            onViewJob={(job) => setDetailJob(job)}
+            onViewJob={handleOpenDetailJob}
             onSaveJob={(title) => handleSaveItem(title, 'Job')}
-            onSwitchToJobsForYou={() => setActiveTab('jobs-for-you')}
+            onSwitchToJobsForYou={() => changeTab('jobs-for-you')}
           />
         )}
 
         {activeTab === 'exams' && (
           <ExamsTab
             exams={exams}
-            onOpenExamHub={(title) => setActiveExamHubTitle(title)}
+            onOpenExamHub={handleOpenExamHub}
           />
         )}
 
         {activeTab === 'deadlines' && (
           <DeadlinesTab
             jobs={jobs}
-            onViewJob={(job) => setDetailJob(job)}
+            onViewJob={handleOpenDetailJob}
             onSaveJob={(title) => handleSaveItem(title, 'Job')}
             onSetReminder={handleSetReminder}
-            onOpenAlertModal={() => setJobAlertModalOpen(true)}
+            onOpenAlertModal={handleOpenJobAlertModal}
           />
         )}
 
         {activeTab === 'admit-cards' && (
           <AdmitCardsTab
-            onOpenAlertModal={() => setJobAlertModalOpen(true)}
+            onOpenAlertModal={handleOpenJobAlertModal}
           />
         )}
 
@@ -282,6 +389,27 @@ export default function App() {
       <AiAssistantModal
         isOpen={aiModalOpen}
         onClose={() => setAiModalOpen(false)}
+        aiCredits={aiCredits}
+        setAiCredits={setAiCredits}
+        unlimitedPassUntil={unlimitedPassUntil}
+        onOpenDailyRewards={handleOpenDailyRewardsModal}
+      />
+
+      <DailyRewardsModal
+        isOpen={dailyRewardsModalOpen}
+        onClose={() => setDailyRewardsModalOpen(false)}
+        coins={coins}
+        setCoins={setCoins}
+        aiCredits={aiCredits}
+        setAiCredits={setAiCredits}
+        streakDays={streakDays}
+        setStreakDays={setStreakDays}
+        hasClaimedToday={hasClaimedToday}
+        setHasClaimedToday={setHasClaimedToday}
+        unlimitedPassUntil={unlimitedPassUntil}
+        setUnlimitedPassUntil={setUnlimitedPassUntil}
+        onOpenAiModal={handleOpenAiModal}
+        showToast={showToast}
       />
 
       {/* Exam Lifecycle Hub Permanent Page Modal */}
@@ -317,9 +445,9 @@ export default function App() {
 
       {/* Footer */}
       <Footer
-        setActiveTab={setActiveTab}
-        onOpenAiModal={() => setAiModalOpen(true)}
-        onOpenInstallModal={() => setInstallModalOpen(true)}
+        setActiveTab={changeTab}
+        onOpenAiModal={handleOpenAiModal}
+        onOpenInstallModal={handleOpenInstallModal}
         onOpenLegalModal={handleOpenLegalModal}
       />
     </div>

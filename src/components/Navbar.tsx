@@ -21,6 +21,9 @@ import {
   ShieldCheck,
   Bell,
   Ticket,
+  Gift,
+  Coins,
+  Flame,
 } from 'lucide-react';
 import { JurisdictionState } from '../types';
 
@@ -33,6 +36,9 @@ interface NavbarProps {
   onOpenInstallModal: () => void;
   onOpenLegalModal: () => void;
   onOpenAlertModal?: () => void;
+  coins?: number;
+  streakDays?: number;
+  onOpenDailyRewards?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -44,6 +50,9 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenInstallModal,
   onOpenLegalModal,
   onOpenAlertModal,
+  coins = 100,
+  streakDays = 3,
+  onOpenDailyRewards,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -153,6 +162,23 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Right Actions */}
         <div className="flex items-center space-x-2 sm:space-x-3">
+          {/* Daily Rewards Button */}
+          {onOpenDailyRewards && (
+            <button
+              onClick={onOpenDailyRewards}
+              className="inline-flex items-center space-x-1.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 px-3 py-2.5 rounded-xl font-black text-xs transition cursor-pointer shadow-xs border border-amber-300"
+              title="Daily Rewards & Unlocks"
+            >
+              <Gift className="w-4 h-4 text-slate-950 animate-bounce shrink-0" />
+              <div className="flex items-center space-x-1">
+                <span className="hidden lg:inline text-[10px] bg-slate-950 text-amber-300 px-1.5 py-0.5 rounded font-black">
+                  🔥 {streakDays}d
+                </span>
+                <span className="font-black">🪙 {coins}</span>
+              </div>
+            </button>
+          )}
+
           {/* Job Alerts Button */}
           {onOpenAlertModal && (
             <button

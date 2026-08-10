@@ -23,6 +23,8 @@ import { AiAssistantModal } from './components/AiAssistantModal';
 import { ExamLifecycleHub } from './components/ExamLifecycleHub';
 import { PwaInstallModal } from './components/PwaInstallModal';
 import { LegalNoticeModal } from './components/LegalNoticeModal';
+import { AdmitCardsTab } from './components/AdmitCardsTab';
+import { JobAlertModal } from './components/JobAlertModal';
 
 import {
   JurisdictionState,
@@ -70,6 +72,7 @@ export default function App() {
   const [aiModalOpen, setAiModalOpen] = useState(false);
   const [installModalOpen, setInstallModalOpen] = useState(false);
   const [legalModalOpen, setLegalModalOpen] = useState(false);
+  const [jobAlertModalOpen, setJobAlertModalOpen] = useState(false);
   const [legalModalTab, setLegalModalTab] = useState<'privacy' | 'terms' | 'disclaimer'>('disclaimer');
   const [detailService, setDetailService] = useState<CitizenService | null>(null);
   const [detailJob, setDetailJob] = useState<GovJob | null>(null);
@@ -157,6 +160,7 @@ export default function App() {
         onOpenAiModal={() => setAiModalOpen(true)}
         onOpenInstallModal={() => setInstallModalOpen(true)}
         onOpenLegalModal={handleOpenLegalModal}
+        onOpenAlertModal={() => setJobAlertModalOpen(true)}
       />
 
       {/* Main Container */}
@@ -236,6 +240,13 @@ export default function App() {
             onViewJob={(job) => setDetailJob(job)}
             onSaveJob={(title) => handleSaveItem(title, 'Job')}
             onSetReminder={handleSetReminder}
+            onOpenAlertModal={() => setJobAlertModalOpen(true)}
+          />
+        )}
+
+        {activeTab === 'admit-cards' && (
+          <AdmitCardsTab
+            onOpenAlertModal={() => setJobAlertModalOpen(true)}
           />
         )}
 
@@ -296,6 +307,12 @@ export default function App() {
         isOpen={legalModalOpen}
         onClose={() => setLegalModalOpen(false)}
         defaultSubTab={legalModalTab}
+      />
+
+      <JobAlertModal
+        isOpen={jobAlertModalOpen}
+        onClose={() => setJobAlertModalOpen(false)}
+        onSavePreferences={(msg) => showToast(msg)}
       />
 
       {/* Footer */}

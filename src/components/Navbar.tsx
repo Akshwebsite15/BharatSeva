@@ -19,6 +19,8 @@ import {
   Download,
   AlertTriangle,
   ShieldCheck,
+  Bell,
+  Ticket,
 } from 'lucide-react';
 import { JurisdictionState } from '../types';
 
@@ -30,6 +32,7 @@ interface NavbarProps {
   onOpenAiModal: () => void;
   onOpenInstallModal: () => void;
   onOpenLegalModal: () => void;
+  onOpenAlertModal?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -40,21 +43,21 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenAiModal,
   onOpenInstallModal,
   onOpenLegalModal,
+  onOpenAlertModal,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navItems = [
     { id: 'home', label: 'Home', icon: House },
-    { id: 'current-affairs', label: "Today's Current Affairs", icon: Newspaper, highlight: true },
-    { id: 'bharatseva-bihar', label: 'BharatSeva Bihar', icon: Landmark },
-    { id: 'search-intent-hub', label: 'Intent Search Pages', icon: Layers },
+    { id: 'current-affairs', label: "Current Affairs", icon: Newspaper, highlight: true },
     { id: 'jobs-for-you', label: 'Jobs For You', icon: Sparkles },
-    { id: 'services', label: 'Services', icon: FileCheck },
-    { id: 'scholarships', label: 'Scholarships', icon: GraduationCap },
-    { id: 'schemes', label: 'Schemes', icon: Building2 },
     { id: 'jobs', label: 'Govt Jobs', icon: Briefcase },
+    { id: 'deadlines', label: 'Closing Soon 🚨', icon: Hourglass },
+    { id: 'admit-cards', label: 'Admit Cards 🎫', icon: Ticket },
     { id: 'exams', label: 'Exams', icon: PenSquare },
-    { id: 'deadlines', label: 'Deadlines', icon: Hourglass },
+    { id: 'bharatseva-bihar', label: 'Bihar Hub', icon: Landmark },
+    { id: 'services', label: 'Services', icon: FileCheck },
+    { id: 'schemes', label: 'Schemes', icon: Building2 },
     { id: 'dashboard', label: 'Dashboard', icon: UserCheck },
   ];
 
@@ -150,6 +153,18 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Right Actions */}
         <div className="flex items-center space-x-2 sm:space-x-3">
+          {/* Job Alerts Button */}
+          {onOpenAlertModal && (
+            <button
+              onClick={onOpenAlertModal}
+              className="inline-flex items-center space-x-1.5 bg-amber-400 hover:bg-amber-300 text-slate-950 px-3 py-2.5 rounded-xl font-black text-xs transition cursor-pointer shadow-xs"
+              title="Job & Exam Alerts"
+            >
+              <Bell className="w-4 h-4 text-slate-950 animate-bounce" />
+              <span className="hidden md:inline">Job Alerts</span>
+            </button>
+          )}
+
           {/* Install App Button on header */}
           <button
             onClick={onOpenInstallModal}

@@ -1,0 +1,6 @@
+{
+  "name": "BharatSeva Portal",
+  "description": "Unified Citizen Services, Government Jobs, Competitive Exams, Scholarships & Welfare Schemes Portal",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

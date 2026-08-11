@@ -8,6 +8,7 @@ import {
   SavedItem,
   ApplicationStatus,
 } from '../types';
+import { getTodayStr, getOffsetDateStr } from '../utils/dateUtils';
 
 export const initialServicesData: CitizenService[] = [
   {
@@ -385,8 +386,8 @@ export const initialJobsData: GovJob[] = [
     notification: 'CSBC Advt. No. 01/2026',
     appLink: 'https://csbc.bih.nic.in',
     verificationStatus: 'Verified & Active Official Recruitment',
-    deadlineDate: '2026-08-10', // CLOSING TODAY
-    startDate: '2026-07-01',
+    deadlineDate: getTodayStr(), // CLOSING TODAY
+    startDate: getOffsetDateStr(-30),
     minAge: 18,
     maxAgeGen: 25,
     reqQualificationLevel: '12th',
@@ -403,7 +404,7 @@ export const initialJobsData: GovJob[] = [
     qualification: 'Graduate',
     vacancy: '1,245 Posts (SDO, DSP, Revenue Officer, Commercial Tax Officer, BDO)',
     age: '20 - 37 Years (Upper age limit relaxations apply)',
-    dates: 'Application Start: July 1, 2026 | Deadline: Aug 11, 2026',
+    dates: 'Application Active | Deadline: Upcoming',
     fee: '₹600 (General/OBC) | ₹150 (Bihar SC/ST/Female/PwD)',
     salary: 'Pay Level-9 & Level-7 Gazetted Administrative Grade',
     selection: 'Prelims Exam (150 Marks Objective with Negative Marking) -> Mains Exam (Descriptive Papers) -> Personal Interview (120 Marks).',
@@ -416,8 +417,8 @@ export const initialJobsData: GovJob[] = [
     notification: 'BPSC Advt. No. 12/2026',
     appLink: 'https://bpsc.bih.nic.in',
     verificationStatus: 'Verified Official Commission Release',
-    deadlineDate: '2026-08-11', // CLOSING TOMORROW
-    startDate: '2026-07-01',
+    deadlineDate: getOffsetDateStr(1), // CLOSING TOMORROW
+    startDate: getOffsetDateStr(-30),
     minAge: 20,
     maxAgeGen: 37,
     reqQualificationLevel: 'Graduate',
@@ -431,7 +432,7 @@ export const initialJobsData: GovJob[] = [
     qualification: 'Graduate',
     vacancy: '15,000+ Vacancies (Assistant Section Officer, Inspector Income Tax/GST, Auditor)',
     age: '18 - 32 Years',
-    dates: 'Application Active | Deadline: Aug 12, 2026',
+    dates: 'Application Active | Deadline: Soon',
     fee: '₹100 (General/OBC) | ₹0 (SC/ST/Women/PwD)',
     salary: 'Pay Level-4 (₹25,500) to Pay Level-8 (₹47,600 basic)',
     selection: 'Tier-I CBT Exam -> Tier-II CBT Exam (Reasoning, Math, English, Computer Test) -> Document Verification.',
@@ -442,8 +443,8 @@ export const initialJobsData: GovJob[] = [
     notification: 'SSC CGL Notice 2026',
     appLink: 'https://ssc.gov.in',
     verificationStatus: 'Verified Central Govt Notification',
-    deadlineDate: '2026-08-12', // CLOSING IN 2 DAYS
-    startDate: '2026-07-05',
+    deadlineDate: getOffsetDateStr(2), // CLOSING IN 2 DAYS
+    startDate: getOffsetDateStr(-30),
     minAge: 18,
     maxAgeGen: 32,
     reqQualificationLevel: 'Graduate',
@@ -457,7 +458,7 @@ export const initialJobsData: GovJob[] = [
     qualification: 'B.Tech',
     vacancy: '7,911 Posts (JE Civil, Electrical, Mechanical, CSE, Electronics)',
     age: '18 - 33 Years',
-    dates: 'Application Start: July 15, 2026 | Deadline: Aug 15, 2026',
+    dates: 'Application Active | Deadline: In 5 Days',
     fee: '₹500 (General) | ₹250 (SC/ST/Women)',
     salary: 'Pay Level-6 (₹35,400 + Railway Allowances)',
     selection: 'CBT 1 -> CBT 2 (Technical Ability) -> Document Verification & Medical.',
@@ -468,7 +469,7 @@ export const initialJobsData: GovJob[] = [
     notification: 'RRB CEN 04/2026 (JE)',
     appLink: 'https://rrbcdg.gov.in',
     verificationStatus: 'Verified Indian Railways Engineering Vacancy',
-    deadlineDate: '2026-08-15', // CLOSING IN 5 DAYS
+    deadlineDate: getOffsetDateStr(5), // CLOSING IN 5 DAYS
     startDate: '2026-07-15',
     minAge: 18,
     maxAgeGen: 33,
@@ -496,8 +497,8 @@ export const initialJobsData: GovJob[] = [
     notification: 'PSU GATE Trainee Advt 2026',
     appLink: 'https://iocl.com',
     verificationStatus: 'Verified PSU Executive Recruitment',
-    deadlineDate: '2026-08-30', // RECENTLY OPENED (20 DAYS LEFT)
-    startDate: '2026-08-01',
+    deadlineDate: getOffsetDateStr(15), // RECENTLY OPENED (15 DAYS LEFT)
+    startDate: getOffsetDateStr(-5),
     minAge: 21,
     maxAgeGen: 28,
     reqQualificationLevel: 'B.Tech',
@@ -513,7 +514,7 @@ export const initialJobsData: GovJob[] = [
     qualification: 'B.Tech',
     vacancy: '3,200 Posts (Civil, Electrical, Mechanical, IT/CS)',
     age: '21 - 37 Years',
-    dates: 'Application Start: July 10, 2026 | Deadline: Aug 16, 2026',
+    dates: 'Application Active | Deadline: In 6 Days',
     fee: '₹600 (General) | ₹150 (Bihar Reserved)',
     salary: 'Pay Level-9 (₹53,100 basic + Bihar Govt DA/HRA)',
     selection: 'Degree/Diploma Marks Weightage + Written Technical Exam -> Document Verification.',
@@ -525,8 +526,8 @@ export const initialJobsData: GovJob[] = [
     notification: 'BTSC Advt. No. 08/2026',
     appLink: 'https://btsc.bih.nic.in',
     verificationStatus: 'Verified Bihar State Engineering Recruitment',
-    deadlineDate: '2026-08-16', // CLOSING THIS WEEK (6 DAYS LEFT)
-    startDate: '2026-07-10',
+    deadlineDate: getOffsetDateStr(6), // CLOSING THIS WEEK (6 DAYS LEFT)
+    startDate: getOffsetDateStr(-20),
     minAge: 21,
     maxAgeGen: 37,
     reqQualificationLevel: 'B.Tech',
@@ -540,7 +541,7 @@ export const initialJobsData: GovJob[] = [
     qualification: 'Graduate',
     vacancy: '1,820 Posts',
     age: '20 - 37 Years (Upper age relaxations up to 42 yrs)',
-    dates: 'Application Start: Aug 1, 2026 | Deadline: Sept 5, 2026',
+    dates: 'Application Active | Deadline: Upcoming',
     fee: '₹700 (General/EBC/BC) | ₹400 (SC/ST/Female)',
     salary: 'Pay Level-6 (₹35,400 - ₹1,12,400)',
     selection: 'Prelims Written Exam -> Mains Written Exam -> Physical Efficiency Test (PET) -> Medical.',
@@ -552,8 +553,8 @@ export const initialJobsData: GovJob[] = [
     notification: 'BPSSC Advt 02/2026',
     appLink: 'https://bpssc.bih.nic.in',
     verificationStatus: 'Verified State Police Executive Post',
-    deadlineDate: '2026-09-05', // OPEN (26 DAYS LEFT)
-    startDate: '2026-08-01',
+    deadlineDate: getOffsetDateStr(25), // OPEN (25 DAYS LEFT)
+    startDate: getOffsetDateStr(-5),
     minAge: 20,
     maxAgeGen: 37,
     reqQualificationLevel: 'Graduate',
@@ -570,7 +571,7 @@ export const initialJobsData: GovJob[] = [
     qualification: 'Graduate',
     vacancy: '65,000+ Teacher Posts (Primary Class 1-5, Middle 6-8, TGT 9-10, PGT 11-12)',
     age: '21 - 42 Years',
-    dates: 'Application Start: July 20, 2026 | Deadline: Aug 14, 2026',
+    dates: 'Application Active | Deadline: In 3 Days',
     fee: '₹750 (General) | ₹200 (SC/ST/Female)',
     salary: '₹25,000 - ₹45,000 basic + DA + HRA (New State Cadre Teachers)',
     selection: 'Written Objective Exam (Language + General Studies + Main Subject). No Interview.',
@@ -583,8 +584,8 @@ export const initialJobsData: GovJob[] = [
     notification: 'BPSC TRE 4.0 Official Notice',
     appLink: 'https://bpsc.bih.nic.in',
     verificationStatus: 'Verified & Active State Recruitment',
-    deadlineDate: '2026-08-14', // CLOSING THIS WEEK (4 DAYS LEFT)
-    startDate: '2026-07-20',
+    deadlineDate: getOffsetDateStr(3), // CLOSING THIS WEEK (3 DAYS LEFT)
+    startDate: getOffsetDateStr(-15),
     minAge: 21,
     maxAgeGen: 42,
     reqQualificationLevel: 'Graduate',
@@ -598,7 +599,7 @@ export const initialJobsData: GovJob[] = [
     qualification: '10th',
     vacancy: '450 Posts (Fitter, Electronic Mechanic, Machinist, Turner)',
     age: '18 - 35 Years',
-    dates: 'Application Start: Aug 5, 2026 | Deadline: Sept 10, 2026',
+    dates: 'Application Active | Deadline: Upcoming',
     fee: '₹100 Application Fee',
     salary: 'Pay Level-3 (₹21,700 basic + ISRO Special Allowances)',
     selection: 'Written Test (Objective CBT) -> Practical Trade Skill Test.',
@@ -609,8 +610,8 @@ export const initialJobsData: GovJob[] = [
     notification: 'ISRO HQ/2026/02',
     appLink: 'https://isro.gov.in',
     verificationStatus: 'Verified Official Defense/Space Vacancy',
-    deadlineDate: '2026-09-10', // OPEN (31 DAYS LEFT)
-    startDate: '2026-08-05',
+    deadlineDate: getOffsetDateStr(28), // OPEN (28 DAYS LEFT)
+    startDate: getOffsetDateStr(-5),
     minAge: 18,
     maxAgeGen: 35,
     reqQualificationLevel: 'ITI',
@@ -624,7 +625,7 @@ export const initialJobsData: GovJob[] = [
     qualification: 'Graduate',
     vacancy: '1,100+ Posts (Clerk, Computer Operator, Stenographer)',
     age: '18 - 37 Years',
-    dates: 'Application Start: July 1, 2026 | Deadline: Aug 10, 2026',
+    dates: 'Application Active | Deadline: CLOSING TODAY',
     fee: '₹800 (General) | ₹400 (SC/ST)',
     salary: 'Pay Level-4 (₹25,500 - ₹81,100)',
     selection: 'Preliminary Screening Test -> Written Test + English/Hindi Typing Test -> Interview.',
@@ -636,8 +637,8 @@ export const initialJobsData: GovJob[] = [
     notification: 'PHC Advt 03/2026',
     appLink: 'https://patnahighcourt.gov.in',
     verificationStatus: 'Verified Judicial Recruitment',
-    deadlineDate: '2026-08-10', // CLOSING TODAY
-    startDate: '2026-07-01',
+    deadlineDate: getTodayStr(), // CLOSING TODAY
+    startDate: getOffsetDateStr(-30),
     minAge: 18,
     maxAgeGen: 37,
     reqQualificationLevel: 'Graduate',
@@ -651,7 +652,7 @@ export const initialJobsData: GovJob[] = [
     qualification: 'Graduate',
     vacancy: '11,558 Posts (Station Master, Goods Guard, Senior Clerk, Commercial Apprentice)',
     age: '18 - 33 Years (Graduate level)',
-    dates: 'Application Open | Deadline: Aug 17, 2026',
+    dates: 'Application Active | Deadline: In 7 Days',
     fee: '₹500 (General) | ₹250 (SC/ST/Ex-Servicemen/Female - Refundable on CBT 1)',
     salary: 'Pay Level-2 to Level-6 (₹19,900 - ₹35,400 + Railway Allowances)',
     selection: 'CBT 1 (Screening) -> CBT 2 (Final Rank) -> Computer Based Aptitude / Typing Test -> Medical.',
@@ -663,8 +664,8 @@ export const initialJobsData: GovJob[] = [
     notification: 'RRB CEN 03/2026',
     appLink: 'https://rrbcdg.gov.in',
     verificationStatus: 'Verified Indian Railways Vacancy',
-    deadlineDate: '2026-08-17', // CLOSING THIS WEEK (7 DAYS LEFT)
-    startDate: '2026-07-01',
+    deadlineDate: getOffsetDateStr(7), // CLOSING THIS WEEK (7 DAYS LEFT)
+    startDate: getOffsetDateStr(-25),
     minAge: 18,
     maxAgeGen: 33,
     reqQualificationLevel: 'Graduate',

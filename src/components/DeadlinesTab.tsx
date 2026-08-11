@@ -9,6 +9,9 @@ interface DeadlinesTabProps {
   onSaveJob?: (title: string) => void;
   onSetReminder: (title: string, days: number) => void;
   onOpenAlertModal?: () => void;
+  onFetchLiveUpdates?: () => void;
+  isSyncingLive?: boolean;
+  lastSyncedTime?: string | null;
 }
 
 export const DeadlinesTab: React.FC<DeadlinesTabProps> = ({
@@ -18,6 +21,9 @@ export const DeadlinesTab: React.FC<DeadlinesTabProps> = ({
   onSaveJob,
   onSetReminder,
   onOpenAlertModal,
+  onFetchLiveUpdates,
+  isSyncingLive = false,
+  lastSyncedTime,
 }) => {
   return (
     <div className="space-y-8">
@@ -29,6 +35,9 @@ export const DeadlinesTab: React.FC<DeadlinesTabProps> = ({
         onSaveJob={onSaveJob}
         onSetReminder={onSetReminder}
         onOpenAlertModal={onOpenAlertModal}
+        onFetchLiveUpdates={onFetchLiveUpdates}
+        isSyncingLive={isSyncingLive}
+        lastSyncedTime={lastSyncedTime}
       />
     </div>
   );

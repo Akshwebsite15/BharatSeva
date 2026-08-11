@@ -24,16 +24,26 @@ import {
   CurrentAffairsQuiz,
 } from '../types';
 import { initialCurrentAffairsArticles, initialCurrentAffairsQuiz } from '../data/currentAffairsData';
+import { LiveSyncBanner } from './LiveSyncBanner';
 
 interface CurrentAffairsTabProps {
   onSaveItem: (title: string, type: 'Service' | 'Scholarship' | 'Scheme' | 'Job' | 'Exam') => void;
   onNavigateToIntentPage?: (slug: string) => void;
+  articles?: CurrentAffairsArticle[];
+  onFetchLiveUpdates?: () => void;
+  isSyncingLive?: boolean;
+  lastSyncedTime?: string | null;
 }
 
 export const CurrentAffairsTab: React.FC<CurrentAffairsTabProps> = ({
   onSaveItem,
   onNavigateToIntentPage,
+  articles,
+  onFetchLiveUpdates,
+  isSyncingLive = false,
+  lastSyncedTime,
 }) => {
+  const articlesList = articles || initialCurrentAffairsArticles;
   const [activeSubView, setActiveSubView] = useState<'read' | 'quiz' | 'saved'>('read');
   const [selectedCategory, setSelectedCategory] = useState<CurrentAffairsCategory | 'All'>('All');
   const [searchQuery, setSearchQuery] = useState('');
@@ -62,19 +72,19 @@ export const CurrentAffairsTab: React.FC<CurrentAffairsTabProps> = ({
 
   // Articles Filtering
   const filteredArticles = useMemo(() => {
-    return initialCurrentAffairsArticles.filter((art) => {
+    return articlesList.filter((art) => {
       const matchCat = selectedCategory === 'All' || art.category === selectedCategory;
       const matchQuery =
         art.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         art.summary.toLowerCase().includes(searchQuery.toLowerCase());
       return matchCat && matchQuery;
     });
-  }, [selectedCategory, searchQuery]);
+  }, [articlesList, selectedCategory, searchQuery]);
 
   // Saved Articles
   const savedArticles = useMemo(() => {
-    return initialCurrentAffairsArticles.filter((art) => savedArticleIds.includes(art.id));
-  }, [savedArticleIds]);
+    return articlesList.filter((art) => savedArticleIds.includes(art.id));
+  }, [articlesList, savedArticleIds]);
 
   const toggleSaveArticle = (article: CurrentAffairsArticle) => {
     if (savedArticleIds.includes(article.id)) {
@@ -125,7 +135,14 @@ export const CurrentAffairsTab: React.FC<CurrentAffairsTabProps> = ({
         </div>
       )}
 
-      {/* Top Banner */}
+      {/* Dynamic Live Sync Banner */}
+      {onFetchLiveUpdates && (
+        <LiveSyncBanner
+          onFetchLiveUpdates={onFetchLiveUpdates}
+          isSyncingLive={isSyncingLive}
+          lastSyncedTime={lastSyncedTime}
+        />
+      )}
       <div className="bg-gradient-to-r from-blue-950 via-slate-900 to-teal-950 text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-teal-500/20 relative overflow-hidden">
         <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div className="space-y-2 max-w-2xl">

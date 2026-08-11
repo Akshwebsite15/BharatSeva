@@ -4,11 +4,12 @@ import { evaluateJobEligibility } from './eligibilityEngine';
 export type DeadlineCategory = 'All' | 'Closing Today' | 'Closing Tomorrow' | 'Closing This Week' | 'Recently Opened';
 
 /**
- * Calculates days remaining from current date (2026-08-10) to target deadline date.
+ * Calculates days remaining from current dynamic date (today) to target deadline date.
  */
 export function calculateDaysRemaining(deadlineDateStr?: string): number {
   if (!deadlineDateStr) return 15; // default fallback
-  const now = new Date('2026-08-10T00:00:00');
+  const now = new Date();
+  now.setHours(0, 0, 0, 0); // start of today
   const target = new Date(`${deadlineDateStr}T23:59:59`);
   const diffTime = target.getTime() - now.getTime();
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));

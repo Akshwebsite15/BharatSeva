@@ -19,6 +19,8 @@ export interface CitizenService {
   warnings?: string;
 }
 
+import { AdmitCardItem } from './data/admitCardsData';
+
 export interface Scholarship {
   id: string;
   title: string;
@@ -51,8 +53,8 @@ export interface GovJob {
   id: string;
   title: string;
   organization: string;
-  type: 'Bihar' | 'Central' | 'Delhi' | 'Uttar Pradesh';
-  qualification: '10th' | '12th' | 'Graduate' | 'Diploma' | 'B.Tech' | 'Post Graduate';
+  type: 'Bihar' | 'Central' | 'Delhi' | 'Uttar Pradesh' | string;
+  qualification: '10th' | '12th' | 'Graduate' | 'Diploma' | 'B.Tech' | 'Post Graduate' | string;
   vacancy: string;
   age: string;
   dates: string;
@@ -126,6 +128,7 @@ export interface GovExam {
 
 // Complete Exam Lifecycle Interfaces
 export interface SampleQuestion {
+  id?: string;
   questionNumber: number;
   subject: string;
   question: string;
@@ -411,4 +414,106 @@ export interface IntentPageData {
   officialPortalName: string;
   faqs: { question: string; answer: string }[];
   relatedSearchQueries: string[];
+}
+
+// BharatSeva CMS Core Interfaces
+export type CMSPublishStatus = 'Published' | 'Draft' | 'Scheduled' | 'Expired';
+
+export interface CMSJobItem extends GovJob {
+  publishStatus: CMSPublishStatus;
+  scheduledPublishDate?: string;
+  expiryDate?: string;
+  pdfUrl?: string;
+  pdfName?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface CMSResultItem {
+  id: string;
+  title: string;
+  examName: string;
+  conductingBody: string;
+  category: string;
+  releaseDate: string;
+  details: string;
+  meritListPdfUrl?: string;
+  cutOffPdfUrl?: string;
+  pdfName?: string;
+  officialPortalUrl: string;
+  publishStatus: CMSPublishStatus;
+  scheduledPublishDate?: string;
+  expiryDate?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface CMSAdmitCardItem extends AdmitCardItem {
+  publishStatus: CMSPublishStatus;
+  scheduledPublishDate?: string;
+  expiryDate?: string;
+  pdfUrl?: string;
+  pdfName?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface CMSAnswerKeyItem {
+  id: string;
+  title: string;
+  examName: string;
+  conductingBody: string;
+  category: string;
+  releaseDate: string;
+  objectionDeadline: string;
+  objectionFee: string;
+  portalUrl: string;
+  questionPaperPdfUrl?: string;
+  answerKeyPdfUrl?: string;
+  pdfName?: string;
+  publishStatus: CMSPublishStatus;
+  scheduledPublishDate?: string;
+  expiryDate?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface CMSPyqItem {
+  id: string;
+  title: string;
+  examName: string;
+  category: 'BPSC' | 'BSSC' | 'Bihar Police' | 'Bihar Teacher' | 'UPSC' | 'SSC' | 'Banking' | 'Railways';
+  conductingBody: string;
+  year: number;
+  tier: string;
+  subject: string;
+  totalQuestions: number;
+  durationMinutes: number;
+  pdfUrl?: string;
+  solvedKeyPdfUrl?: string;
+  pdfName?: string;
+  sampleQuestions: SampleQuestion[];
+  publishStatus: CMSPublishStatus;
+  scheduledPublishDate?: string;
+  expiryDate?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface CMSNoticeItem {
+  id: string;
+  title: string;
+  issuingBody: string;
+  releaseDate: string;
+  urgency: 'Normal' | 'Urgent' | 'Critical';
+  summary: string;
+  category: string;
+  noticePdfUrl?: string;
+  pdfName?: string;
+  officialUrl?: string;
+  publishStatus: CMSPublishStatus;
+  scheduledPublishDate?: string;
+  expiryDate?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }

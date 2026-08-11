@@ -14,6 +14,7 @@ import {
   Clock,
 } from 'lucide-react';
 import { GovJob, JurisdictionState } from '../types';
+import { LiveSyncBanner } from './LiveSyncBanner';
 import {
   getDeadlineBadgeInfo,
   calculateDaysRemaining,
@@ -26,6 +27,9 @@ interface JobsTabProps {
   onViewJob: (job: GovJob) => void;
   onSaveJob: (title: string, type: 'Job') => void;
   onSwitchToJobsForYou?: () => void;
+  onFetchLiveUpdates?: () => void;
+  isSyncingLive?: boolean;
+  lastSyncedTime?: string | null;
 }
 
 export const JobsTab: React.FC<JobsTabProps> = ({
@@ -34,6 +38,9 @@ export const JobsTab: React.FC<JobsTabProps> = ({
   onViewJob,
   onSaveJob,
   onSwitchToJobsForYou,
+  onFetchLiveUpdates,
+  isSyncingLive = false,
+  lastSyncedTime,
 }) => {
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState<string>('All');
@@ -93,6 +100,15 @@ export const JobsTab: React.FC<JobsTabProps> = ({
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>
+      )}
+
+      {/* Dynamic Live Sync Banner */}
+      {onFetchLiveUpdates && (
+        <LiveSyncBanner
+          onFetchLiveUpdates={onFetchLiveUpdates}
+          isSyncingLive={isSyncingLive}
+          lastSyncedTime={lastSyncedTime}
+        />
       )}
 
       {/* Header */}

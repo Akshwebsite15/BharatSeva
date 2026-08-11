@@ -17,12 +17,24 @@ import {
   Clock,
 } from 'lucide-react';
 import { AdmitCardItem, initialAdmitCardsData } from '../data/admitCardsData';
+import { LiveSyncBanner } from './LiveSyncBanner';
 
 interface AdmitCardsTabProps {
   onOpenAlertModal?: () => void;
+  admitCards?: AdmitCardItem[];
+  onFetchLiveUpdates?: () => void;
+  isSyncingLive?: boolean;
+  lastSyncedTime?: string | null;
 }
 
-export const AdmitCardsTab: React.FC<AdmitCardsTabProps> = ({ onOpenAlertModal }) => {
+export const AdmitCardsTab: React.FC<AdmitCardsTabProps> = ({
+  onOpenAlertModal,
+  admitCards,
+  onFetchLiveUpdates,
+  isSyncingLive = false,
+  lastSyncedTime,
+}) => {
+  const admitCardsList = admitCards || initialAdmitCardsData;
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
 
@@ -40,7 +52,7 @@ export const AdmitCardsTab: React.FC<AdmitCardsTabProps> = ({ onOpenAlertModal }
   ];
 
   const filteredAdmitCards = useMemo(() => {
-    return initialAdmitCardsData.filter((card) => {
+    return admitCardsList.filter((card) => {
       const matchesCategory =
         selectedCategory === 'All' || card.category === selectedCategory;
       const matchesSearch =
@@ -49,10 +61,19 @@ export const AdmitCardsTab: React.FC<AdmitCardsTabProps> = ({ onOpenAlertModal }
         card.organization.toLowerCase().includes(searchQuery.toLowerCase());
       return matchesCategory && matchesSearch;
     });
-  }, [selectedCategory, searchQuery]);
+  }, [admitCardsList, selectedCategory, searchQuery]);
 
   return (
     <div className="space-y-8">
+      {/* Dynamic Live Sync Banner */}
+      {onFetchLiveUpdates && (
+        <LiveSyncBanner
+          onFetchLiveUpdates={onFetchLiveUpdates}
+          isSyncingLive={isSyncingLive}
+          lastSyncedTime={lastSyncedTime}
+        />
+      )}
+
       {/* Header Banner */}
       <div className="bg-gradient-to-br from-purple-950 via-slate-900 to-indigo-950 text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-purple-500/30 relative overflow-hidden">
         <div className="relative z-10 space-y-4">

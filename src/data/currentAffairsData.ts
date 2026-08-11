@@ -1,11 +1,12 @@
 import { CurrentAffairsArticle, CurrentAffairsQuiz, CurrentAffairsCategory } from '../types';
+import { getTodayStr, getOffsetDateStr } from '../utils/dateUtils';
 
 export const initialCurrentAffairsArticles: CurrentAffairsArticle[] = [
   {
     id: 'ca-1',
     title: 'Union Cabinet Approves PM-SURYA Ghar Electricity Subsidy Extension & Rural Grid Augmentation',
     category: 'Government Schemes',
-    date: '2026-08-10',
+    date: getTodayStr(),
     summary: 'The Cabinet Committee on Economic Affairs has expanded the PM-Surya Ghar Free Electricity scheme with an additional allocation of ₹15,000 Crore to accelerate rooftop solar installation in tier-2 and tier-3 rural districts.',
     keyPoints: [
       'Up to ₹78,000 direct subsidy provided for 3kW solar systems.',
@@ -21,7 +22,7 @@ export const initialCurrentAffairsArticles: CurrentAffairsArticle[] = [
     id: 'ca-2',
     title: 'Bihar Cabinet Approves Mukhyamantri IT & AI Skill Mission 2026 for Youth',
     category: 'Bihar',
-    date: '2026-08-10',
+    date: getTodayStr(),
     summary: 'Hon’ble Chief Minister Nitish Kumar led cabinet meeting approved a new ₹850 Crore state mission to train 2 Lakh youth in Bihar in Artificial Intelligence, Cloud Computing, and Mobile App Development.',
     keyPoints: [
       'Stipend of ₹5,000 per month during 6-month intensive training.',
@@ -37,7 +38,7 @@ export const initialCurrentAffairsArticles: CurrentAffairsArticle[] = [
     id: 'ca-3',
     title: 'RBI Monetary Policy Committee Keeps Repo Rate Unchanged at 6.25% with Neutral Stance',
     category: 'Economy',
-    date: '2026-08-10',
+    date: getTodayStr(),
     summary: 'Reserve Bank of India Governor announced the bimonthly MPC decisions, highlighting stable inflation trajectories and strong 7.2% GDP growth projections for FY 2026-27.',
     keyPoints: [
       'Repo Rate maintained at 6.25% for fourth consecutive quarter.',
@@ -53,7 +54,7 @@ export const initialCurrentAffairsArticles: CurrentAffairsArticle[] = [
     id: 'ca-4',
     title: 'ISRO Successfully Launches Earth Observation Satellite EOS-09 via SSLV-D4 Rocket',
     category: 'Science & Technology',
-    date: '2026-08-09',
+    date: getOffsetDateStr(-1),
     summary: 'ISRO launched the EOS-09 satellite onboard the Small Satellite Launch Vehicle (SSLV-D4) from Satish Dhawan Space Centre, Sriharikota, putting the 450kg satellite into precise Sun-Synchronous Orbit.',
     keyPoints: [
       'EOS-09 carries high-resolution Synthetic Aperture Radar (SAR) for day-and-night imagery.',
@@ -68,7 +69,7 @@ export const initialCurrentAffairsArticles: CurrentAffairsArticle[] = [
     id: 'ca-5',
     title: 'DRDO Successfully Conducts Flight Test of High-Altitude Glide Bomb ‘GAURAV’',
     category: 'Defence',
-    date: '2026-08-09',
+    date: getOffsetDateStr(-1),
     summary: 'Defence Research and Development Organisation (DRDO) and IAF flight-tested the 1,000kg long-range glide bomb GAURAV from a Su-30MKI fighter aircraft off Odisha coast.',
     keyPoints: [
       'GAURAV is designed to hit ground targets up to 100km away with pinpoint accuracy.',
@@ -83,7 +84,7 @@ export const initialCurrentAffairsArticles: CurrentAffairsArticle[] = [
     id: 'ca-6',
     title: 'India Wins 12 Medals at World Athletics Continental Tour Gold Event in Zurich',
     category: 'Sports',
-    date: '2026-08-08',
+    date: getOffsetDateStr(-2),
     summary: 'Indian athletics contingent achieved stellar success claiming 4 Gold, 5 Silver, and 3 Bronze medals at Zurich, led by Olympic champion Neeraj Chopra in Javelin Throw.',
     keyPoints: [
       'Neeraj Chopra won Gold with an 89.85m throw in final attempt.',
@@ -98,7 +99,7 @@ export const initialCurrentAffairsArticles: CurrentAffairsArticle[] = [
     id: 'ca-7',
     title: 'Senior IAS Officer Rajesh Kumar Appointed as Chairman of Union Public Service Commission (UPSC)',
     category: 'Important Appointments',
-    date: '2026-08-08',
+    date: getOffsetDateStr(-2),
     summary: 'The President of India has appointed senior bureaucrat Shri Rajesh Kumar as Chairman of UPSC, succeeding Dr. Manoj Soni under Article 316 of the Constitution of India.',
     keyPoints: [
       'Rajesh Kumar is a 1989-batch IAS officer with extensive administration experience.',

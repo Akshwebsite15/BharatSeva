@@ -21,6 +21,7 @@ import {
   calculateDaysRemaining,
   getEligibleJobsClosingSoon,
 } from '../utils/deadlineUtils';
+import { LiveSyncBanner } from './LiveSyncBanner';
 
 export type ClosingSoonFilter = 'All' | 'Today' | 'Tomorrow' | '3 days' | '7 days' | '15 days';
 
@@ -31,6 +32,9 @@ interface DeadlineTrackerSectionProps {
   onSaveJob?: (title: string) => void;
   onSetReminder?: (title: string, days: number) => void;
   onOpenAlertModal?: () => void;
+  onFetchLiveUpdates?: () => void;
+  isSyncingLive?: boolean;
+  lastSyncedTime?: string | null;
 }
 
 export const DeadlineTrackerSection: React.FC<DeadlineTrackerSectionProps> = ({
@@ -40,6 +44,9 @@ export const DeadlineTrackerSection: React.FC<DeadlineTrackerSectionProps> = ({
   onSaveJob,
   onSetReminder,
   onOpenAlertModal,
+  onFetchLiveUpdates,
+  isSyncingLive = false,
+  lastSyncedTime,
 }) => {
   const [activeFilter, setActiveFilter] = useState<ClosingSoonFilter>('All');
   const [reminders, setReminders] = useState<{ [key: string]: boolean }>({});
@@ -91,6 +98,15 @@ export const DeadlineTrackerSection: React.FC<DeadlineTrackerSectionProps> = ({
 
   return (
     <div className="space-y-6">
+      {/* Dynamic Live Sync Banner */}
+      {onFetchLiveUpdates && (
+        <LiveSyncBanner
+          onFetchLiveUpdates={onFetchLiveUpdates}
+          isSyncingLive={isSyncingLive}
+          lastSyncedTime={lastSyncedTime}
+        />
+      )}
+
       {/* Header Banner */}
       <div className="bg-gradient-to-r from-rose-950 via-slate-900 to-amber-950 text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-rose-500/30 relative overflow-hidden">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">

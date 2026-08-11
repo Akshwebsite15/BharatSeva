@@ -39,6 +39,7 @@ interface NavbarProps {
   coins?: number;
   streakDays?: number;
   onOpenDailyRewards?: () => void;
+  onOpenAdmin?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -53,6 +54,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   coins = 100,
   streakDays = 3,
   onOpenDailyRewards,
+  onOpenAdmin,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -176,6 +178,18 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </span>
                 <span className="font-black">🪙 {coins}</span>
               </div>
+            </button>
+          )}
+
+          {/* Admin CMS Portal Trigger Button */}
+          {onOpenAdmin && (
+            <button
+              onClick={onOpenAdmin}
+              className="inline-flex items-center space-x-1.5 bg-slate-900 hover:bg-slate-800 text-teal-400 border border-teal-500/40 px-3 py-2.5 rounded-xl font-extrabold text-xs transition cursor-pointer shadow-xs"
+              title="BharatSeva CMS Portal"
+            >
+              <ShieldCheck className="w-4 h-4 text-teal-400" />
+              <span className="hidden xl:inline">Admin CMS</span>
             </button>
           )}
 

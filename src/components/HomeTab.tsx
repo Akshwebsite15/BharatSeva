@@ -32,7 +32,8 @@ import {
   Filter,
   Check,
 } from 'lucide-react';
-import { JurisdictionState } from '../types';
+import { JurisdictionState, GovJob, CurrentAffairsArticle } from '../types';
+import { LiveSyncBanner } from './LiveSyncBanner';
 import {
   initialJobsData,
   initialServicesData,
@@ -46,13 +47,25 @@ interface HomeTabProps {
   setActiveTab: (tab: string) => void;
   selectedJurisdiction: JurisdictionState;
   onGlobalSearch: (query: string) => void;
+  jobs?: GovJob[];
+  currentAffairsArticles?: CurrentAffairsArticle[];
+  onFetchLiveUpdates?: () => void;
+  isSyncingLive?: boolean;
+  lastSyncedTime?: string | null;
 }
 
 export const HomeTab: React.FC<HomeTabProps> = ({
   setActiveTab,
   selectedJurisdiction,
   onGlobalSearch,
+  jobs,
+  currentAffairsArticles,
+  onFetchLiveUpdates,
+  isSyncingLive = false,
+  lastSyncedTime,
 }) => {
+  const jobsList = jobs || initialJobsData;
+  const articlesList = currentAffairsArticles || initialCurrentAffairsArticles;
   const [searchInput, setSearchInput] = useState('');
 
   // Primary CTA Job Finder Quick State
@@ -344,6 +357,17 @@ export const HomeTab: React.FC<HomeTabProps> = ({
         </div>
       </section>
 
+      {/* Dynamic Live Sync Banner */}
+      {onFetchLiveUpdates && (
+        <div className="max-w-7xl mx-auto px-2 sm:px-4">
+          <LiveSyncBanner
+            onFetchLiveUpdates={onFetchLiveUpdates}
+            isSyncingLive={isSyncingLive}
+            lastSyncedTime={lastSyncedTime}
+          />
+        </div>
+      )}
+
       {/* 2. 🔥 LATEST GOVERNMENT JOBS & 3. 🚨 CLOSING SOON (TWO COLUMN GRID) */}
       <div className="max-w-7xl mx-auto px-2 sm:px-4 grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Column: 🔥 Latest Government Jobs (2 Cols wide on desktop) */}
@@ -365,7 +389,7 @@ export const HomeTab: React.FC<HomeTabProps> = ({
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {initialJobsData.slice(0, 4).map((job) => (
+            {jobsList.slice(0, 4).map((job) => (
               <div
                 key={job.id}
                 onClick={() => setActiveTab('jobs')}
@@ -630,7 +654,7 @@ export const HomeTab: React.FC<HomeTabProps> = ({
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {initialCurrentAffairsArticles.slice(0, 3).map((art) => (
+          {articlesList.slice(0, 3).map((art) => (
             <div
               key={art.id}
               onClick={() => setActiveTab('current-affairs')}

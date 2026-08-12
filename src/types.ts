@@ -517,3 +517,306 @@ export interface CMSNoticeItem {
   createdAt?: string;
   updatedAt?: string;
 }
+
+// Higher Education - Colleges & Universities Interfaces
+export type CollegeType = 'Government' | 'Private' | 'Deemed' | 'Autonomous' | 'Central';
+export type UniversityType = 'Central' | 'State' | 'Private' | 'Deemed';
+
+export interface CollegeCourse {
+  name: string;
+  level: 'Undergraduate' | 'Postgraduate' | 'Diploma' | 'Doctoral';
+  duration: string;
+  annualFee: number;
+  feeText: string;
+  seats: number;
+  eligibility: string;
+  entranceExam: string;
+}
+
+export interface CollegeCutoff {
+  examName: string;
+  year: number;
+  category: string;
+  openingRank: number;
+  closingRank: number;
+  scoreOrPercentile?: string;
+  round: string;
+}
+
+export interface CollegePlacement {
+  academicYear: string;
+  highestPackageLpa: number;
+  averagePackageLpa: number;
+  medianPackageLpa: number;
+  placementRatePercent: number;
+  topRecruiters: string[];
+}
+
+export interface CollegeFacility {
+  name: string;
+  description: string;
+}
+
+export interface CollegeHostel {
+  availableFor: 'Boys & Girls' | 'Boys Only' | 'Girls Only' | 'Not Available';
+  annualFee: string;
+  roomTypes: string[];
+  messDetails: string;
+  facilities: string[];
+}
+
+export interface CollegeScholarshipInfo {
+  name: string;
+  provider: string;
+  amountOrWaiver: string;
+  eligibility: string;
+}
+
+export interface CollegeReview {
+  id: string;
+  reviewerName: string;
+  batch: string;
+  rating: number;
+  title: string;
+  pros: string;
+  cons: string;
+  date: string;
+}
+
+export interface CollegeQA {
+  id: string;
+  question: string;
+  askedBy: string;
+  answer: string;
+  answeredBy: string;
+  date: string;
+}
+
+export interface CollegeUpdate {
+  id: string;
+  title: string;
+  date: string;
+  category: 'Admission' | 'Exam' | 'Counseling' | 'Cutoff' | 'General';
+  link?: string;
+  summary: string;
+}
+
+export interface College {
+  id: string;
+  name: string;
+  shortName: string;
+  slug: string;
+  establishedYear: number;
+  type: CollegeType;
+  nirfRank?: number;
+  naacGrade?: string;
+  universityAffiliation: string;
+  state: string;
+  city: string;
+  address: string;
+  nearestConnectivity: string;
+  overview: string;
+  logoUrl?: string;
+  bannerUrl?: string;
+  
+  // Filtering Attributes
+  coursesOffered: string[];
+  degreesOffered: string[];
+  entranceExamsAccepted: string[];
+  feeRangeCategory: 'Under ₹50k/yr' | '₹50k - ₹1.5L/yr' | '₹1.5L - ₹3L/yr' | 'Above ₹3L/yr';
+  avgAnnualFeeInr: number;
+  
+  // 16 Detailed Sections for SEO Individual Page
+  courses: CollegeCourse[];
+  cutoffs: CollegeCutoff[];
+  placement: CollegePlacement;
+  facilities: CollegeFacility[];
+  hostel: CollegeHostel;
+  scholarships: CollegeScholarshipInfo[];
+  reviews: CollegeReview[];
+  qaList: CollegeQA[];
+  latestUpdates: CollegeUpdate[];
+  
+  admissionProcessSteps: string[];
+  eligibilityOverview: string;
+  officialWebsiteUrl: string;
+  applicationLink: string;
+  verifiedSource: string;
+  lastVerifiedDate: string;
+}
+
+export interface University {
+  id: string;
+  name: string;
+  shortName: string;
+  slug: string;
+  type: UniversityType;
+  establishedYear: number;
+  location: string;
+  state: string;
+  city: string;
+  ugcRecognized: boolean;
+  nirfRank?: number;
+  naacGrade?: string;
+  campusSizeAcres?: number;
+  affiliatedCollegesCount: number;
+  overview: string;
+  chancellorOrVc: string;
+  keyFaculties: string[];
+  popularCourses: string[];
+  entranceExams: string[];
+  officialWebsiteUrl: string;
+  admissionNotice: string;
+  verifiedSource: string;
+  lastVerifiedDate: string;
+}
+
+export interface CourseSyllabusSemester {
+  semesterOrYear: string;
+  subjects: string[];
+}
+
+export interface CourseCareerOption {
+  title: string;
+  avgSalary: string;
+  topSectors: string;
+}
+
+export interface CourseTopCollegeRef {
+  collegeId: string;
+  collegeName: string;
+  city: string;
+  state: string;
+  feeText: string;
+  rating: number;
+  nirfRank?: number;
+}
+
+export interface CourseDirectoryItem {
+  id: string;
+  name: string;
+  shortName: string;
+  slug: string;
+  degree: 'B.Tech' | 'BCA' | 'BBA' | 'B.Sc' | 'B.Com' | 'BA' | 'MBA' | 'MCA' | 'M.Tech' | 'Diploma/Polytechnic' | 'MBBS' | 'LLB' | 'B.Pharm';
+  stream: 'Engineering & Tech' | 'Computer Applications' | 'Management' | 'Science' | 'Commerce' | 'Arts & Humanities' | 'Medical' | 'Law' | 'Pharmacy';
+  level: 'Undergraduate' | 'Postgraduate' | 'Diploma' | 'Doctoral';
+  durationYears: number;
+  durationText: string;
+  specializations: string[];
+  avgAnnualFeeGovt: string;
+  avgAnnualFeePrivate: string;
+  feeCategory: 'Under ₹30k/yr' | '₹30k - ₹1L/yr' | '₹1L - ₹2.5L/yr' | 'Above ₹2.5L/yr';
+  avgStartingSalaryLpa: string;
+  highestPackageLpa: string;
+  entranceExams: string[];
+  stateAvailability: string[];
+  overview: string;
+  eligibility: string;
+  admissionProcessSteps: string[];
+  coreSubjects: CourseSyllabusSemester[];
+  careerOptions: CourseCareerOption[];
+  higherStudiesOptions: string[];
+  topCollegesList: CourseTopCollegeRef[];
+  scholarships: { name: string; provider: string; benefit: string }[];
+  faqs: { question: string; answer: string }[];
+}
+
+export interface CollegeCourseSpecificData {
+  collegeId: string;
+  collegeName: string;
+  collegeShortName: string;
+  collegeCity: string;
+  collegeState: string;
+  courseName: string;
+  degree: string;
+  stream: string;
+  duration: string;
+  eligibility: string;
+  annualFeeInr: number;
+  feeText: string;
+  seats: number;
+  admissionProcess: string[];
+  entranceExam: string;
+  cutoffs: { category: string; openingRank: string; closingRank: string; round: string }[];
+  placementStats: { highestLpa: number; averageLpa: number; topRecruiters: string[] };
+  scholarships: { name: string; benefit: string }[];
+  departmentReviews: { reviewer: string; batch: string; rating: number; title: string; review: string }[];
+}
+
+// Admission Directory Types
+export type AdmissionStatus = 'Upcoming' | 'Open' | 'Closing Soon' | 'Closed';
+
+export interface AdmissionItem {
+  id: string;
+  title: string;
+  slug: string;
+  collegeId?: string;
+  collegeName: string;
+  collegeLogo?: string;
+  collegeType: 'Government' | 'Private' | 'Central' | 'Autonomous' | 'Deemed';
+  city: string;
+  state: string;
+  courseName: string;
+  degree: string;
+  stream: string;
+  status: AdmissionStatus;
+  
+  // Quick Summary Info
+  startDate: string; // YYYY-MM-DD or Display Date
+  deadlineDate: string; // YYYY-MM-DD
+  daysLeft: number;
+  eligibilitySummary: string;
+  appFeeText: string;
+  entranceExam: string;
+  officialAppUrl: string;
+  officialNotificationPdf?: string;
+
+  // 10 Detailed Sections for Admission Detail Page
+  overview: string;
+  importantDates: { event: string; date: string; status: 'Passed' | 'Active' | 'Upcoming' }[];
+  eligibilityDetails: {
+    minQualification: string;
+    minPercentage: string;
+    subjectRequirements: string;
+    ageLimit: string;
+    relaxationRules: string;
+  };
+  requiredDocuments: string[];
+  applicationProcessSteps: string[];
+  feeBreakdown: {
+    category: string;
+    amount: string;
+  }[];
+  selectionProcess: {
+    stage: string;
+    description: string;
+    weightage?: string;
+  }[];
+  counsellingInfo: {
+    conductingBody: string;
+    roundsCount: number;
+    registrationFee: string;
+    counsellingWebsite: string;
+    choiceFillingGuide: string;
+  };
+  seatAllotmentAndQuota: {
+    totalSeats: number;
+    categoryQuota: { category: string; percentageOrSeats: string }[];
+    reservationPolicy: string;
+  };
+  faqs: { question: string; answer: string }[];
+}
+
+// SEO & Schema Metadata Interface
+export interface SEOPageMeta {
+  title: string;
+  description: string;
+  h1: string;
+  canonicalUrl: string;
+  breadcrumbs: { label: string; url: string }[];
+  faqSchema?: { question: string; answer: string }[];
+  structuredData?: Record<string, any>;
+  internalLinks?: { label: string; url: string; category: string }[];
+}
+
+

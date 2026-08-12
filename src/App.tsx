@@ -26,6 +26,17 @@ import { LegalNoticeModal } from './components/LegalNoticeModal';
 import { AdmitCardsTab } from './components/AdmitCardsTab';
 import { JobAlertModal } from './components/JobAlertModal';
 import { DailyRewardsModal } from './components/DailyRewardsModal';
+import { CollegeDirectory } from './components/CollegeDirectory';
+import { UniversityDirectory } from './components/UniversityDirectory';
+import { CourseDirectory } from './components/CourseDirectory';
+import { AdmissionDirectory } from './components/AdmissionDirectory';
+import { UnifiedSearchModal } from './components/UnifiedSearchModal';
+import { SEOHelper } from './components/SEOHelper';
+import { CollegeDetailPage } from './components/CollegeDetailPage';
+import { UniversityDetailPage } from './components/UniversityDetailPage';
+import { initialCoursesData } from './data/coursesData';
+import { initialAdmissionsData } from './data/admissionsData';
+import { SEOPageMeta, AdmissionItem } from './types';
 
 import {
   JurisdictionState,
@@ -39,6 +50,8 @@ import {
   CMSAnswerKeyItem,
   CMSPyqItem,
   CMSNoticeItem,
+  College,
+  University,
 } from './types';
 
 import {
@@ -54,6 +67,7 @@ import {
 
 import { initialCurrentAffairsArticles } from './data/currentAffairsData';
 import { initialAdmitCardsData, AdmitCardItem } from './data/admitCardsData';
+import { initialCollegesData, initialUniversitiesData } from './data/collegesUniversitiesData';
 import { CurrentAffairsArticle } from './types';
 import { examHubDataList } from './data/examHubData';
 import { AdminCms } from './components/AdminCms';
@@ -100,6 +114,10 @@ export default function App() {
   const [currentAffairsArticles, setCurrentAffairsArticles] = useState<CurrentAffairsArticle[]>(initialCurrentAffairsArticles);
   const [exams] = useState(initialExamsData);
   const [deadlines] = useState(initialDeadlinesData);
+  const [colleges] = useState<College[]>(initialCollegesData);
+  const [universities] = useState<University[]>(initialUniversitiesData);
+  const [courses] = useState(initialCoursesData);
+  const [admissions] = useState<AdmissionItem[]>(initialAdmissionsData);
 
   // Live Updates Sync State
   const [isSyncingLive, setIsSyncingLive] = useState(false);
@@ -116,10 +134,94 @@ export default function App() {
   const [legalModalOpen, setLegalModalOpen] = useState(false);
   const [jobAlertModalOpen, setJobAlertModalOpen] = useState(false);
   const [dailyRewardsModalOpen, setDailyRewardsModalOpen] = useState(false);
+  const [unifiedSearchOpen, setUnifiedSearchOpen] = useState(false);
   const [legalModalTab, setLegalModalTab] = useState<'privacy' | 'terms' | 'disclaimer'>('disclaimer');
   const [detailService, setDetailService] = useState<CitizenService | null>(null);
   const [detailJob, setDetailJob] = useState<GovJob | null>(null);
   const [activeExamHubTitle, setActiveExamHubTitle] = useState<string | null>(null);
+  const [selectedCollegeForPage, setSelectedCollegeForPage] = useState<College | null>(null);
+  const [selectedUniversityForPage, setSelectedUniversityForPage] = useState<University | null>(null);
+
+  // Dynamic SEO Page Metadata Calculation
+  const currentSeoMeta: SEOPageMeta = React.useMemo(() => {
+    switch (activeTab) {
+      case 'admissions':
+        return {
+          title: 'College & University Admission Directory 2026 - Central & State Applications | BharatSeva',
+          description: 'Explore live college admissions, open application forms, dates, eligibility criteria, entrance exams, and cutoff trends across Bihar & India.',
+          h1: 'University & College Admissions Portal 2026',
+          canonicalUrl: 'https://bharatseva.in/admissions',
+          breadcrumbs: [
+            { label: 'Home', url: '/' },
+            { label: 'Admissions 2026', url: '/admissions' },
+          ],
+          internalLinks: [
+            { label: 'College Directory', url: '#colleges' },
+            { label: 'Course Directory', url: '#courses' },
+            { label: 'University Directory', url: '#universities' },
+          ],
+        };
+      case 'courses':
+        return {
+          title: 'Course Directory 2026 - B.Tech, BCA, BBA, MBA, MBBS, MCA Degrees | BharatSeva',
+          description: 'Comprehensive directory of higher education degrees, subjects, duration, fees, career options, and top colleges offering each course.',
+          h1: 'Higher Education Course Directory',
+          canonicalUrl: 'https://bharatseva.in/courses',
+          breadcrumbs: [
+            { label: 'Home', url: '/' },
+            { label: 'Course Directory', url: '/courses' },
+          ],
+          internalLinks: [
+            { label: 'Admission Directory', url: '#admissions' },
+            { label: 'College Directory', url: '#colleges' },
+          ],
+        };
+      case 'colleges':
+        return {
+          title: 'Top Government & Private College Directory 2026 | BharatSeva',
+          description: 'Find verified top government & private engineering, medical, management, and degree colleges in Bihar & India with fees, hostels, and cutoffs.',
+          h1: 'Verified College Directory',
+          canonicalUrl: 'https://bharatseva.in/colleges',
+          breadcrumbs: [
+            { label: 'Home', url: '/' },
+            { label: 'Colleges', url: '/colleges' },
+          ],
+          internalLinks: [
+            { label: 'Universities', url: '#universities' },
+            { label: 'Admissions', url: '#admissions' },
+          ],
+        };
+      case 'universities':
+        return {
+          title: 'Central, State, Private & Deemed University Directory 2026 | BharatSeva',
+          description: 'Directory of Central Universities, State Universities, Private Universities & Deemed Universities with UGC NAAC accreditation ratings.',
+          h1: 'Central & State University Directory',
+          canonicalUrl: 'https://bharatseva.in/universities',
+          breadcrumbs: [
+            { label: 'Home', url: '/' },
+            { label: 'Universities', url: '/universities' },
+          ],
+          internalLinks: [
+            { label: 'Colleges', url: '#colleges' },
+            { label: 'Courses', url: '#courses' },
+          ],
+        };
+      default:
+        return {
+          title: 'BharatSeva - Bihar & Central Citizen Services, Govt Jobs, Admissions & Exams Portal 2026',
+          description: 'Single-window verified portal for Bihar & Central government services, job notifications, college directories, admissions, current affairs & schemes.',
+          h1: 'BharatSeva Citizen & Higher Education Hub',
+          canonicalUrl: 'https://bharatseva.in/',
+          breadcrumbs: [{ label: 'Home', url: '/' }],
+          internalLinks: [
+            { label: 'Admissions 2026', url: '#admissions' },
+            { label: 'Course Directory', url: '#courses' },
+            { label: 'Colleges', url: '#colleges' },
+            { label: 'Government Jobs', url: '#jobs' },
+          ],
+        };
+    }
+  }, [activeTab]);
 
   // Daily Rewards & Unlocks State
   const [coins, setCoins] = React.useState<number>(120);
@@ -145,7 +247,9 @@ export default function App() {
         installModalOpen ||
         detailService ||
         detailJob ||
-        activeExamHubTitle
+        activeExamHubTitle ||
+        selectedCollegeForPage ||
+        selectedUniversityForPage
       ) {
         setAiModalOpen(false);
         setDailyRewardsModalOpen(false);
@@ -155,6 +259,8 @@ export default function App() {
         setDetailService(null);
         setDetailJob(null);
         setActiveExamHubTitle(null);
+        setSelectedCollegeForPage(null);
+        setSelectedUniversityForPage(null);
         return;
       }
 
@@ -396,6 +502,7 @@ export default function App() {
         streakDays={streakDays}
         onOpenDailyRewards={handleOpenDailyRewardsModal}
         onOpenAdmin={() => setAdminCmsOpen(true)}
+        onOpenUnifiedSearch={() => setUnifiedSearchOpen(true)}
       />
 
       {/* Admin CMS Modal Overlay */}
@@ -444,9 +551,43 @@ export default function App() {
             onGlobalSearch={handleGlobalSearch}
             jobs={publishedJobs}
             currentAffairsArticles={currentAffairsArticles}
+            colleges={colleges}
+            universities={universities}
+            onSelectCollege={setSelectedCollegeForPage}
+            onSelectUniversity={setSelectedUniversityForPage}
             onFetchLiveUpdates={handleFetchLiveUpdates}
             isSyncingLive={isSyncingLive}
             lastSyncedTime={lastSyncedTime}
+          />
+        )}
+
+        {activeTab === 'admissions' && (
+          <AdmissionDirectory
+            admissions={admissions}
+            colleges={colleges}
+            onSelectCollege={setSelectedCollegeForPage}
+          />
+        )}
+
+        {activeTab === 'courses' && (
+          <CourseDirectory
+            courses={courses}
+            colleges={colleges}
+            onSelectCollege={setSelectedCollegeForPage}
+          />
+        )}
+
+        {activeTab === 'colleges' && (
+          <CollegeDirectory
+            colleges={colleges}
+            onSelectCollege={setSelectedCollegeForPage}
+          />
+        )}
+
+        {activeTab === 'universities' && (
+          <UniversityDirectory
+            universities={universities}
+            onSelectUniversity={setSelectedUniversityForPage}
           />
         )}
 
@@ -610,6 +751,22 @@ export default function App() {
         />
       )}
 
+      {/* Individual College 16-Section Detailed SEO Page Modal */}
+      {selectedCollegeForPage && (
+        <CollegeDetailPage
+          college={selectedCollegeForPage}
+          onClose={() => setSelectedCollegeForPage(null)}
+        />
+      )}
+
+      {/* Individual University Page Modal */}
+      {selectedUniversityForPage && (
+        <UniversityDetailPage
+          university={selectedUniversityForPage}
+          onClose={() => setSelectedUniversityForPage(null)}
+        />
+      )}
+
       <PwaInstallModal
         isOpen={installModalOpen}
         onClose={() => setInstallModalOpen(false)}
@@ -626,6 +783,31 @@ export default function App() {
         onClose={() => setJobAlertModalOpen(false)}
         onSavePreferences={(msg) => showToast(msg)}
       />
+
+      {/* Universal Search Modal */}
+      <UnifiedSearchModal
+        isOpen={unifiedSearchOpen}
+        onClose={() => setUnifiedSearchOpen(false)}
+        colleges={colleges}
+        universities={universities}
+        courses={courses}
+        admissions={admissions}
+        exams={exams}
+        onSelectCollege={(c) => setSelectedCollegeForPage(c)}
+        onSelectUniversity={(u) => setSelectedUniversityForPage(u)}
+        onSelectAdmission={(a) => {
+          changeTab('admissions');
+        }}
+        onSelectCourse={(cr) => {
+          changeTab('courses');
+        }}
+        onSelectExam={(ex) => {
+          handleOpenExamHub(ex.title);
+        }}
+      />
+
+      {/* SEO Engine System Injection */}
+      <SEOHelper meta={currentSeoMeta} onNavigateTab={changeTab} />
 
       {/* Footer */}
       <Footer

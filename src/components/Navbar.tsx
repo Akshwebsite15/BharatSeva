@@ -24,6 +24,9 @@ import {
   Gift,
   Coins,
   Flame,
+  BookOpen,
+  CalendarCheck,
+  Search,
 } from 'lucide-react';
 import { JurisdictionState } from '../types';
 
@@ -40,6 +43,7 @@ interface NavbarProps {
   streakDays?: number;
   onOpenDailyRewards?: () => void;
   onOpenAdmin?: () => void;
+  onOpenUnifiedSearch?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -55,11 +59,16 @@ export const Navbar: React.FC<NavbarProps> = ({
   streakDays = 3,
   onOpenDailyRewards,
   onOpenAdmin,
+  onOpenUnifiedSearch,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navItems = [
     { id: 'home', label: 'Home', icon: House },
+    { id: 'admissions', label: 'Admissions ⭐', icon: CalendarCheck },
+    { id: 'courses', label: 'Courses ⭐', icon: BookOpen },
+    { id: 'colleges', label: 'Colleges 🎓', icon: GraduationCap },
+    { id: 'universities', label: 'Universities 🏛️', icon: Building2 },
     { id: 'current-affairs', label: "Current Affairs", icon: Newspaper, highlight: true },
     { id: 'jobs-for-you', label: 'Jobs For You', icon: Sparkles },
     { id: 'jobs', label: 'Govt Jobs', icon: Briefcase },
@@ -71,6 +80,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'schemes', label: 'Schemes', icon: Building2 },
     { id: 'dashboard', label: 'Dashboard', icon: UserCheck },
   ];
+
 
   const handleTabClick = (id: string) => {
     setActiveTab(id);
@@ -164,6 +174,18 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Right Actions */}
         <div className="flex items-center space-x-2 sm:space-x-3">
+          {/* Universal Search Trigger Button */}
+          {onOpenUnifiedSearch && (
+            <button
+              onClick={onOpenUnifiedSearch}
+              className="inline-flex items-center space-x-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-900 border border-indigo-200 px-3 py-2.5 rounded-xl font-black text-xs transition cursor-pointer shadow-2xs"
+              title="Search College, Course, Exam"
+            >
+              <Search className="w-4 h-4 text-indigo-600 shrink-0" />
+              <span className="hidden md:inline">Search...</span>
+            </button>
+          )}
+
           {/* Daily Rewards Button */}
           {onOpenDailyRewards && (
             <button

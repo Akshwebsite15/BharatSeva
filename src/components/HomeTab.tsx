@@ -31,8 +31,10 @@ import {
   Keyboard,
   Filter,
   Check,
+  MapPin,
+  BookOpen,
 } from 'lucide-react';
-import { JurisdictionState, GovJob, CurrentAffairsArticle } from '../types';
+import { JurisdictionState, GovJob, CurrentAffairsArticle, College, University } from '../types';
 import { LiveSyncBanner } from './LiveSyncBanner';
 import {
   initialJobsData,
@@ -42,6 +44,7 @@ import {
   initialDeadlinesData,
 } from '../data/portalData';
 import { initialCurrentAffairsArticles } from '../data/currentAffairsData';
+import { initialCollegesData, initialUniversitiesData } from '../data/collegesUniversitiesData';
 
 interface HomeTabProps {
   setActiveTab: (tab: string) => void;
@@ -49,6 +52,10 @@ interface HomeTabProps {
   onGlobalSearch: (query: string) => void;
   jobs?: GovJob[];
   currentAffairsArticles?: CurrentAffairsArticle[];
+  colleges?: College[];
+  universities?: University[];
+  onSelectCollege?: (college: College) => void;
+  onSelectUniversity?: (university: University) => void;
   onFetchLiveUpdates?: () => void;
   isSyncingLive?: boolean;
   lastSyncedTime?: string | null;
@@ -60,12 +67,18 @@ export const HomeTab: React.FC<HomeTabProps> = ({
   onGlobalSearch,
   jobs,
   currentAffairsArticles,
+  colleges,
+  universities,
+  onSelectCollege,
+  onSelectUniversity,
   onFetchLiveUpdates,
   isSyncingLive = false,
   lastSyncedTime,
 }) => {
   const jobsList = jobs || initialJobsData;
   const articlesList = currentAffairsArticles || initialCurrentAffairsArticles;
+  const collegesList = colleges || initialCollegesData;
+  const universitiesList = universities || initialUniversitiesData;
   const [searchInput, setSearchInput] = useState('');
 
   // Primary CTA Job Finder Quick State
@@ -367,6 +380,102 @@ export const HomeTab: React.FC<HomeTabProps> = ({
           />
         </div>
       )}
+
+      {/* 🎓 HIGHER EDUCATION DIRECTORY (COLLEGES & UNIVERSITIES) */}
+      <section className="max-w-7xl mx-auto px-2 sm:px-4 space-y-4">
+        <div className="bg-gradient-to-r from-slate-900 via-teal-950 to-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 text-white space-y-6 shadow-xl relative overflow-hidden">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800/80 pb-4">
+            <div className="space-y-1">
+              <div className="inline-flex items-center space-x-2 bg-teal-500/10 border border-teal-500/30 px-3 py-1 rounded-full text-xs font-black text-teal-300">
+                <GraduationCap className="w-4 h-4 text-teal-400" />
+                <span>Higher Education Portal 2026</span>
+              </div>
+              <h2 className="text-xl sm:text-2xl font-black text-white">
+                Colleges & Universities Directory
+              </h2>
+              <p className="text-xs text-slate-300">
+                Search government & private colleges, fees, cutoff ranks, entrance exams, and UGC universities.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                onClick={() => setActiveTab('admissions')}
+                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-black text-xs rounded-xl shadow-md transition cursor-pointer flex items-center gap-1.5"
+              >
+                <Calendar className="w-4 h-4 text-amber-300" />
+                <span>Admissions ⭐</span>
+              </button>
+
+              <button
+                onClick={() => setActiveTab('courses')}
+                className="px-4 py-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs rounded-xl shadow-md transition cursor-pointer flex items-center gap-1.5"
+              >
+                <BookOpen className="w-4 h-4 text-amber-950" />
+                <span>Course Directory ⭐</span>
+              </button>
+
+              <button
+                onClick={() => setActiveTab('colleges')}
+                className="px-4 py-2 bg-teal-500 hover:bg-teal-400 text-slate-950 font-black text-xs rounded-xl shadow-md transition cursor-pointer flex items-center gap-1.5"
+              >
+                <GraduationCap className="w-4 h-4" />
+                <span>Colleges ({collegesList.length})</span>
+              </button>
+
+              <button
+                onClick={() => setActiveTab('universities')}
+                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs rounded-xl border border-slate-700 transition cursor-pointer flex items-center gap-1.5"
+              >
+                <Building2 className="w-4 h-4 text-indigo-400" />
+                <span>Universities ({universitiesList.length})</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Featured Top Colleges Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {collegesList.slice(0, 3).map((college) => (
+              <div
+                key={college.id}
+                onClick={() => {
+                  if (onSelectCollege) onSelectCollege(college);
+                  else setActiveTab('colleges');
+                }}
+                className="bg-slate-900/90 border border-slate-800 hover:border-teal-500/50 p-4 rounded-2xl shadow-md transition cursor-pointer group flex flex-col justify-between space-y-3"
+              >
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="px-2 py-0.5 bg-teal-500/10 text-teal-300 border border-teal-500/30 text-[10px] font-black rounded uppercase">
+                      {college.type}
+                    </span>
+                    <span className="text-[10px] text-amber-300 font-extrabold">NIRF #{college.nirfRank}</span>
+                  </div>
+
+                  <h3 className="text-sm font-extrabold text-white group-hover:text-teal-300 transition-colors line-clamp-1">
+                    {college.name}
+                  </h3>
+
+                  <p className="text-xs text-slate-400 flex items-center gap-1">
+                    <MapPin className="w-3.5 h-3.5 text-teal-400" />
+                    {college.city}, {college.state}
+                  </p>
+
+                  <div className="text-xs text-slate-300 bg-slate-950/60 p-2.5 rounded-xl border border-slate-800 flex justify-between">
+                    <span>Avg Fee: <strong className="text-amber-400">₹{(college.avgAnnualFeeInr / 100000).toFixed(1)}L/yr</strong></span>
+                    <span>Highest CTC: <strong className="text-emerald-400">₹{college.placement.highestPackageLpa} LPA</strong></span>
+                  </div>
+                </div>
+
+                <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-xs font-bold text-teal-400">
+                  <span>View 16-Section SEO Page</span>
+                  <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* 2. 🔥 LATEST GOVERNMENT JOBS & 3. 🚨 CLOSING SOON (TWO COLUMN GRID) */}
       <div className="max-w-7xl mx-auto px-2 sm:px-4 grid grid-cols-1 lg:grid-cols-3 gap-8">

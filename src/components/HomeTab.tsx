@@ -36,6 +36,8 @@ import {
 } from 'lucide-react';
 import { JurisdictionState, GovJob, CurrentAffairsArticle, College, University } from '../types';
 import { LiveSyncBanner } from './LiveSyncBanner';
+import { calculateDaysRemaining, getDeadlineBadgeInfo } from '../utils/deadlineUtils';
+import { formatFriendlyDate } from '../utils/dateUtils';
 import {
   initialJobsData,
   initialServicesData,
@@ -56,6 +58,7 @@ interface HomeTabProps {
   universities?: University[];
   onSelectCollege?: (college: College) => void;
   onSelectUniversity?: (university: University) => void;
+  onViewJob?: (job: GovJob) => void;
   onFetchLiveUpdates?: () => void;
   isSyncingLive?: boolean;
   lastSyncedTime?: string | null;
@@ -71,6 +74,7 @@ export const HomeTab: React.FC<HomeTabProps> = ({
   universities,
   onSelectCollege,
   onSelectUniversity,
+  onViewJob,
   onFetchLiveUpdates,
   isSyncingLive = false,
   lastSyncedTime,
@@ -214,6 +218,31 @@ export const HomeTab: React.FC<HomeTabProps> = ({
     },
   ];
 
+  // Dynamic Closing Soon calculation from live jobs data
+  const dynamicClosingSoon = useMemo(() => {
+    return [...jobsList]
+      .map((job) => {
+        const daysLeft = calculateDaysRemaining(job.deadlineDate);
+        let badgeText = `${daysLeft} Days Left`;
+        if (daysLeft === 0) badgeText = 'CLOSING TODAY';
+        else if (daysLeft === 1) badgeText = 'CLOSING TOMORROW';
+
+        return {
+          job,
+          title: job.title,
+          daysLeft,
+          badgeText,
+          formattedDate: formatFriendlyDate(job.deadlineDate || ''),
+          urgent: daysLeft <= 3,
+        };
+      })
+      .filter((item) => item.daysLeft >= 0)
+      .sort((a, b) => a.daysLeft - b.daysLeft)
+      .slice(0, 5);
+  }, [jobsList]);
+
+  const mostUrgentJob = dynamicClosingSoon[0];
+
   return (
     <div className="space-y-12">
       {/* 4. 🆕 TODAY'S UPDATES (Live Government Notification Ticker) */}
@@ -223,7 +252,7 @@ export const HomeTab: React.FC<HomeTabProps> = ({
             <Bell className="w-3 h-3 mr-1 animate-pulse" /> 🆕 TODAY'S UPDATES
           </span>
           <span className="text-slate-800 font-extrabold">
-            • BPSC 71st CCE Notification: 1,245 Posts Deadline Tomorrow (Aug 11)
+            • {mostUrgentJob ? `${mostUrgentJob.title}: Deadline ${mostUrgentJob.badgeText} (${mostUrgentJob.formattedDate})` : 'BPSC 71st CCE Notification: 1,245 Posts Application Active'}
           </span>
           <span className="text-slate-400">•</span>
           <span className="text-slate-800 font-extrabold">
@@ -547,53 +576,42 @@ export const HomeTab: React.FC<HomeTabProps> = ({
           </div>
 
           <div className="space-y-3">
-            {[
-              {
-                title: 'BPSC 71st CCE Application Deadline',
-                daysLeft: 'CLOSING TOMORROW',
-                date: 'Aug 11, 2026',
-                urgent: true,
-              },
-              {
-                title: 'SSC CGL 2026 Registration Last Date',
-                daysLeft: '2 Days Left',
-                date: 'Aug 12, 2026',
-                urgent: true,
-              },
-              {
-                title: 'RRB Junior Engineer (JE) Application',
-                daysLeft: '5 Days Left',
-                date: 'Aug 15, 2026',
-                urgent: false,
-              },
-              {
-                title: 'BTSC Assistant Engineer Civil/Mech',
-                daysLeft: '6 Days Left',
-                date: 'Aug 16, 2026',
-                urgent: false,
-              },
-            ].map((dl, idx) => (
-              <div
-                key={idx}
-                onClick={() => setActiveTab('deadlines')}
-                className="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-2xs hover:border-rose-400 transition cursor-pointer flex items-center justify-between"
-              >
-                <div className="space-y-1 max-w-[70%]">
-                  <h4 className="text-xs font-extrabold text-slate-900 line-clamp-1">{dl.title}</h4>
-                  <p className="text-[10px] text-slate-500">Last Date: {dl.date}</p>
-                </div>
-
-                <span
-                  className={`px-2.5 py-1 rounded-xl text-[10px] font-black shrink-0 ${
-                    dl.urgent
-                      ? 'bg-rose-500 text-white animate-pulse'
-                      : 'bg-amber-100 text-amber-900 border border-amber-300'
-                  }`}
-                >
-                  {dl.daysLeft}
-                </span>
+            {dynamicClosingSoon.length === 0 ? (
+              <div className="bg-white p-4 rounded-2xl border border-slate-200 text-center text-xs text-slate-500">
+                No immediate recruitment deadlines closing this week.
               </div>
-            ))}
+            ) : (
+              dynamicClosingSoon.map((dl, idx) => (
+                <div
+                  key={idx}
+                  onClick={() => {
+                    if (onViewJob) {
+                      onViewJob(dl.job);
+                    } else {
+                      setActiveTab('deadlines');
+                    }
+                  }}
+                  className="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-2xs hover:border-rose-400 hover:shadow-sm transition cursor-pointer flex items-center justify-between gap-3"
+                >
+                  <div className="space-y-1 min-w-0">
+                    <h4 className="text-xs font-extrabold text-slate-900 line-clamp-1 hover:text-rose-700">
+                      {dl.title}
+                    </h4>
+                    <p className="text-[10px] text-slate-500">Last Date: {dl.formattedDate}</p>
+                  </div>
+
+                  <span
+                    className={`px-2.5 py-1 rounded-xl text-[10px] font-black shrink-0 ${
+                      dl.urgent
+                        ? 'bg-rose-500 text-white animate-pulse'
+                        : 'bg-amber-100 text-amber-900 border border-amber-300'
+                    }`}
+                  >
+                    {dl.badgeText}
+                  </span>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </div>

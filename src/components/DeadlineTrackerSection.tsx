@@ -21,6 +21,7 @@ import {
   calculateDaysRemaining,
   getEligibleJobsClosingSoon,
 } from '../utils/deadlineUtils';
+import { formatFriendlyDate } from '../utils/dateUtils';
 import { LiveSyncBanner } from './LiveSyncBanner';
 
 export type ClosingSoonFilter = 'All' | 'Today' | 'Tomorrow' | '3 days' | '7 days' | '15 days';
@@ -225,7 +226,7 @@ export const DeadlineTrackerSection: React.FC<DeadlineTrackerSectionProps> = ({
                 <div className="bg-rose-50 border border-rose-200 p-3 rounded-2xl flex flex-wrap items-center justify-between gap-2">
                   <div className="flex items-center space-x-2 font-black text-xs text-rose-950">
                     <Clock className="w-4 h-4 text-rose-700 animate-pulse shrink-0" />
-                    <span>⏰ Last Date: {job.deadlineDate}</span>
+                    <span>⏰ Last Date: {formatFriendlyDate(job.deadlineDate || '')}</span>
                   </div>
 
                   <span

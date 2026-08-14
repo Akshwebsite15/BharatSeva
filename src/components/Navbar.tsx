@@ -91,54 +91,54 @@ export const Navbar: React.FC<NavbarProps> = ({
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs">
       {/* Persistent Non-Government Portal Disclaimer Bar */}
-      <div className="bg-gradient-to-r from-amber-950 via-slate-900 to-amber-950 text-amber-200 text-[11px] py-1.5 px-4 font-semibold border-b border-amber-800/60 flex flex-wrap items-center justify-between gap-2">
-        <div className="flex items-center space-x-2">
+      <div className="bg-gradient-to-r from-amber-950 via-slate-900 to-amber-950 text-amber-200 text-[10px] sm:text-[11px] py-1 px-3 sm:px-4 font-semibold border-b border-amber-800/60 flex flex-wrap items-center justify-between gap-1.5 sm:gap-2">
+        <div className="flex items-center space-x-1.5 flex-1 min-w-[240px]">
           <AlertTriangle className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-          <span>
-            <strong className="text-amber-300">INDIVIDUAL PLATFORM NOTICE:</strong> BharatSeva is an individual, independent citizen information portal and is <strong>NOT an official government portal</strong> or affiliated with any government agency.
+          <span className="line-clamp-2 sm:line-clamp-none">
+            <strong className="text-amber-300">NOTICE:</strong> Independent portal; <strong>NOT an official government portal</strong> or affiliated with any government agency.
           </span>
           <button
             onClick={onOpenLegalModal}
-            className="text-amber-300 hover:text-white underline font-bold cursor-pointer ml-1"
+            className="text-amber-300 hover:text-white underline font-bold cursor-pointer shrink-0 ml-1"
           >
-            Privacy Notice & Terms
+            Terms
           </button>
         </div>
 
-        <div className="flex items-center space-x-2 shrink-0">
+        <div className="flex items-center space-x-1.5 shrink-0 ml-auto">
           <button
             onClick={onOpenInstallModal}
-            className="bg-amber-400 hover:bg-amber-300 text-slate-950 text-[10px] font-black px-2.5 py-0.5 rounded-full shadow-2xs transition flex items-center space-x-1 cursor-pointer"
+            className="bg-amber-400 hover:bg-amber-300 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded-full shadow-2xs transition flex items-center space-x-1 cursor-pointer"
           >
             <Download className="w-3 h-3" />
-            <span>Install App</span>
+            <span>Install</span>
           </button>
 
           <button
             onClick={onOpenLegalModal}
-            className="text-slate-300 hover:text-white text-[10px] font-bold px-2 py-0.5 rounded bg-white/10 hover:bg-white/20 transition cursor-pointer flex items-center space-x-1"
+            className="text-slate-300 hover:text-white text-[10px] font-bold px-1.5 py-0.5 rounded bg-white/10 hover:bg-white/20 transition cursor-pointer flex items-center space-x-1"
           >
             <ShieldCheck className="w-3 h-3 text-emerald-400" />
-            <span>Legal Notice</span>
+            <span className="hidden sm:inline">Legal</span>
           </button>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-14 sm:h-20 flex items-center justify-between gap-2">
         {/* Brand Logo */}
         <div
           onClick={() => handleTabClick('home')}
-          className="flex items-center space-x-2.5 sm:space-x-3 cursor-pointer group"
+          className="flex items-center space-x-2 sm:space-x-3 cursor-pointer group shrink-0"
         >
-          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-blue-900 to-teal-700 flex items-center justify-center text-white shadow-md group-hover:scale-105 transition-transform">
-            <Landmark className="w-5 h-5 sm:w-6 sm:h-6" />
+          <div className="w-8 h-8 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-blue-900 to-teal-700 flex items-center justify-center text-white shadow-md group-hover:scale-105 transition-transform">
+            <Landmark className="w-4 h-4 sm:w-6 sm:h-6" />
           </div>
           <div>
-            <span className="text-xl sm:text-2xl font-extrabold tracking-tight bg-gradient-to-r from-blue-900 via-teal-800 to-teal-700 bg-clip-text text-transparent">
+            <span className="text-lg sm:text-2xl font-extrabold tracking-tight bg-gradient-to-r from-blue-900 via-teal-800 to-teal-700 bg-clip-text text-transparent block leading-tight">
               BharatSeva
             </span>
-            <span className="block text-[10px] sm:text-xs font-semibold text-slate-500 tracking-wider">
-              CITIZEN SERVICES & JOBS HUB
+            <span className="block text-[8px] sm:text-xs font-semibold text-slate-500 tracking-wider">
+              CITIZEN & EDUCATION HUB
             </span>
           </div>
         </div>

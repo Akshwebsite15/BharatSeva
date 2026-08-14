@@ -32,6 +32,7 @@ import { CourseDirectory } from './components/CourseDirectory';
 import { AdmissionDirectory } from './components/AdmissionDirectory';
 import { UnifiedSearchModal } from './components/UnifiedSearchModal';
 import { SEOHelper } from './components/SEOHelper';
+import { MobileBottomNav } from './components/MobileBottomNav';
 import { CollegeDetailPage } from './components/CollegeDetailPage';
 import { UniversityDetailPage } from './components/UniversityDetailPage';
 import { initialCoursesData } from './data/coursesData';
@@ -525,7 +526,7 @@ export default function App() {
       )}
 
       {/* Main Container */}
-      <main className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+      <main className="flex-grow max-w-7xl w-full mx-auto px-3.5 sm:px-6 lg:px-8 py-6 sm:py-10 pb-28 md:pb-12">
         {activeTab === 'admin' && (
           <AdminCms
             jobs={cmsJobs}
@@ -555,6 +556,7 @@ export default function App() {
             universities={universities}
             onSelectCollege={setSelectedCollegeForPage}
             onSelectUniversity={setSelectedUniversityForPage}
+            onViewJob={setDetailJob}
             onFetchLiveUpdates={handleFetchLiveUpdates}
             isSyncingLive={isSyncingLive}
             lastSyncedTime={lastSyncedTime}
@@ -808,6 +810,22 @@ export default function App() {
 
       {/* SEO Engine System Injection */}
       <SEOHelper meta={currentSeoMeta} onNavigateTab={changeTab} />
+
+      {/* 📱 Mobile Fixed Bottom Navigation App Dock */}
+      <MobileBottomNav
+        activeTab={activeTab}
+        setActiveTab={changeTab}
+        onOpenAiModal={handleOpenAiModal}
+        onOpenUnifiedSearch={() => setUnifiedSearchOpen(true)}
+        onOpenInstallModal={handleOpenInstallModal}
+        onOpenDailyRewards={handleOpenDailyRewardsModal}
+        onOpenAdmin={() => setAdminCmsOpen(true)}
+        onOpenLegalModal={handleOpenLegalModal}
+        selectedJurisdiction={selectedJurisdiction}
+        setSelectedJurisdiction={setSelectedJurisdiction}
+        coins={coins}
+        streakDays={streakDays}
+      />
 
       {/* Footer */}
       <Footer

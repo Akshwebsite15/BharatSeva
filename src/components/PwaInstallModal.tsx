@@ -11,6 +11,8 @@ export const PwaInstallModal: React.FC<PwaInstallModalProps> = ({ isOpen, onClos
   const [isInstalled, setIsInstalled] = useState(false);
   const [isIos, setIsIos] = useState(false);
 
+  const [showManualSteps, setShowManualSteps] = useState(false);
+
   useEffect(() => {
     // Detect iOS
     const userAgent = window.navigator.userAgent.toLowerCase();
@@ -52,8 +54,7 @@ export const PwaInstallModal: React.FC<PwaInstallModalProps> = ({ isOpen, onClos
       }
       setDeferredPrompt(null);
     } else {
-      // Show fallback guide if native prompt isn't fired
-      alert('To install BharatSeva:\n\n1. Tap your browser menu (⋮ or share icon)\n2. Tap "Add to Home Screen" or "Install App"\n3. BharatSeva will launch as an app on your device!');
+      setShowManualSteps(true);
     }
   };
 
@@ -133,13 +134,27 @@ export const PwaInstallModal: React.FC<PwaInstallModalProps> = ({ isOpen, onClos
         )}
 
         {/* Action Button */}
+        {showManualSteps && (
+          <div className="bg-emerald-50 border border-emerald-300 p-4 rounded-2xl text-xs text-emerald-950 space-y-2 mb-4 animate-in fade-in">
+            <div className="font-extrabold flex items-center gap-1.5 text-emerald-900">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+              <span>How to Install Manually on Mobile / Desktop:</span>
+            </div>
+            <ol className="list-decimal list-inside space-y-1 text-[11px] text-emerald-900 font-medium">
+              <li>Open your browser menu (<strong>⋮</strong> in Chrome / <strong>Share ⎋</strong> in Safari)</li>
+              <li>Select <strong>"Add to Home Screen"</strong> or <strong>"Install App"</strong></li>
+              <li>Tap <strong>Add / Install</strong> to confirm. BharatSeva will launch fullscreen as an app!</li>
+            </ol>
+          </div>
+        )}
+
         <div className="flex flex-col sm:flex-row gap-3">
           <button
             onClick={handleInstallClick}
-            className="flex-1 py-3 px-5 bg-gradient-to-r from-blue-900 to-teal-800 hover:from-blue-800 hover:to-teal-700 text-white font-extrabold text-xs sm:text-sm rounded-2xl transition shadow-md flex items-center justify-center space-x-2 cursor-pointer"
+            className="flex-1 py-3 px-5 bg-gradient-to-r from-blue-900 to-teal-800 hover:from-blue-800 hover:to-teal-700 text-white font-extrabold text-xs sm:text-sm rounded-2xl transition shadow-md flex items-center justify-center space-x-2 cursor-pointer active:scale-95"
           >
             <Download className="w-4 h-4" />
-            <span>{isInstalled ? 'App Already Installed' : 'Install BharatSeva Now'}</span>
+            <span>{isInstalled ? 'App Installed on Device' : 'Install BharatSeva App'}</span>
           </button>
 
           <button

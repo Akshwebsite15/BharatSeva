@@ -3,38 +3,45 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import React, { useState, Suspense, lazy } from 'react';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { HomeTab } from './components/HomeTab';
-import { ServicesTab } from './components/ServicesTab';
-import { ScholarshipsTab } from './components/ScholarshipsTab';
-import { SchemesTab } from './components/SchemesTab';
-import { JobsTab } from './components/JobsTab';
-import { JobsForYouSection } from './components/JobsForYouSection';
-import { ExamsTab } from './components/ExamsTab';
-import { DeadlinesTab } from './components/DeadlinesTab';
-import { DashboardTab } from './components/DashboardTab';
-import { CurrentAffairsTab } from './components/CurrentAffairsTab';
-import { BharatSevaBiharTab } from './components/BharatSevaBiharTab';
-import { SearchIntentHubTab } from './components/SearchIntentHubTab';
-import { DetailModal } from './components/DetailModal';
-import { AiAssistantModal } from './components/AiAssistantModal';
-import { ExamLifecycleHub } from './components/ExamLifecycleHub';
-import { PwaInstallModal } from './components/PwaInstallModal';
-import { LegalNoticeModal } from './components/LegalNoticeModal';
-import { AdmitCardsTab } from './components/AdmitCardsTab';
-import { JobAlertModal } from './components/JobAlertModal';
-import { DailyRewardsModal } from './components/DailyRewardsModal';
-import { CollegeDirectory } from './components/CollegeDirectory';
-import { UniversityDirectory } from './components/UniversityDirectory';
-import { CourseDirectory } from './components/CourseDirectory';
-import { AdmissionDirectory } from './components/AdmissionDirectory';
-import { UnifiedSearchModal } from './components/UnifiedSearchModal';
 import { SEOHelper } from './components/SEOHelper';
 import { MobileBottomNav } from './components/MobileBottomNav';
-import { CollegeDetailPage } from './components/CollegeDetailPage';
-import { UniversityDetailPage } from './components/UniversityDetailPage';
+import { TabLoadingSkeleton } from './components/TabLoadingSkeleton';
+
+// Code-split / Lazy load secondary tabs for instant initial app startup
+const AdminCms = lazy(() => import('./components/AdminCms').then(m => ({ default: m.AdminCms })));
+const ServicesTab = lazy(() => import('./components/ServicesTab').then(m => ({ default: m.ServicesTab })));
+const ScholarshipsTab = lazy(() => import('./components/ScholarshipsTab').then(m => ({ default: m.ScholarshipsTab })));
+const SchemesTab = lazy(() => import('./components/SchemesTab').then(m => ({ default: m.SchemesTab })));
+const JobsTab = lazy(() => import('./components/JobsTab').then(m => ({ default: m.JobsTab })));
+const JobsForYouSection = lazy(() => import('./components/JobsForYouSection').then(m => ({ default: m.JobsForYouSection })));
+const ExamsTab = lazy(() => import('./components/ExamsTab').then(m => ({ default: m.ExamsTab })));
+const DeadlinesTab = lazy(() => import('./components/DeadlinesTab').then(m => ({ default: m.DeadlinesTab })));
+const DashboardTab = lazy(() => import('./components/DashboardTab').then(m => ({ default: m.DashboardTab })));
+const CurrentAffairsTab = lazy(() => import('./components/CurrentAffairsTab').then(m => ({ default: m.CurrentAffairsTab })));
+const BharatSevaBiharTab = lazy(() => import('./components/BharatSevaBiharTab').then(m => ({ default: m.BharatSevaBiharTab })));
+const SearchIntentHubTab = lazy(() => import('./components/SearchIntentHubTab').then(m => ({ default: m.SearchIntentHubTab })));
+const CollegeDirectory = lazy(() => import('./components/CollegeDirectory').then(m => ({ default: m.CollegeDirectory })));
+const UniversityDirectory = lazy(() => import('./components/UniversityDirectory').then(m => ({ default: m.UniversityDirectory })));
+const CourseDirectory = lazy(() => import('./components/CourseDirectory').then(m => ({ default: m.CourseDirectory })));
+const AdmissionDirectory = lazy(() => import('./components/AdmissionDirectory').then(m => ({ default: m.AdmissionDirectory })));
+const AdmitCardsTab = lazy(() => import('./components/AdmitCardsTab').then(m => ({ default: m.AdmitCardsTab })));
+
+// Lazy load Modals
+const DetailModal = lazy(() => import('./components/DetailModal').then(m => ({ default: m.DetailModal })));
+const AiAssistantModal = lazy(() => import('./components/AiAssistantModal').then(m => ({ default: m.AiAssistantModal })));
+const ExamLifecycleHub = lazy(() => import('./components/ExamLifecycleHub').then(m => ({ default: m.ExamLifecycleHub })));
+const PwaInstallModal = lazy(() => import('./components/PwaInstallModal').then(m => ({ default: m.PwaInstallModal })));
+const LegalNoticeModal = lazy(() => import('./components/LegalNoticeModal').then(m => ({ default: m.LegalNoticeModal })));
+const JobAlertModal = lazy(() => import('./components/JobAlertModal').then(m => ({ default: m.JobAlertModal })));
+const DailyRewardsModal = lazy(() => import('./components/DailyRewardsModal').then(m => ({ default: m.DailyRewardsModal })));
+const UnifiedSearchModal = lazy(() => import('./components/UnifiedSearchModal').then(m => ({ default: m.UnifiedSearchModal })));
+const CollegeDetailPage = lazy(() => import('./components/CollegeDetailPage').then(m => ({ default: m.CollegeDetailPage })));
+const UniversityDetailPage = lazy(() => import('./components/UniversityDetailPage').then(m => ({ default: m.UniversityDetailPage })));
+
 import { initialCoursesData } from './data/coursesData';
 import { initialAdmissionsData } from './data/admissionsData';
 import { SEOPageMeta, AdmissionItem } from './types';
@@ -71,7 +78,6 @@ import { initialAdmitCardsData, AdmitCardItem } from './data/admitCardsData';
 import { initialCollegesData, initialUniversitiesData } from './data/collegesUniversitiesData';
 import { CurrentAffairsArticle } from './types';
 import { examHubDataList } from './data/examHubData';
-import { AdminCms } from './components/AdminCms';
 import {
   initialCMSJobs,
   initialCMSResults,
@@ -527,171 +533,173 @@ export default function App() {
 
       {/* Main Container */}
       <main className="flex-grow max-w-7xl w-full mx-auto px-3.5 sm:px-6 lg:px-8 py-6 sm:py-10 pb-28 md:pb-12">
-        {activeTab === 'admin' && (
-          <AdminCms
-            jobs={cmsJobs}
-            results={cmsResults}
-            admitCards={cmsAdmitCards}
-            answerKeys={cmsAnswerKeys}
-            pyqs={cmsPyqs}
-            notices={cmsNotices}
-            onUpdateJobs={setCmsJobs}
-            onUpdateResults={setCmsResults}
-            onUpdateAdmitCards={setCmsAdmitCards}
-            onUpdateAnswerKeys={setCmsAnswerKeys}
-            onUpdatePyqs={setCmsPyqs}
-            onUpdateNotices={setCmsNotices}
-            onClose={() => changeTab('home')}
-          />
-        )}
+        <Suspense fallback={<TabLoadingSkeleton />}>
+          {activeTab === 'admin' && (
+            <AdminCms
+              jobs={cmsJobs}
+              results={cmsResults}
+              admitCards={cmsAdmitCards}
+              answerKeys={cmsAnswerKeys}
+              pyqs={cmsPyqs}
+              notices={cmsNotices}
+              onUpdateJobs={setCmsJobs}
+              onUpdateResults={setCmsResults}
+              onUpdateAdmitCards={setCmsAdmitCards}
+              onUpdateAnswerKeys={setCmsAnswerKeys}
+              onUpdatePyqs={setCmsPyqs}
+              onUpdateNotices={setCmsNotices}
+              onClose={() => changeTab('home')}
+            />
+          )}
 
-        {activeTab === 'home' && (
-          <HomeTab
-            setActiveTab={changeTab}
-            selectedJurisdiction={selectedJurisdiction}
-            onGlobalSearch={handleGlobalSearch}
-            jobs={publishedJobs}
-            currentAffairsArticles={currentAffairsArticles}
-            colleges={colleges}
-            universities={universities}
-            onSelectCollege={setSelectedCollegeForPage}
-            onSelectUniversity={setSelectedUniversityForPage}
-            onViewJob={setDetailJob}
-            onFetchLiveUpdates={handleFetchLiveUpdates}
-            isSyncingLive={isSyncingLive}
-            lastSyncedTime={lastSyncedTime}
-          />
-        )}
+          {activeTab === 'home' && (
+            <HomeTab
+              setActiveTab={changeTab}
+              selectedJurisdiction={selectedJurisdiction}
+              onGlobalSearch={handleGlobalSearch}
+              jobs={publishedJobs}
+              currentAffairsArticles={currentAffairsArticles}
+              colleges={colleges}
+              universities={universities}
+              onSelectCollege={setSelectedCollegeForPage}
+              onSelectUniversity={setSelectedUniversityForPage}
+              onViewJob={setDetailJob}
+              onFetchLiveUpdates={handleFetchLiveUpdates}
+              isSyncingLive={isSyncingLive}
+              lastSyncedTime={lastSyncedTime}
+            />
+          )}
 
-        {activeTab === 'admissions' && (
-          <AdmissionDirectory
-            admissions={admissions}
-            colleges={colleges}
-            onSelectCollege={setSelectedCollegeForPage}
-          />
-        )}
+          {activeTab === 'admissions' && (
+            <AdmissionDirectory
+              admissions={admissions}
+              colleges={colleges}
+              onSelectCollege={setSelectedCollegeForPage}
+            />
+          )}
 
-        {activeTab === 'courses' && (
-          <CourseDirectory
-            courses={courses}
-            colleges={colleges}
-            onSelectCollege={setSelectedCollegeForPage}
-          />
-        )}
+          {activeTab === 'courses' && (
+            <CourseDirectory
+              courses={courses}
+              colleges={colleges}
+              onSelectCollege={setSelectedCollegeForPage}
+            />
+          )}
 
-        {activeTab === 'colleges' && (
-          <CollegeDirectory
-            colleges={colleges}
-            onSelectCollege={setSelectedCollegeForPage}
-          />
-        )}
+          {activeTab === 'colleges' && (
+            <CollegeDirectory
+              colleges={colleges}
+              onSelectCollege={setSelectedCollegeForPage}
+            />
+          )}
 
-        {activeTab === 'universities' && (
-          <UniversityDirectory
-            universities={universities}
-            onSelectUniversity={setSelectedUniversityForPage}
-          />
-        )}
+          {activeTab === 'universities' && (
+            <UniversityDirectory
+              universities={universities}
+              onSelectUniversity={setSelectedUniversityForPage}
+            />
+          )}
 
-        {activeTab === 'current-affairs' && (
-          <CurrentAffairsTab
-            onSaveItem={(title, type) => handleSaveItem(title, type)}
-            articles={currentAffairsArticles}
-            onFetchLiveUpdates={handleFetchLiveUpdates}
-            isSyncingLive={isSyncingLive}
-            lastSyncedTime={lastSyncedTime}
-          />
-        )}
+          {activeTab === 'current-affairs' && (
+            <CurrentAffairsTab
+              onSaveItem={(title, type) => handleSaveItem(title, type)}
+              articles={currentAffairsArticles}
+              onFetchLiveUpdates={handleFetchLiveUpdates}
+              isSyncingLive={isSyncingLive}
+              lastSyncedTime={lastSyncedTime}
+            />
+          )}
 
-        {activeTab === 'bharatseva-bihar' && (
-          <BharatSevaBiharTab
-            onSaveItem={(title, type) => handleSaveItem(title, type)}
-          />
-        )}
+          {activeTab === 'bharatseva-bihar' && (
+            <BharatSevaBiharTab
+              onSaveItem={(title, type) => handleSaveItem(title, type)}
+            />
+          )}
 
-        {activeTab === 'search-intent-hub' && (
-          <SearchIntentHubTab
-            onSaveItem={(title, type) => handleSaveItem(title, type)}
-          />
-        )}
+          {activeTab === 'search-intent-hub' && (
+            <SearchIntentHubTab
+              onSaveItem={(title, type) => handleSaveItem(title, type)}
+            />
+          )}
 
-        {activeTab === 'services' && (
-          <ServicesTab
-            services={services}
-            selectedJurisdiction={selectedJurisdiction}
-            onViewService={handleOpenDetailService}
-            onSaveService={(title) => handleSaveItem(title, 'Service')}
-          />
-        )}
+          {activeTab === 'services' && (
+            <ServicesTab
+              services={services}
+              selectedJurisdiction={selectedJurisdiction}
+              onViewService={handleOpenDetailService}
+              onSaveService={(title) => handleSaveItem(title, 'Service')}
+            />
+          )}
 
-        {activeTab === 'scholarships' && (
-          <ScholarshipsTab
-            scholarships={scholarships}
-            onSaveScholarship={(title) => handleSaveItem(title, 'Scholarship')}
-          />
-        )}
+          {activeTab === 'scholarships' && (
+            <ScholarshipsTab
+              scholarships={scholarships}
+              onSaveScholarship={(title) => handleSaveItem(title, 'Scholarship')}
+            />
+          )}
 
-        {activeTab === 'schemes' && <SchemesTab schemes={schemes} />}
+          {activeTab === 'schemes' && <SchemesTab schemes={schemes} />}
 
-        {activeTab === 'jobs-for-you' && (
-          <JobsForYouSection
-            jobs={publishedJobs}
-            onViewJob={handleOpenDetailJob}
-            onSaveJob={(title) => handleSaveItem(title, 'Job')}
-          />
-        )}
+          {activeTab === 'jobs-for-you' && (
+            <JobsForYouSection
+              jobs={publishedJobs}
+              onViewJob={handleOpenDetailJob}
+              onSaveJob={(title) => handleSaveItem(title, 'Job')}
+            />
+          )}
 
-        {activeTab === 'jobs' && (
-          <JobsTab
-            jobs={publishedJobs}
-            selectedJurisdiction={selectedJurisdiction}
-            onViewJob={handleOpenDetailJob}
-            onSaveJob={(title) => handleSaveItem(title, 'Job')}
-            onSwitchToJobsForYou={() => changeTab('jobs-for-you')}
-            onFetchLiveUpdates={handleFetchLiveUpdates}
-            isSyncingLive={isSyncingLive}
-            lastSyncedTime={lastSyncedTime}
-          />
-        )}
+          {activeTab === 'jobs' && (
+            <JobsTab
+              jobs={publishedJobs}
+              selectedJurisdiction={selectedJurisdiction}
+              onViewJob={handleOpenDetailJob}
+              onSaveJob={(title) => handleSaveItem(title, 'Job')}
+              onSwitchToJobsForYou={() => changeTab('jobs-for-you')}
+              onFetchLiveUpdates={handleFetchLiveUpdates}
+              isSyncingLive={isSyncingLive}
+              lastSyncedTime={lastSyncedTime}
+            />
+          )}
 
-        {activeTab === 'exams' && (
-          <ExamsTab
-            exams={exams}
-            onOpenExamHub={handleOpenExamHub}
-          />
-        )}
+          {activeTab === 'exams' && (
+            <ExamsTab
+              exams={exams}
+              onOpenExamHub={handleOpenExamHub}
+            />
+          )}
 
-        {activeTab === 'deadlines' && (
-          <DeadlinesTab
-            jobs={publishedJobs}
-            onViewJob={handleOpenDetailJob}
-            onSaveJob={(title) => handleSaveItem(title, 'Job')}
-            onSetReminder={handleSetReminder}
-            onOpenAlertModal={handleOpenJobAlertModal}
-            onFetchLiveUpdates={handleFetchLiveUpdates}
-            isSyncingLive={isSyncingLive}
-            lastSyncedTime={lastSyncedTime}
-          />
-        )}
+          {activeTab === 'deadlines' && (
+            <DeadlinesTab
+              jobs={publishedJobs}
+              onViewJob={handleOpenDetailJob}
+              onSaveJob={(title) => handleSaveItem(title, 'Job')}
+              onSetReminder={handleSetReminder}
+              onOpenAlertModal={handleOpenJobAlertModal}
+              onFetchLiveUpdates={handleFetchLiveUpdates}
+              isSyncingLive={isSyncingLive}
+              lastSyncedTime={lastSyncedTime}
+            />
+          )}
 
-        {activeTab === 'admit-cards' && (
-          <AdmitCardsTab
-            admitCards={publishedAdmitCards}
-            onOpenAlertModal={handleOpenJobAlertModal}
-            onFetchLiveUpdates={handleFetchLiveUpdates}
-            isSyncingLive={isSyncingLive}
-            lastSyncedTime={lastSyncedTime}
-          />
-        )}
+          {activeTab === 'admit-cards' && (
+            <AdmitCardsTab
+              admitCards={publishedAdmitCards}
+              onOpenAlertModal={handleOpenJobAlertModal}
+              onFetchLiveUpdates={handleFetchLiveUpdates}
+              isSyncingLive={isSyncingLive}
+              lastSyncedTime={lastSyncedTime}
+            />
+          )}
 
-        {activeTab === 'dashboard' && (
-          <DashboardTab
-            savedItems={savedItems}
-            applications={applications}
-            onRemoveSavedItem={handleRemoveSavedItem}
-            onAddApplication={handleAddApplication}
-          />
-        )}
+          {activeTab === 'dashboard' && (
+            <DashboardTab
+              savedItems={savedItems}
+              applications={applications}
+              onRemoveSavedItem={handleRemoveSavedItem}
+              onAddApplication={handleAddApplication}
+            />
+          )}
+        </Suspense>
       </main>
 
       {/* Toast Notification */}
@@ -702,111 +710,127 @@ export default function App() {
         </div>
       )}
 
-      {/* Modals */}
-      <DetailModal
-        isOpen={Boolean(detailService || detailJob)}
-        onClose={() => {
-          setDetailService(null);
-          setDetailJob(null);
-        }}
-        service={detailService}
-        job={detailJob}
-      />
+      {/* On-Demand Lazy Modals */}
+      <Suspense fallback={null}>
+        {Boolean(detailService || detailJob) && (
+          <DetailModal
+            isOpen={Boolean(detailService || detailJob)}
+            onClose={() => {
+              setDetailService(null);
+              setDetailJob(null);
+            }}
+            service={detailService}
+            job={detailJob}
+          />
+        )}
 
-      <AiAssistantModal
-        isOpen={aiModalOpen}
-        onClose={() => setAiModalOpen(false)}
-        aiCredits={aiCredits}
-        setAiCredits={setAiCredits}
-        unlimitedPassUntil={unlimitedPassUntil}
-        onOpenDailyRewards={handleOpenDailyRewardsModal}
-      />
+        {aiModalOpen && (
+          <AiAssistantModal
+            isOpen={aiModalOpen}
+            onClose={() => setAiModalOpen(false)}
+            aiCredits={aiCredits}
+            setAiCredits={setAiCredits}
+            unlimitedPassUntil={unlimitedPassUntil}
+            onOpenDailyRewards={handleOpenDailyRewardsModal}
+          />
+        )}
 
-      <DailyRewardsModal
-        isOpen={dailyRewardsModalOpen}
-        onClose={() => setDailyRewardsModalOpen(false)}
-        coins={coins}
-        setCoins={setCoins}
-        aiCredits={aiCredits}
-        setAiCredits={setAiCredits}
-        streakDays={streakDays}
-        setStreakDays={setStreakDays}
-        hasClaimedToday={hasClaimedToday}
-        setHasClaimedToday={setHasClaimedToday}
-        unlimitedPassUntil={unlimitedPassUntil}
-        setUnlimitedPassUntil={setUnlimitedPassUntil}
-        onOpenAiModal={handleOpenAiModal}
-        showToast={showToast}
-      />
+        {dailyRewardsModalOpen && (
+          <DailyRewardsModal
+            isOpen={dailyRewardsModalOpen}
+            onClose={() => setDailyRewardsModalOpen(false)}
+            coins={coins}
+            setCoins={setCoins}
+            aiCredits={aiCredits}
+            setAiCredits={setAiCredits}
+            streakDays={streakDays}
+            setStreakDays={setStreakDays}
+            hasClaimedToday={hasClaimedToday}
+            setHasClaimedToday={setHasClaimedToday}
+            unlimitedPassUntil={unlimitedPassUntil}
+            setUnlimitedPassUntil={setUnlimitedPassUntil}
+            onOpenAiModal={handleOpenAiModal}
+            showToast={showToast}
+          />
+        )}
 
-      {/* Exam Lifecycle Hub Permanent Page Modal */}
-      {activeExamHubTitle && (
-        <ExamLifecycleHub
-          examHub={
-            examHubDataList.find(
-              (h) => h.title.toLowerCase().includes(activeExamHubTitle.toLowerCase()) ||
-                     activeExamHubTitle.toLowerCase().includes(h.title.toLowerCase())
-            ) || examHubDataList[0]
-          }
-          onClose={() => setActiveExamHubTitle(null)}
-          onSaveExam={(title) => handleSaveItem(title, 'Exam')}
-        />
-      )}
+        {/* Exam Lifecycle Hub Permanent Page Modal */}
+        {activeExamHubTitle && (
+          <ExamLifecycleHub
+            examHub={
+              examHubDataList.find(
+                (h) => h.title.toLowerCase().includes(activeExamHubTitle.toLowerCase()) ||
+                       activeExamHubTitle.toLowerCase().includes(h.title.toLowerCase())
+              ) || examHubDataList[0]
+            }
+            onClose={() => setActiveExamHubTitle(null)}
+            onSaveExam={(title) => handleSaveItem(title, 'Exam')}
+          />
+        )}
 
-      {/* Individual College 16-Section Detailed SEO Page Modal */}
-      {selectedCollegeForPage && (
-        <CollegeDetailPage
-          college={selectedCollegeForPage}
-          onClose={() => setSelectedCollegeForPage(null)}
-        />
-      )}
+        {/* Individual College 16-Section Detailed SEO Page Modal */}
+        {selectedCollegeForPage && (
+          <CollegeDetailPage
+            college={selectedCollegeForPage}
+            onClose={() => setSelectedCollegeForPage(null)}
+          />
+        )}
 
-      {/* Individual University Page Modal */}
-      {selectedUniversityForPage && (
-        <UniversityDetailPage
-          university={selectedUniversityForPage}
-          onClose={() => setSelectedUniversityForPage(null)}
-        />
-      )}
+        {/* Individual University Page Modal */}
+        {selectedUniversityForPage && (
+          <UniversityDetailPage
+            university={selectedUniversityForPage}
+            onClose={() => setSelectedUniversityForPage(null)}
+          />
+        )}
 
-      <PwaInstallModal
-        isOpen={installModalOpen}
-        onClose={() => setInstallModalOpen(false)}
-      />
+        {installModalOpen && (
+          <PwaInstallModal
+            isOpen={installModalOpen}
+            onClose={() => setInstallModalOpen(false)}
+          />
+        )}
 
-      <LegalNoticeModal
-        isOpen={legalModalOpen}
-        onClose={() => setLegalModalOpen(false)}
-        defaultSubTab={legalModalTab}
-      />
+        {legalModalOpen && (
+          <LegalNoticeModal
+            isOpen={legalModalOpen}
+            onClose={() => setLegalModalOpen(false)}
+            defaultSubTab={legalModalTab}
+          />
+        )}
 
-      <JobAlertModal
-        isOpen={jobAlertModalOpen}
-        onClose={() => setJobAlertModalOpen(false)}
-        onSavePreferences={(msg) => showToast(msg)}
-      />
+        {jobAlertModalOpen && (
+          <JobAlertModal
+            isOpen={jobAlertModalOpen}
+            onClose={() => setJobAlertModalOpen(false)}
+            onSavePreferences={(msg) => showToast(msg)}
+          />
+        )}
 
-      {/* Universal Search Modal */}
-      <UnifiedSearchModal
-        isOpen={unifiedSearchOpen}
-        onClose={() => setUnifiedSearchOpen(false)}
-        colleges={colleges}
-        universities={universities}
-        courses={courses}
-        admissions={admissions}
-        exams={exams}
-        onSelectCollege={(c) => setSelectedCollegeForPage(c)}
-        onSelectUniversity={(u) => setSelectedUniversityForPage(u)}
-        onSelectAdmission={(a) => {
-          changeTab('admissions');
-        }}
-        onSelectCourse={(cr) => {
-          changeTab('courses');
-        }}
-        onSelectExam={(ex) => {
-          handleOpenExamHub(ex.title);
-        }}
-      />
+        {/* Universal Search Modal */}
+        {unifiedSearchOpen && (
+          <UnifiedSearchModal
+            isOpen={unifiedSearchOpen}
+            onClose={() => setUnifiedSearchOpen(false)}
+            colleges={colleges}
+            universities={universities}
+            courses={courses}
+            admissions={admissions}
+            exams={exams}
+            onSelectCollege={(c) => setSelectedCollegeForPage(c)}
+            onSelectUniversity={(u) => setSelectedUniversityForPage(u)}
+            onSelectAdmission={(a) => {
+              changeTab('admissions');
+            }}
+            onSelectCourse={(cr) => {
+              changeTab('courses');
+            }}
+            onSelectExam={(ex) => {
+              handleOpenExamHub(ex.title);
+            }}
+          />
+        )}
+      </Suspense>
 
       {/* SEO Engine System Injection */}
       <SEOHelper meta={currentSeoMeta} onNavigateTab={changeTab} />

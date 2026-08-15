@@ -36,6 +36,7 @@ import {
 } from 'lucide-react';
 import { JurisdictionState, GovJob, CurrentAffairsArticle, College, University } from '../types';
 import { LiveSyncBanner } from './LiveSyncBanner';
+import { StudentPowerHubSection } from './StudentPowerHubSection';
 import { calculateDaysRemaining, getDeadlineBadgeInfo } from '../utils/deadlineUtils';
 import { formatFriendlyDate } from '../utils/dateUtils';
 import {
@@ -62,6 +63,12 @@ interface HomeTabProps {
   onFetchLiveUpdates?: () => void;
   isSyncingLive?: boolean;
   lastSyncedTime?: string | null;
+  onOpenSpeedQuiz?: () => void;
+  onOpenAgeCalculator?: () => void;
+  onOpenPhotoTool?: () => void;
+  onOpenStudyPlanner?: () => void;
+  coins?: number;
+  streakDays?: number;
 }
 
 export const HomeTab: React.FC<HomeTabProps> = ({
@@ -78,6 +85,12 @@ export const HomeTab: React.FC<HomeTabProps> = ({
   onFetchLiveUpdates,
   isSyncingLive = false,
   lastSyncedTime,
+  onOpenSpeedQuiz,
+  onOpenAgeCalculator,
+  onOpenPhotoTool,
+  onOpenStudyPlanner,
+  coins = 100,
+  streakDays = 3,
 }) => {
   const jobsList = jobs || initialJobsData;
   const articlesList = currentAffairsArticles || initialCurrentAffairsArticles;
@@ -398,6 +411,18 @@ export const HomeTab: React.FC<HomeTabProps> = ({
           </div>
         </div>
       </section>
+
+      {/* 🚀 DAILY STUDENT & ASPIRANT POWER HUB */}
+      <div className="max-w-7xl mx-auto px-2 sm:px-4">
+        <StudentPowerHubSection
+          onOpenSpeedQuiz={onOpenSpeedQuiz || (() => {})}
+          onOpenAgeCalculator={onOpenAgeCalculator || (() => {})}
+          onOpenPhotoTool={onOpenPhotoTool || (() => {})}
+          onOpenStudyPlanner={onOpenStudyPlanner || (() => {})}
+          coins={coins}
+          streakDays={streakDays}
+        />
+      </div>
 
       {/* Dynamic Live Sync Banner */}
       {onFetchLiveUpdates && (
@@ -919,7 +944,7 @@ export const HomeTab: React.FC<HomeTabProps> = ({
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Tool 1: Age Calculator */}
           <div
-            onClick={() => setActiveToolModal('age-calc')}
+            onClick={() => (onOpenAgeCalculator ? onOpenAgeCalculator() : setActiveToolModal('age-calc'))}
             className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs hover:border-indigo-500 hover:shadow-md transition cursor-pointer space-y-3 flex flex-col justify-between"
           >
             <div className="space-y-2">
@@ -927,14 +952,14 @@ export const HomeTab: React.FC<HomeTabProps> = ({
                 <Calculator className="w-5 h-5" />
               </div>
               <h3 className="font-extrabold text-slate-900 text-sm">
-                Govt Job Age Calculator
+                Govt Exam Age & Eligibility Calculator
               </h3>
               <p className="text-xs text-slate-500 leading-relaxed">
-                Calculate your exact age in Years, Months, and Days as of exam cut-off date (e.g. 01/08/2026).
+                Calculate exact age and check OBC, SC/ST & PwD relaxation across 35+ SSC, UPSC & BPSC exams.
               </p>
             </div>
             <button className="w-full py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-900 font-extrabold text-xs rounded-xl transition">
-              Open Age Calculator
+              Open Live Age Calculator
             </button>
           </div>
 
@@ -980,9 +1005,9 @@ export const HomeTab: React.FC<HomeTabProps> = ({
             </button>
           </div>
 
-          {/* Tool 4: Photo & Signature Spec Guide */}
+          {/* Tool 4: Photo & Signature Resizer */}
           <div
-            onClick={() => setActiveToolModal('photo-guide')}
+            onClick={() => (onOpenPhotoTool ? onOpenPhotoTool() : setActiveToolModal('photo-guide'))}
             className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs hover:border-amber-500 hover:shadow-md transition cursor-pointer space-y-3 flex flex-col justify-between"
           >
             <div className="space-y-2">
@@ -990,14 +1015,14 @@ export const HomeTab: React.FC<HomeTabProps> = ({
                 <FileText className="w-5 h-5" />
               </div>
               <h3 className="font-extrabold text-slate-900 text-sm">
-                Photo & Signature Dimensions Guide
+                Photo & Sign Resizer & Spec Tool
               </h3>
               <p className="text-xs text-slate-500 leading-relaxed">
-                Kilobyte (KB) limits & pixel dimensions for CSBC, BPSC, BSSC, and SSC form uploads.
+                Resize, crop & compress JPG to exact 20-50 KB limits for SSC, CSBC, BPSC and NTA uploads.
               </p>
             </div>
             <button className="w-full py-2 bg-amber-50 hover:bg-amber-100 text-amber-900 font-extrabold text-xs rounded-xl transition">
-              View KB Standards
+              Open Image Resizer & Compressor
             </button>
           </div>
         </div>

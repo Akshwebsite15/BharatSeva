@@ -41,6 +41,10 @@ const DailyRewardsModal = lazy(() => import('./components/DailyRewardsModal').th
 const UnifiedSearchModal = lazy(() => import('./components/UnifiedSearchModal').then(m => ({ default: m.UnifiedSearchModal })));
 const CollegeDetailPage = lazy(() => import('./components/CollegeDetailPage').then(m => ({ default: m.CollegeDetailPage })));
 const UniversityDetailPage = lazy(() => import('./components/UniversityDetailPage').then(m => ({ default: m.UniversityDetailPage })));
+const DailySpeedQuizModal = lazy(() => import('./components/DailySpeedQuizModal').then(m => ({ default: m.DailySpeedQuizModal })));
+const GovtPhotoToolModal = lazy(() => import('./components/GovtPhotoToolModal').then(m => ({ default: m.GovtPhotoToolModal })));
+const GovtAgeEligibilityCalculatorModal = lazy(() => import('./components/GovtAgeEligibilityCalculatorModal').then(m => ({ default: m.GovtAgeEligibilityCalculatorModal })));
+const DailyStudyPlannerModal = lazy(() => import('./components/DailyStudyPlannerModal').then(m => ({ default: m.DailyStudyPlannerModal })));
 
 import { initialCoursesData } from './data/coursesData';
 import { initialAdmissionsData } from './data/admissionsData';
@@ -148,6 +152,10 @@ export default function App() {
   const [activeExamHubTitle, setActiveExamHubTitle] = useState<string | null>(null);
   const [selectedCollegeForPage, setSelectedCollegeForPage] = useState<College | null>(null);
   const [selectedUniversityForPage, setSelectedUniversityForPage] = useState<University | null>(null);
+  const [speedQuizModalOpen, setSpeedQuizModalOpen] = useState(false);
+  const [photoToolModalOpen, setPhotoToolModalOpen] = useState(false);
+  const [ageCalcModalOpen, setAgeCalcModalOpen] = useState(false);
+  const [studyPlannerModalOpen, setStudyPlannerModalOpen] = useState(false);
 
   // Dynamic SEO Page Metadata Calculation
   const currentSeoMeta: SEOPageMeta = React.useMemo(() => {
@@ -510,6 +518,10 @@ export default function App() {
         onOpenDailyRewards={handleOpenDailyRewardsModal}
         onOpenAdmin={() => setAdminCmsOpen(true)}
         onOpenUnifiedSearch={() => setUnifiedSearchOpen(true)}
+        onOpenSpeedQuiz={() => setSpeedQuizModalOpen(true)}
+        onOpenAgeCalculator={() => setAgeCalcModalOpen(true)}
+        onOpenPhotoTool={() => setPhotoToolModalOpen(true)}
+        onOpenStudyPlanner={() => setStudyPlannerModalOpen(true)}
       />
 
       {/* Admin CMS Modal Overlay */}
@@ -567,6 +579,12 @@ export default function App() {
               onFetchLiveUpdates={handleFetchLiveUpdates}
               isSyncingLive={isSyncingLive}
               lastSyncedTime={lastSyncedTime}
+              onOpenSpeedQuiz={() => setSpeedQuizModalOpen(true)}
+              onOpenAgeCalculator={() => setAgeCalcModalOpen(true)}
+              onOpenPhotoTool={() => setPhotoToolModalOpen(true)}
+              onOpenStudyPlanner={() => setStudyPlannerModalOpen(true)}
+              coins={coins}
+              streakDays={streakDays}
             />
           )}
 
@@ -830,6 +848,45 @@ export default function App() {
             }}
           />
         )}
+
+        {/* Daily Speed GK Quiz Modal */}
+        {speedQuizModalOpen && (
+          <DailySpeedQuizModal
+            isOpen={speedQuizModalOpen}
+            onClose={() => setSpeedQuizModalOpen(false)}
+            onAddCoins={(amount) => {
+              setCoins((prev) => prev + amount);
+            }}
+            showToast={showToast}
+          />
+        )}
+
+        {/* Govt Photo & Signature Resizer & Compressor Tool Modal */}
+        {photoToolModalOpen && (
+          <GovtPhotoToolModal
+            isOpen={photoToolModalOpen}
+            onClose={() => setPhotoToolModalOpen(false)}
+            showToast={showToast}
+          />
+        )}
+
+        {/* Govt Exam Age & Full Eligibility Calculator Modal */}
+        {ageCalcModalOpen && (
+          <GovtAgeEligibilityCalculatorModal
+            isOpen={ageCalcModalOpen}
+            onClose={() => setAgeCalcModalOpen(false)}
+          />
+        )}
+
+        {/* Daily Study Planner & Pomodoro Focus Timer Modal */}
+        {studyPlannerModalOpen && (
+          <DailyStudyPlannerModal
+            isOpen={studyPlannerModalOpen}
+            onClose={() => setStudyPlannerModalOpen(false)}
+            streakDays={streakDays}
+            showToast={showToast}
+          />
+        )}
       </Suspense>
 
       {/* SEO Engine System Injection */}
@@ -849,6 +906,10 @@ export default function App() {
         setSelectedJurisdiction={setSelectedJurisdiction}
         coins={coins}
         streakDays={streakDays}
+        onOpenSpeedQuiz={() => setSpeedQuizModalOpen(true)}
+        onOpenAgeCalculator={() => setAgeCalcModalOpen(true)}
+        onOpenPhotoTool={() => setPhotoToolModalOpen(true)}
+        onOpenStudyPlanner={() => setStudyPlannerModalOpen(true)}
       />
 
       {/* Footer */}

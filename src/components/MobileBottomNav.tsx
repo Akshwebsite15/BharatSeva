@@ -22,6 +22,10 @@ import {
   Newspaper,
   ShieldCheck,
   Layers,
+  Calculator,
+  Scissors,
+  Clock,
+  Trophy,
 } from 'lucide-react';
 import { JurisdictionState } from '../types';
 
@@ -38,6 +42,10 @@ interface MobileBottomNavProps {
   setSelectedJurisdiction: (j: JurisdictionState) => void;
   coins?: number;
   streakDays?: number;
+  onOpenSpeedQuiz?: () => void;
+  onOpenAgeCalculator?: () => void;
+  onOpenPhotoTool?: () => void;
+  onOpenStudyPlanner?: () => void;
 }
 
 export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
@@ -53,6 +61,10 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
   setSelectedJurisdiction,
   coins = 120,
   streakDays = 3,
+  onOpenSpeedQuiz,
+  onOpenAgeCalculator,
+  onOpenPhotoTool,
+  onOpenStudyPlanner,
 }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -153,6 +165,77 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
 
             {/* Scrollable Directory Grid */}
             <div className="p-4 overflow-y-auto space-y-4">
+              {/* Daily Aspirant Power Tools Section */}
+              <div className="bg-gradient-to-r from-orange-500/10 via-amber-500/10 to-purple-500/10 p-3 rounded-2xl border border-orange-200/60 space-y-2">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-[11px] font-black uppercase tracking-wider text-orange-950 flex items-center gap-1">
+                    <Sparkles className="w-3.5 h-3.5 text-orange-600" />
+                    Daily Aspirant & Student Tools
+                  </h4>
+                  <span className="text-[10px] bg-orange-200 text-orange-950 px-1.5 py-0.2 rounded-full font-extrabold">
+                    FREE
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => {
+                      setDrawerOpen(false);
+                      if (onOpenSpeedQuiz) onOpenSpeedQuiz();
+                    }}
+                    className="p-2.5 bg-white border border-orange-200 rounded-xl text-left font-black text-xs text-orange-950 flex items-center gap-2 shadow-2xs cursor-pointer active:scale-95"
+                  >
+                    <Trophy className="w-4 h-4 text-orange-600 shrink-0" />
+                    <div>
+                      <span className="block text-[11px] leading-tight">Daily GK Quiz</span>
+                      <span className="text-[9px] text-orange-700 font-bold">+50 Coins</span>
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setDrawerOpen(false);
+                      if (onOpenAgeCalculator) onOpenAgeCalculator();
+                    }}
+                    className="p-2.5 bg-white border border-blue-200 rounded-xl text-left font-black text-xs text-blue-950 flex items-center gap-2 shadow-2xs cursor-pointer active:scale-95"
+                  >
+                    <Calculator className="w-4 h-4 text-blue-600 shrink-0" />
+                    <div>
+                      <span className="block text-[11px] leading-tight">Age Calculator</span>
+                      <span className="text-[9px] text-blue-700 font-bold">35+ Exams</span>
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setDrawerOpen(false);
+                      if (onOpenPhotoTool) onOpenPhotoTool();
+                    }}
+                    className="p-2.5 bg-white border border-indigo-200 rounded-xl text-left font-black text-xs text-indigo-950 flex items-center gap-2 shadow-2xs cursor-pointer active:scale-95"
+                  >
+                    <Scissors className="w-4 h-4 text-indigo-600 shrink-0" />
+                    <div>
+                      <span className="block text-[11px] leading-tight">Photo Resizer</span>
+                      <span className="text-[9px] text-indigo-700 font-bold">20-50 KB Limit</span>
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setDrawerOpen(false);
+                      if (onOpenStudyPlanner) onOpenStudyPlanner();
+                    }}
+                    className="p-2.5 bg-white border border-purple-200 rounded-xl text-left font-black text-xs text-purple-950 flex items-center gap-2 shadow-2xs cursor-pointer active:scale-95"
+                  >
+                    <Clock className="w-4 h-4 text-purple-600 shrink-0" />
+                    <div>
+                      <span className="block text-[11px] leading-tight">Study Planner</span>
+                      <span className="text-[9px] text-purple-700 font-bold">Pomodoro 25m</span>
+                    </div>
+                  </button>
+                </div>
+              </div>
+
               {/* Higher Education Section */}
               <div>
                 <h4 className="text-[11px] font-black uppercase tracking-wider text-indigo-900 mb-2 flex items-center gap-1">

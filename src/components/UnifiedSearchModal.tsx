@@ -17,15 +17,19 @@ import {
   ExternalLink,
 } from 'lucide-react';
 import { College, University, CourseDirectoryItem, AdmissionItem, GovExam } from '../types';
+import { initialCollegesData, initialUniversitiesData } from '../data/collegesUniversitiesData';
+import { initialCoursesData } from '../data/coursesData';
+import { initialAdmissionsData } from '../data/admissionsData';
+import { initialExamsData } from '../data/portalData';
 
 interface UnifiedSearchModalProps {
   isOpen: boolean;
   onClose: () => void;
-  colleges: College[];
-  universities: University[];
-  courses: CourseDirectoryItem[];
-  admissions: AdmissionItem[];
-  exams: GovExam[];
+  colleges?: College[];
+  universities?: University[];
+  courses?: CourseDirectoryItem[];
+  admissions?: AdmissionItem[];
+  exams?: GovExam[];
   onSelectCollege?: (college: College) => void;
   onSelectUniversity?: (university: University) => void;
   onSelectCourse?: (course: CourseDirectoryItem) => void;
@@ -36,11 +40,11 @@ interface UnifiedSearchModalProps {
 export const UnifiedSearchModal: React.FC<UnifiedSearchModalProps> = ({
   isOpen,
   onClose,
-  colleges = [],
-  universities = [],
-  courses = [],
-  admissions = [],
-  exams = [],
+  colleges = initialCollegesData,
+  universities = initialUniversitiesData,
+  courses = initialCoursesData,
+  admissions = initialAdmissionsData,
+  exams = initialExamsData,
   onSelectCollege,
   onSelectUniversity,
   onSelectCourse,

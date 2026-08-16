@@ -22,18 +22,27 @@ import {
   Search,
 } from 'lucide-react';
 import { ExamLifecycleHubData, SampleQuestion } from '../types';
+import { examHubDataList } from '../data/examHubData';
 
 interface ExamLifecycleHubProps {
-  examHub: ExamLifecycleHubData;
+  examHub?: ExamLifecycleHubData;
+  examHubTitle?: string | null;
   onClose: () => void;
   onSaveExam?: (title: string) => void;
 }
 
 export const ExamLifecycleHub: React.FC<ExamLifecycleHubProps> = ({
   examHub,
+  examHubTitle,
   onClose,
   onSaveExam,
 }) => {
+  const hub = examHub || (examHubTitle ? (
+    examHubDataList.find(
+      (h) => h.title.toLowerCase().includes(examHubTitle.toLowerCase()) ||
+             examHubTitle.toLowerCase().includes(h.title.toLowerCase())
+    ) || examHubDataList[0]
+  ) : examHubDataList[0]);
   const [activeTab, setActiveTab] = useState<
     | 'notification'
     | 'eligibility'
@@ -53,7 +62,7 @@ export const ExamLifecycleHub: React.FC<ExamLifecycleHubProps> = ({
 
   const [expandedQuestion, setExpandedQuestion] = useState<number | null>(null);
   const [selectedPyqYear, setSelectedPyqYear] = useState<number>(
-    examHub.previousPapers[0]?.year || 2025
+    hub.previousPapers[0]?.year || 2025
   );
 
   const tabs = [
@@ -73,7 +82,7 @@ export const ExamLifecycleHub: React.FC<ExamLifecycleHubProps> = ({
     { id: 'selection', label: '14. Final Selection / DV', icon: ShieldAlert },
   ];
 
-  const currentPyq = examHub.previousPapers.find((p) => p.year === selectedPyqYear) || examHub.previousPapers[0];
+  const currentPyq = hub.previousPapers.find((p) => p.year === selectedPyqYear) || hub.previousPapers[0];
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 md:p-6">
@@ -94,27 +103,27 @@ export const ExamLifecycleHub: React.FC<ExamLifecycleHubProps> = ({
               PERMANENT EXAM HUB
             </span>
             <span className="px-3 py-1 rounded-full text-xs font-bold bg-amber-400 text-slate-950 uppercase tracking-wider">
-              STAGE: {examHub.currentStage}
+              STAGE: {hub.currentStage}
             </span>
             <span className="text-xs text-slate-300 ml-auto">
-              Updated: {examHub.lastUpdated}
+              Updated: {hub.lastUpdated}
             </span>
           </div>
 
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight">
-            {examHub.title}
+            {hub.title}
           </h1>
 
           <div className="flex flex-wrap items-center justify-between gap-4 mt-4 pt-4 border-t border-white/10 text-xs sm:text-sm text-slate-200">
             <div>
               <span className="text-slate-400">Conducting Body:</span>{' '}
-              <strong className="text-white font-bold">{examHub.conductingBody}</strong>
+              <strong className="text-white font-bold">{hub.conductingBody}</strong>
             </div>
 
             <div className="flex items-center space-x-3">
               {onSaveExam && (
                 <button
-                  onClick={() => onSaveExam(examHub.title)}
+                  onClick={() => onSaveExam(hub.title)}
                   className="px-4 py-2 bg-teal-600 hover:bg-teal-500 text-white rounded-xl font-bold text-xs transition cursor-pointer flex items-center space-x-1"
                 >
                   <Bell className="w-3.5 h-3.5 mr-1" />
@@ -123,7 +132,7 @@ export const ExamLifecycleHub: React.FC<ExamLifecycleHubProps> = ({
               )}
 
               <a
-                href={examHub.officialWebsite}
+                href={hub.officialWebsite}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-4 py-2 bg-white text-slate-900 hover:bg-slate-100 rounded-xl font-bold text-xs transition flex items-center space-x-1"
@@ -179,15 +188,15 @@ export const ExamLifecycleHub: React.FC<ExamLifecycleHubProps> = ({
 
                 <div className="bg-blue-50/70 border border-blue-200 rounded-2xl p-5 space-y-3">
                   <div className="flex justify-between items-center text-xs">
-                    <span className="font-bold text-blue-900">Advt No: {examHub.notification.advtNo}</span>
-                    <span className="text-slate-600">Released: {examHub.notification.releaseDate}</span>
+                    <span className="font-bold text-blue-900">Advt No: {hub.notification.advtNo}</span>
+                    <span className="text-slate-600">Released: {hub.notification.releaseDate}</span>
                   </div>
                   <p className="text-sm text-slate-800 font-medium leading-relaxed">
-                    {examHub.notification.summary}
+                    {hub.notification.summary}
                   </p>
                   <div className="pt-2">
                     <a
-                      href={examHub.notification.officialPdfUrl}
+                      href={hub.notification.officialPdfUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center space-x-2 px-4 py-2.5 bg-blue-900 hover:bg-blue-800 text-white rounded-xl text-xs font-bold transition"
@@ -201,7 +210,7 @@ export const ExamLifecycleHub: React.FC<ExamLifecycleHubProps> = ({
                 <div>
                   <h3 className="font-extrabold text-slate-900 text-sm mb-3">Key Highlights</h3>
                   <div className="space-y-2">
-                    {examHub.notification.keyHighlights.map((hl, idx) => (
+                    {hub.notification.keyHighlights.map((hl, idx) => (
                       <div key={idx} className="flex items-start space-x-2 text-xs text-slate-700 bg-slate-50 p-3 rounded-xl border border-slate-100">
                         <CheckCircle2 className="w-4 h-4 text-teal-600 shrink-0 mt-0.5" />
                         <span>{hl}</span>
@@ -226,9 +235,9 @@ export const ExamLifecycleHub: React.FC<ExamLifecycleHubProps> = ({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200/80">
                     <span className="text-[10px] uppercase font-extrabold text-teal-600">ACADEMIC QUALIFICATION</span>
-                    <p className="text-sm font-extrabold text-slate-900 mt-1">{examHub.eligibility.qualification}</p>
+                    <p className="text-sm font-extrabold text-slate-900 mt-1">{hub.eligibility.qualification}</p>
                     <div className="mt-3 flex flex-wrap gap-1.5">
-                      {examHub.eligibility.allowedStreams.map((s, idx) => (
+                      {hub.eligibility.allowedStreams.map((s, idx) => (
                         <span key={idx} className="px-2.5 py-1 rounded-lg bg-white text-slate-700 border border-slate-200 text-xs font-bold">
                           {s}
                         </span>
@@ -239,7 +248,7 @@ export const ExamLifecycleHub: React.FC<ExamLifecycleHubProps> = ({
                   <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200/80">
                     <span className="text-[10px] uppercase font-extrabold text-amber-600">AGE LIMIT (GENERAL)</span>
                     <p className="text-xl font-extrabold text-slate-900 mt-1">
-                      {examHub.eligibility.minAge} to {examHub.eligibility.maxAgeGen} Years
+                      {hub.eligibility.minAge} to {hub.eligibility.maxAgeGen} Years
                     </p>
                     <p className="text-xs text-slate-500 mt-1">As on cutoff date specified in notification</p>
                   </div>
@@ -248,7 +257,7 @@ export const ExamLifecycleHub: React.FC<ExamLifecycleHubProps> = ({
                 <div>
                   <h3 className="font-extrabold text-slate-900 text-sm mb-3">Category-Wise Upper Age Relaxation</h3>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    {examHub.eligibility.ageRelaxations.map((rel, idx) => (
+                    {hub.eligibility.ageRelaxations.map((rel, idx) => (
                       <div key={idx} className="bg-purple-50/70 p-3 rounded-xl border border-purple-100 text-center">
                         <span className="text-xs font-extrabold text-purple-900 block">{rel.category}</span>
                         <strong className="text-sm text-purple-700 font-black">+{rel.years} Years</strong>
@@ -257,14 +266,14 @@ export const ExamLifecycleHub: React.FC<ExamLifecycleHubProps> = ({
                   </div>
                 </div>
 
-                {examHub.eligibility.physicalStandards && (
+                {hub.eligibility.physicalStandards && (
                   <div className="bg-emerald-50/70 p-5 rounded-2xl border border-emerald-200">
                     <h3 className="font-extrabold text-emerald-900 text-sm mb-2">Physical Standards (Mandatory)</h3>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs text-slate-800">
-                      <div>Male Height: <strong>{examHub.eligibility.physicalStandards.heightMale}</strong></div>
-                      <div>Female Height: <strong>{examHub.eligibility.physicalStandards.heightFemale}</strong></div>
-                      <div>Chest (Male): <strong>{examHub.eligibility.physicalStandards.chestMale || 'N/A'}</strong></div>
-                      <div className="col-span-2 sm:col-span-3 text-slate-600 mt-1">{examHub.eligibility.physicalStandards.endurance}</div>
+                      <div>Male Height: <strong>{hub.eligibility.physicalStandards.heightMale}</strong></div>
+                      <div>Female Height: <strong>{hub.eligibility.physicalStandards.heightFemale}</strong></div>
+                      <div>Chest (Male): <strong>{hub.eligibility.physicalStandards.chestMale || 'N/A'}</strong></div>
+                      <div className="col-span-2 sm:col-span-3 text-slate-600 mt-1">{hub.eligibility.physicalStandards.endurance}</div>
                     </div>
                   </div>
                 )}
@@ -277,7 +286,7 @@ export const ExamLifecycleHub: React.FC<ExamLifecycleHubProps> = ({
                 <div className="flex items-center space-x-3 border-b border-slate-100 pb-4">
                   <Briefcase className="w-6 h-6 text-blue-900" />
                   <div>
-                    <h2 className="text-xl font-extrabold text-slate-900">Post-Wise Vacancies ({examHub.vacancy.totalPosts})</h2>
+                    <h2 className="text-xl font-extrabold text-slate-900">Post-Wise Vacancies ({hub.vacancy.totalPosts})</h2>
                     <p className="text-xs text-slate-500">Breakdown of posts, department allocation, and reservation quota</p>
                   </div>
                 </div>
@@ -293,7 +302,7 @@ export const ExamLifecycleHub: React.FC<ExamLifecycleHubProps> = ({
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
-                      {examHub.vacancy.postList.map((post, idx) => (
+                      {hub.vacancy.postList.map((post, idx) => (
                         <tr key={idx} className="hover:bg-slate-50 transition">
                           <td className="p-3.5 font-extrabold text-slate-900">{post.postTitle}</td>
                           <td className="p-3.5 text-slate-600">{post.dept}</td>
@@ -305,11 +314,11 @@ export const ExamLifecycleHub: React.FC<ExamLifecycleHubProps> = ({
                   </table>
                 </div>
 
-                {examHub.vacancy.categoryQuota && (
+                {hub.vacancy.categoryQuota && (
                   <div>
                     <h3 className="font-extrabold text-slate-900 text-sm mb-3">Category-Wise Reservation Distribution</h3>
                     <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-                      {examHub.vacancy.categoryQuota.map((q, idx) => (
+                      {hub.vacancy.categoryQuota.map((q, idx) => (
                         <div key={idx} className="bg-slate-50 p-3 rounded-xl border border-slate-200 text-center">
                           <span className="text-[10px] font-bold text-slate-500 uppercase block">{q.category}</span>
                           <strong className="text-sm font-extrabold text-slate-900">{q.count} Posts</strong>
@@ -335,22 +344,22 @@ export const ExamLifecycleHub: React.FC<ExamLifecycleHubProps> = ({
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="bg-emerald-50 p-5 rounded-2xl border border-emerald-200">
                     <span className="text-[10px] uppercase font-extrabold text-emerald-800">PAY SCALE</span>
-                    <p className="text-lg font-extrabold text-emerald-950 mt-1">{examHub.salary.payScale}</p>
+                    <p className="text-lg font-extrabold text-emerald-950 mt-1">{hub.salary.payScale}</p>
                   </div>
                   <div className="bg-emerald-50 p-5 rounded-2xl border border-emerald-200">
                     <span className="text-[10px] uppercase font-extrabold text-emerald-800">BASIC PAY</span>
-                    <p className="text-lg font-extrabold text-emerald-950 mt-1">{examHub.salary.basicPay}</p>
+                    <p className="text-lg font-extrabold text-emerald-950 mt-1">{hub.salary.basicPay}</p>
                   </div>
                   <div className="bg-emerald-600 text-white p-5 rounded-2xl shadow-md">
                     <span className="text-[10px] uppercase font-extrabold text-emerald-100 block">ESTIMATED IN-HAND SALARY</span>
-                    <p className="text-xl font-black mt-1">{examHub.salary.approxInHand}</p>
+                    <p className="text-xl font-black mt-1">{hub.salary.approxInHand}</p>
                   </div>
                 </div>
 
                 <div>
                   <h3 className="font-extrabold text-slate-900 text-sm mb-3">Allowances & Key Benefits</h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                    {examHub.salary.allowances.map((allw, idx) => (
+                    {hub.salary.allowances.map((allw, idx) => (
                       <div key={idx} className="flex items-center space-x-2 text-xs font-bold text-slate-800 bg-slate-50 p-3 rounded-xl border border-slate-100">
                         <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                         <span>{allw}</span>
@@ -372,7 +381,7 @@ export const ExamLifecycleHub: React.FC<ExamLifecycleHubProps> = ({
                   </div>
                 </div>
 
-                {examHub.syllabus.map((syl, sIdx) => (
+                {hub.syllabus.map((syl, sIdx) => (
                   <div key={sIdx} className="space-y-3">
                     <h3 className="text-base font-extrabold text-blue-900 bg-blue-50 px-4 py-2.5 rounded-xl border border-blue-100">
                       {syl.tier}
@@ -421,7 +430,7 @@ export const ExamLifecycleHub: React.FC<ExamLifecycleHubProps> = ({
                   </div>
                 </div>
 
-                {examHub.examPattern.map((pat, pIdx) => (
+                {hub.examPattern.map((pat, pIdx) => (
                   <div key={pIdx} className="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-4">
                     <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-3">
                       <div>
@@ -467,7 +476,7 @@ export const ExamLifecycleHub: React.FC<ExamLifecycleHubProps> = ({
 
                 {/* Year Selectors */}
                 <div className="flex space-x-2">
-                  {examHub.previousPapers.map((paper) => (
+                  {hub.previousPapers.map((paper) => (
                     <button
                       key={paper.year}
                       onClick={() => setSelectedPyqYear(paper.year)}
@@ -572,7 +581,7 @@ export const ExamLifecycleHub: React.FC<ExamLifecycleHubProps> = ({
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100 font-bold">
-                      {examHub.cutoffs.map((co, idx) => (
+                      {hub.cutoffs.map((co, idx) => (
                         <tr key={idx} className="hover:bg-slate-50 transition">
                           <td className="p-3.5 font-black text-slate-900">{co.year} - {co.tier}</td>
                           <td className="p-3.5 text-blue-900 font-extrabold">{co.general}</td>
@@ -602,14 +611,14 @@ export const ExamLifecycleHub: React.FC<ExamLifecycleHubProps> = ({
 
                 <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200/80 space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-                    <div>Application Start Date: <strong className="text-slate-900 font-extrabold">{examHub.application.startDate}</strong></div>
-                    <div>Application Deadline: <strong className="text-rose-700 font-black">{examHub.application.endDate}</strong></div>
-                    <div>General / OBC Fee: <strong className="text-slate-900">{examHub.application.feeGeneral}</strong></div>
-                    <div>Reserved / Female Fee: <strong className="text-teal-700">{examHub.application.feeReserved}</strong></div>
+                    <div>Application Start Date: <strong className="text-slate-900 font-extrabold">{hub.application.startDate}</strong></div>
+                    <div>Application Deadline: <strong className="text-rose-700 font-black">{hub.application.endDate}</strong></div>
+                    <div>General / OBC Fee: <strong className="text-slate-900">{hub.application.feeGeneral}</strong></div>
+                    <div>Reserved / Female Fee: <strong className="text-teal-700">{hub.application.feeReserved}</strong></div>
                   </div>
 
                   <a
-                    href={examHub.application.applyUrl}
+                    href={hub.application.applyUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-6 py-3.5 bg-teal-600 hover:bg-teal-500 text-white font-extrabold rounded-xl text-xs transition cursor-pointer shadow-sm"
@@ -622,7 +631,7 @@ export const ExamLifecycleHub: React.FC<ExamLifecycleHubProps> = ({
                 <div>
                   <h3 className="font-extrabold text-slate-900 text-sm mb-3">Required Upload Documents</h3>
                   <div className="space-y-2">
-                    {examHub.application.requiredDocs.map((doc, idx) => (
+                    {hub.application.requiredDocs.map((doc, idx) => (
                       <div key={idx} className="flex items-center space-x-2 text-xs text-slate-800 bg-slate-50 p-3 rounded-xl border border-slate-100">
                         <CheckCircle2 className="w-4 h-4 text-teal-600 shrink-0" />
                         <span>{doc}</span>
@@ -646,12 +655,12 @@ export const ExamLifecycleHub: React.FC<ExamLifecycleHubProps> = ({
 
                 <div className="bg-amber-50/80 p-5 rounded-2xl border border-amber-200 space-y-3">
                   <div className="flex justify-between items-center text-xs">
-                    <span className="font-extrabold text-amber-900">STATUS: {examHub.admitCard.status}</span>
-                    <span className="text-slate-700 font-bold">Release Date: {examHub.admitCard.releaseDate}</span>
+                    <span className="font-extrabold text-amber-900">STATUS: {hub.admitCard.status}</span>
+                    <span className="text-slate-700 font-bold">Release Date: {hub.admitCard.releaseDate}</span>
                   </div>
 
                   <a
-                    href={examHub.admitCard.downloadUrl}
+                    href={hub.admitCard.downloadUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center space-x-2 px-5 py-3 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-extrabold text-xs transition cursor-pointer"
@@ -664,7 +673,7 @@ export const ExamLifecycleHub: React.FC<ExamLifecycleHubProps> = ({
                 <div>
                   <h3 className="font-extrabold text-slate-900 text-sm mb-3">Exam Center Instructions</h3>
                   <div className="space-y-2">
-                    {examHub.admitCard.instructions.map((inst, idx) => (
+                    {hub.admitCard.instructions.map((inst, idx) => (
                       <div key={idx} className="flex items-start space-x-2 text-xs text-slate-700 bg-slate-50 p-3 rounded-xl border border-slate-100">
                         <ShieldAlert className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
                         <span>{inst}</span>
@@ -689,13 +698,13 @@ export const ExamLifecycleHub: React.FC<ExamLifecycleHubProps> = ({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200">
                     <span className="text-[10px] uppercase font-extrabold text-blue-900">TIER-1 EXAM DATES</span>
-                    <p className="text-lg font-extrabold text-slate-900 mt-1">{examHub.examSchedule.tier1Date}</p>
+                    <p className="text-lg font-extrabold text-slate-900 mt-1">{hub.examSchedule.tier1Date}</p>
                   </div>
 
-                  {examHub.examSchedule.tier2Date && (
+                  {hub.examSchedule.tier2Date && (
                     <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200">
                       <span className="text-[10px] uppercase font-extrabold text-purple-900">TIER-2 / MAINS DATES</span>
-                      <p className="text-lg font-extrabold text-slate-900 mt-1">{examHub.examSchedule.tier2Date}</p>
+                      <p className="text-lg font-extrabold text-slate-900 mt-1">{hub.examSchedule.tier2Date}</p>
                     </div>
                   )}
                 </div>
@@ -703,7 +712,7 @@ export const ExamLifecycleHub: React.FC<ExamLifecycleHubProps> = ({
                 <div>
                   <h3 className="font-extrabold text-slate-900 text-sm mb-2">Shift Timings</h3>
                   <div className="flex flex-wrap gap-2">
-                    {examHub.examSchedule.shifts.map((s, idx) => (
+                    {hub.examSchedule.shifts.map((s, idx) => (
                       <span key={idx} className="px-3 py-1.5 bg-blue-50 text-blue-950 font-extrabold text-xs rounded-xl border border-blue-100">
                         {s}
                       </span>
@@ -714,7 +723,7 @@ export const ExamLifecycleHub: React.FC<ExamLifecycleHubProps> = ({
                 <div>
                   <h3 className="font-extrabold text-slate-900 text-sm mb-2">Exam Center Cities</h3>
                   <div className="flex flex-wrap gap-1.5">
-                    {examHub.examSchedule.examCenterCities.map((city, idx) => (
+                    {hub.examSchedule.examCenterCities.map((city, idx) => (
                       <span key={idx} className="px-2.5 py-1 bg-slate-100 text-slate-800 font-bold text-xs rounded-lg border border-slate-200">
                         📍 {city}
                       </span>
@@ -737,16 +746,16 @@ export const ExamLifecycleHub: React.FC<ExamLifecycleHubProps> = ({
 
                 <div className="bg-purple-50/70 p-5 rounded-2xl border border-purple-200 space-y-3">
                   <div className="flex justify-between items-center text-xs">
-                    <span className="font-extrabold text-purple-900">STATUS: {examHub.answerKey.status}</span>
-                    <span className="text-slate-700 font-bold">Expected: {examHub.answerKey.releaseDate}</span>
+                    <span className="font-extrabold text-purple-900">STATUS: {hub.answerKey.status}</span>
+                    <span className="text-slate-700 font-bold">Expected: {hub.answerKey.releaseDate}</span>
                   </div>
 
                   <p className="text-xs text-slate-700 font-medium">
-                    Objection Fee: <strong>{examHub.answerKey.objectionFee}</strong> | Deadline: <strong>{examHub.answerKey.objectionDeadline}</strong>
+                    Objection Fee: <strong>{hub.answerKey.objectionFee}</strong> | Deadline: <strong>{hub.answerKey.objectionDeadline}</strong>
                   </p>
 
                   <a
-                    href={examHub.answerKey.portalUrl}
+                    href={hub.answerKey.portalUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center space-x-2 px-5 py-3 bg-purple-900 hover:bg-purple-800 text-white rounded-xl font-extrabold text-xs transition cursor-pointer"
@@ -771,13 +780,13 @@ export const ExamLifecycleHub: React.FC<ExamLifecycleHubProps> = ({
 
                 <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-4">
                   <div className="flex justify-between items-center text-xs">
-                    <span className="font-extrabold text-slate-900">RESULT STATUS: {examHub.result.status}</span>
-                    <span className="text-slate-600">Declaration Date: {examHub.result.declarationDate}</span>
+                    <span className="font-extrabold text-slate-900">RESULT STATUS: {hub.result.status}</span>
+                    <span className="text-slate-600">Declaration Date: {hub.result.declarationDate}</span>
                   </div>
 
                   <div className="flex flex-wrap gap-3">
                     <a
-                      href={examHub.result.meritListPdfUrl}
+                      href={hub.result.meritListPdfUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center space-x-2 px-4 py-2.5 bg-blue-900 text-white rounded-xl font-bold text-xs hover:bg-blue-800 transition"
@@ -786,7 +795,7 @@ export const ExamLifecycleHub: React.FC<ExamLifecycleHubProps> = ({
                       <span>Download Roll-wise Merit List PDF</span>
                     </a>
                     <a
-                      href={examHub.result.cutOffPdfUrl}
+                      href={hub.result.cutOffPdfUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center space-x-2 px-4 py-2.5 bg-slate-200 text-slate-800 rounded-xl font-bold text-xs hover:bg-slate-300 transition"
@@ -812,13 +821,13 @@ export const ExamLifecycleHub: React.FC<ExamLifecycleHubProps> = ({
 
                 <div className="bg-teal-50/70 p-5 rounded-2xl border border-teal-200 space-y-3">
                   <h3 className="font-extrabold text-teal-900 text-sm">Merit Formula & Weightage</h3>
-                  <p className="text-xs font-bold text-slate-800">{examHub.finalSelection.meritFormula}</p>
+                  <p className="text-xs font-bold text-slate-800">{hub.finalSelection.meritFormula}</p>
                 </div>
 
                 <div>
                   <h3 className="font-extrabold text-slate-900 text-sm mb-3">Document Verification (DV) Checklist</h3>
                   <div className="space-y-2">
-                    {examHub.finalSelection.dvProcess.map((item, idx) => (
+                    {hub.finalSelection.dvProcess.map((item, idx) => (
                       <div key={idx} className="flex items-start space-x-2 text-xs text-slate-800 bg-slate-50 p-3 rounded-xl border border-slate-100">
                         <CheckCircle2 className="w-4 h-4 text-teal-600 shrink-0 mt-0.5" />
                         <span>{item}</span>
@@ -828,7 +837,7 @@ export const ExamLifecycleHub: React.FC<ExamLifecycleHubProps> = ({
                 </div>
 
                 <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs text-slate-800">
-                  <strong>Medical Fitness Standard:</strong> {examHub.finalSelection.medicalStandard}
+                  <strong>Medical Fitness Standard:</strong> {hub.finalSelection.medicalStandard}
                 </div>
               </div>
             )}

@@ -13,14 +13,15 @@ import {
   GraduationCap,
 } from 'lucide-react';
 import { University, UniversityType } from '../types';
+import { initialUniversitiesData } from '../data/collegesUniversitiesData';
 
 interface UniversityDirectoryProps {
-  universities: University[];
+  universities?: University[];
   onSelectUniversity: (university: University) => void;
 }
 
 export const UniversityDirectory: React.FC<UniversityDirectoryProps> = ({
-  universities,
+  universities = initialUniversitiesData,
   onSelectUniversity,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');

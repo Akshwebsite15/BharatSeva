@@ -19,14 +19,15 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 import { College } from '../types';
+import { initialCollegesData } from '../data/collegesUniversitiesData';
 
 interface CollegeDirectoryProps {
-  colleges: College[];
+  colleges?: College[];
   onSelectCollege: (college: College) => void;
 }
 
 export const CollegeDirectory: React.FC<CollegeDirectoryProps> = ({
-  colleges,
+  colleges = initialCollegesData,
   onSelectCollege,
 }) => {
   // Filters State

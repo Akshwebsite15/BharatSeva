@@ -24,87 +24,287 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- Inline Critical Style for Instant Initial Render -->
+    <!-- Inline Critical Style for Instant Initial Render (Zero CLS, Sarkari-Speed) -->
     <style>
-      .app-initial-shell {
-        min-height: 100vh;
+      :root {
+        --brand-blue: #0f172a;
+        --brand-teal: #0d9488;
+        --brand-slate: #f8fafc;
+      }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
         background-color: #f8fafc;
+        color: #0f172a;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+      .app-shell {
+        min-height: 100vh;
         display: flex;
         flex-direction: column;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       }
-      .app-initial-nav {
-        height: 64px;
+      .app-topbar {
         background: #0f172a;
-        color: white;
+        color: #ffffff;
+        border-bottom: 3px solid #0d9488;
+        position: sticky;
+        top: 0;
+        z-index: 40;
+      }
+      .app-topbar-inner {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 12px 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .app-brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        color: #fff;
+      }
+      .app-brand-badge {
+        width: 36px;
+        height: 36px;
+        background: linear-gradient(135deg, #0d9488 0%, #047857 100%);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 900;
+        font-size: 18px;
+        color: #fff;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      }
+      .app-brand-name {
+        font-size: 19px;
+        font-weight: 900;
+        letter-spacing: -0.5px;
+        line-height: 1.1;
+      }
+      .app-brand-sub {
+        font-size: 10px;
+        color: #94a3b8;
+        font-weight: 700;
+      }
+      .app-nav-pills {
+        display: none;
+        gap: 8px;
+      }
+      @media (min-width: 768px) {
+        .app-nav-pills {
+          display: flex;
+        }
+      }
+      .app-pill {
+        font-size: 12px;
+        font-weight: 700;
+        padding: 6px 12px;
+        border-radius: 8px;
+        background: rgba(255,255,255,0.08);
+        color: #e2e8f0;
+      }
+      .app-container {
+        max-width: 1280px;
+        width: 100%;
+        margin: 0 auto;
+        padding: 20px 16px 60px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+      .app-hero-box {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        border-radius: 20px;
+        padding: 24px;
+        color: #fff;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      }
+      .app-hero-title {
+        font-size: 22px;
+        font-weight: 900;
+        margin-bottom: 8px;
+        color: #f8fafc;
+      }
+      .app-hero-sub {
+        font-size: 13px;
+        color: #cbd5e1;
+        margin-bottom: 16px;
+      }
+      .app-search-mock {
+        height: 48px;
+        background: #ffffff;
+        border-radius: 12px;
         display: flex;
         align-items: center;
         padding: 0 16px;
+        color: #64748b;
+        font-size: 14px;
+        font-weight: 600;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      }
+      .app-grid-boxes {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
         gap: 12px;
       }
-      .app-initial-logo {
-        width: 32px;
-        height: 32px;
-        background: #0d9488;
-        border-radius: 8px;
-      }
-      .app-initial-title {
-        font-weight: 800;
-        font-size: 18px;
-        letter-spacing: -0.5px;
-      }
-      .app-initial-body {
-        max-width: 1200px;
-        width: 100%;
-        margin: 20px auto;
-        padding: 0 16px;
+      .app-flash-box {
+        background: #ffffff;
+        border-radius: 14px;
+        padding: 14px 16px;
+        border: 1px solid #e2e8f0;
         display: flex;
-        flex-direction: column;
-        gap: 16px;
+        align-items: center;
+        gap: 12px;
       }
-      .app-initial-hero {
-        height: 140px;
-        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-        border-radius: 20px;
-        animation: initialPulse 1.2s infinite alternate ease-in-out;
+      .app-flash-tag {
+        font-size: 9px;
+        font-weight: 900;
+        padding: 3px 6px;
+        border-radius: 4px;
+        text-transform: uppercase;
       }
-      .app-initial-grid {
+      .app-flash-tag-red { background: #fee2e2; color: #991b1b; }
+      .app-flash-tag-green { background: #dcfce7; color: #166534; }
+      .app-flash-tag-blue { background: #dbeafe; color: #1e40af; }
+      .app-flash-tag-amber { background: #fef3c7; color: #92400e; }
+      .app-flash-text {
+        font-size: 13px;
+        font-weight: 800;
+        color: #1e293b;
+      }
+      .app-tri-cols {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
         gap: 16px;
       }
-      .app-initial-card {
-        height: 120px;
+      .app-col-card {
         background: #ffffff;
         border-radius: 16px;
         border: 1px solid #e2e8f0;
-        animation: initialPulse 1.2s infinite alternate ease-in-out;
+        overflow: hidden;
       }
-      @keyframes initialPulse {
-        0% { opacity: 0.6; }
-        100% { opacity: 1; }
+      .app-col-header {
+        padding: 12px 16px;
+        font-weight: 900;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .app-col-header-red { background: #ef4444; color: #fff; }
+      .app-col-header-green { background: #10b981; color: #fff; }
+      .app-col-header-blue { background: #3b82f6; color: #fff; }
+      .app-col-list {
+        padding: 12px 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .app-col-item {
+        font-size: 12px;
+        font-weight: 700;
+        color: #334155;
+        padding-bottom: 8px;
+        border-bottom: 1px dashed #e2e8f0;
       }
     </style>
   </head>
   <body class="bg-slate-50 text-slate-900">
     <div id="root">
-      <!-- Instant First Paint Shell (Replaced seamlessly once React boots) -->
-      <div class="app-initial-shell">
-        <div class="app-initial-nav">
-          <div class="app-initial-logo"></div>
-          <div>
-            <div class="app-initial-title">BharatSeva</div>
-            <div style="font-size: 10px; color: #94a3b8;">Loading Portal & Live Data...</div>
+      <!-- Instant First Paint Shell (Replaced seamlessly once React hydrates) -->
+      <div class="app-shell">
+        <header class="app-topbar">
+          <div class="app-topbar-inner">
+            <div class="app-brand">
+              <div class="app-brand-badge">भा</div>
+              <div>
+                <div class="app-brand-name">BharatSeva</div>
+                <div class="app-brand-sub">Government Jobs & Citizen Services Portal</div>
+              </div>
+            </div>
+            <div class="app-nav-pills">
+              <span class="app-pill">Latest Jobs</span>
+              <span class="app-pill">Admit Card</span>
+              <span class="app-pill">Results</span>
+              <span class="app-pill">RTPS Services</span>
+              <span class="app-pill">Admissions</span>
+            </div>
           </div>
-        </div>
-        <div class="app-initial-body">
-          <div class="app-initial-hero"></div>
-          <div class="app-initial-grid">
-            <div class="app-initial-card"></div>
-            <div class="app-initial-card"></div>
-            <div class="app-initial-card"></div>
+        </header>
+
+        <main class="app-container">
+          <!-- Hero Search Box -->
+          <div class="app-hero-box">
+            <h1 class="app-hero-title">Unified Citizen Services, Jobs & Exam Portal</h1>
+            <p class="app-hero-sub">Verified Government Notifications, Direct RTPS Links, Admit Cards & Results for Bihar and India.</p>
+            <div class="app-search-mock">
+              🔍 Search 500+ Sarkari Jobs, Admit Cards, RTPS Services, Scholarships...
+            </div>
           </div>
-        </div>
+
+          <!-- Trending 4-Box Sarkari Grid -->
+          <div class="app-grid-boxes">
+            <div class="app-flash-box">
+              <span class="app-flash-tag app-flash-tag-red">HOT</span>
+              <span class="app-flash-text">BPSC 71st CCE 2026 Online Form</span>
+            </div>
+            <div class="app-flash-box">
+              <span class="app-flash-tag app-flash-tag-green">ADMIT CARD</span>
+              <span class="app-flash-text">Bihar Police Constable Admit Card</span>
+            </div>
+            <div class="app-flash-box">
+              <span class="app-flash-tag app-flash-tag-blue">RESULT</span>
+              <span class="app-flash-text">BPSC 70th CCE Final Result & Cutoff</span>
+            </div>
+            <div class="app-flash-box">
+              <span class="app-flash-tag app-flash-tag-amber">RTPS</span>
+              <span class="app-flash-text">Caste / Income / Domicile Certificate</span>
+            </div>
+          </div>
+
+          <!-- 3-Column Sarkari Quick Section -->
+          <div class="app-tri-cols">
+            <div class="app-col-card">
+              <div class="app-col-header app-col-header-red">
+                <span>🔥 Latest Jobs</span>
+                <span>View All ›</span>
+              </div>
+              <div class="app-col-list">
+                <div class="app-col-item">BPSC 71st Combined Competitive Exam 2026</div>
+                <div class="app-col-item">SSC CGL 2026 Tier-1 Online Application</div>
+                <div class="app-col-item">Bihar Police Daroga (BPSSC) 1,980 Posts</div>
+              </div>
+            </div>
+
+            <div class="app-col-card">
+              <div class="app-col-header app-col-header-green">
+                <span>🎟️ Admit Card</span>
+                <span>Download ›</span>
+              </div>
+              <div class="app-col-list">
+                <div class="app-col-item">Bihar Police Constable (CSBC) E-Admit Card</div>
+                <div class="app-col-item">SSC CGL Tier-1 CBT Hall Ticket 2026</div>
+                <div class="app-col-item">BPSC Assistant Professor Admit Card</div>
+              </div>
+            </div>
+
+            <div class="app-col-card">
+              <div class="app-col-header app-col-header-blue">
+                <span>🏆 Results & Answer Keys</span>
+                <span>Check Score ›</span>
+              </div>
+              <div class="app-col-list">
+                <div class="app-col-item">BPSC 70th CCE Final Merit List & Cutoff</div>
+                <div class="app-col-item">Bihar Police Constable Answer Key 2026</div>
+                <div class="app-col-item">BSSC Inter Level Screening Result</div>
+              </div>
+            </div>
+          </div>
+        </main>
       </div>
     </div>
     <script type="module" src="/src/main.tsx"></script>

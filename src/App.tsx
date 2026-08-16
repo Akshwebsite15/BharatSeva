@@ -47,9 +47,7 @@ const GovtAgeEligibilityCalculatorModal = lazy(() => import('./components/GovtAg
 const DailyStudyPlannerModal = lazy(() => import('./components/DailyStudyPlannerModal').then(m => ({ default: m.DailyStudyPlannerModal })));
 const CitizenPublicToolsHubModal = lazy(() => import('./components/CitizenPublicToolsHubModal').then(m => ({ default: m.CitizenPublicToolsHubModal })));
 
-import { initialCoursesData } from './data/coursesData';
-import { initialAdmissionsData } from './data/admissionsData';
-import { SEOPageMeta, AdmissionItem } from './types';
+import { SEOPageMeta } from './types';
 
 import {
   JurisdictionState,
@@ -71,7 +69,6 @@ import {
   initialServicesData,
   initialScholarshipsData,
   initialSchemesData,
-  initialJobsData,
   initialExamsData,
   initialDeadlinesData,
   initialSavedItems,
@@ -79,10 +76,7 @@ import {
 } from './data/portalData';
 
 import { initialCurrentAffairsArticles } from './data/currentAffairsData';
-import { initialAdmitCardsData, AdmitCardItem } from './data/admitCardsData';
-import { initialCollegesData, initialUniversitiesData } from './data/collegesUniversitiesData';
 import { CurrentAffairsArticle } from './types';
-import { examHubDataList } from './data/examHubData';
 import {
   initialCMSJobs,
   initialCMSResults,
@@ -94,6 +88,9 @@ import {
 
 import { CheckCircle2, AlertCircle } from 'lucide-react';
 
+const LIVE_CACHE_KEY = 'bharatseva_live_cache_v2';
+const LIVE_CACHE_TIME_KEY = 'bharatseva_live_cache_time_v2';
+
 export default function App() {
   // Navigation & Jurisdiction
   const [activeTab, setActiveTab] = useState<string>('home');
@@ -102,7 +99,18 @@ export default function App() {
 
   // Admin CMS Portal State
   const [adminCmsOpen, setAdminCmsOpen] = useState(false);
-  const [cmsJobs, setCmsJobs] = useState<CMSJobItem[]>(initialCMSJobs);
+  const [cmsJobs, setCmsJobs] = useState<CMSJobItem[]>(() => {
+    try {
+      const cached = localStorage.getItem(LIVE_CACHE_KEY);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed.jobs && parsed.jobs.length > 0) {
+          return parsed.jobs;
+        }
+      }
+    } catch {}
+    return initialCMSJobs;
+  });
   const [cmsResults, setCmsResults] = useState<CMSResultItem[]>(initialCMSResults);
   const [cmsAdmitCards, setCmsAdmitCards] = useState<CMSAdmitCardItem[]>(initialCMSAdmitCards);
   const [cmsAnswerKeys, setCmsAnswerKeys] = useState<CMSAnswerKeyItem[]>(initialCMSAnswerKeys);
@@ -126,14 +134,16 @@ export default function App() {
   const [currentAffairsArticles, setCurrentAffairsArticles] = useState<CurrentAffairsArticle[]>(initialCurrentAffairsArticles);
   const [exams] = useState(initialExamsData);
   const [deadlines] = useState(initialDeadlinesData);
-  const [colleges] = useState<College[]>(initialCollegesData);
-  const [universities] = useState<University[]>(initialUniversitiesData);
-  const [courses] = useState(initialCoursesData);
-  const [admissions] = useState<AdmissionItem[]>(initialAdmissionsData);
 
   // Live Updates Sync State
   const [isSyncingLive, setIsSyncingLive] = useState(false);
-  const [lastSyncedTime, setLastSyncedTime] = useState<string | null>(null);
+  const [lastSyncedTime, setLastSyncedTime] = useState<string | null>(() => {
+    try {
+      return localStorage.getItem(LIVE_CACHE_TIME_KEY) || null;
+    } catch {
+      return null;
+    }
+  });
 
   // User Saved Items & Application Trackers
   const [savedItems, setSavedItems] = useState<SavedItem[]>(initialSavedItems);
@@ -502,6 +512,12 @@ export default function App() {
 
       const timeString = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
       setLastSyncedTime(timeString);
+      try {
+        localStorage.setItem(LIVE_CACHE_TIME_KEY, timeString);
+        if (data.jobs && data.jobs.length > 0) {
+          localStorage.setItem(LIVE_CACHE_KEY, JSON.stringify({ jobs: data.jobs, admitCards: data.admitCards, timestamp: Date.now() }));
+        }
+      } catch {}
       showToast(`⚡ Live Sync Complete! Today's fresh updates loaded (${timeString}).`);
     } catch (err) {
       console.error('Live fetch error:', err);
@@ -582,8 +598,6 @@ export default function App() {
               onGlobalSearch={handleGlobalSearch}
               jobs={publishedJobs}
               currentAffairsArticles={currentAffairsArticles}
-              colleges={colleges}
-              universities={universities}
               onSelectCollege={setSelectedCollegeForPage}
               onSelectUniversity={setSelectedUniversityForPage}
               onViewJob={setDetailJob}
@@ -602,30 +616,24 @@ export default function App() {
 
           {activeTab === 'admissions' && (
             <AdmissionDirectory
-              admissions={admissions}
-              colleges={colleges}
               onSelectCollege={setSelectedCollegeForPage}
             />
           )}
 
           {activeTab === 'courses' && (
             <CourseDirectory
-              courses={courses}
-              colleges={colleges}
               onSelectCollege={setSelectedCollegeForPage}
             />
           )}
 
           {activeTab === 'colleges' && (
             <CollegeDirectory
-              colleges={colleges}
               onSelectCollege={setSelectedCollegeForPage}
             />
           )}
 
           {activeTab === 'universities' && (
             <UniversityDirectory
-              universities={universities}
               onSelectUniversity={setSelectedUniversityForPage}
             />
           )}
@@ -788,12 +796,7 @@ export default function App() {
         {/* Exam Lifecycle Hub Permanent Page Modal */}
         {activeExamHubTitle && (
           <ExamLifecycleHub
-            examHub={
-              examHubDataList.find(
-                (h) => h.title.toLowerCase().includes(activeExamHubTitle.toLowerCase()) ||
-                       activeExamHubTitle.toLowerCase().includes(h.title.toLowerCase())
-              ) || examHubDataList[0]
-            }
+            examHubTitle={activeExamHubTitle}
             onClose={() => setActiveExamHubTitle(null)}
             onSaveExam={(title) => handleSaveItem(title, 'Exam')}
           />
@@ -843,17 +846,13 @@ export default function App() {
           <UnifiedSearchModal
             isOpen={unifiedSearchOpen}
             onClose={() => setUnifiedSearchOpen(false)}
-            colleges={colleges}
-            universities={universities}
-            courses={courses}
-            admissions={admissions}
             exams={exams}
             onSelectCollege={(c) => setSelectedCollegeForPage(c)}
             onSelectUniversity={(u) => setSelectedUniversityForPage(u)}
-            onSelectAdmission={(a) => {
+            onSelectAdmission={() => {
               changeTab('admissions');
             }}
-            onSelectCourse={(cr) => {
+            onSelectCourse={() => {
               changeTab('courses');
             }}
             onSelectExam={(ex) => {

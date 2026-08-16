@@ -17,17 +17,19 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 import { AdmissionItem, College } from '../types';
+import { initialAdmissionsData } from '../data/admissionsData';
+import { initialCollegesData } from '../data/collegesUniversitiesData';
 import { AdmissionDetailPage } from './AdmissionDetailPage';
 
 interface AdmissionDirectoryProps {
-  admissions: AdmissionItem[];
+  admissions?: AdmissionItem[];
   colleges?: College[];
   onSelectCollege?: (college: College) => void;
 }
 
 export const AdmissionDirectory: React.FC<AdmissionDirectoryProps> = ({
-  admissions,
-  colleges = [],
+  admissions = initialAdmissionsData,
+  colleges = initialCollegesData,
   onSelectCollege,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');

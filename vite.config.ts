@@ -20,16 +20,35 @@ export default defineConfig(() => {
         output: {
           manualChunks(id) {
             if (id.includes('node_modules')) {
-              if (id.includes('react') || id.includes('react-dom')) {
-                return 'vendor-react';
-              }
-              if (id.includes('lucide-react')) {
+              if (id.includes('/lucide-react/')) {
                 return 'vendor-icons';
               }
-              if (id.includes('motion')) {
+              if (id.includes('/motion/')) {
                 return 'vendor-motion';
               }
+              if (
+                id.includes('/react/') ||
+                id.includes('/react-dom/') ||
+                id.includes('/scheduler/')
+              ) {
+                return 'vendor-react';
+              }
               return 'vendor-libs';
+            }
+            if (id.includes('src/data/coursesData')) {
+              return 'data-courses';
+            }
+            if (id.includes('src/data/admissionsData')) {
+              return 'data-admissions';
+            }
+            if (id.includes('src/data/collegesUniversitiesData')) {
+              return 'data-colleges-universities';
+            }
+            if (id.includes('src/data/examHubData')) {
+              return 'data-exam-hub';
+            }
+            if (id.includes('src/data/cmsInitialData')) {
+              return 'data-cms-initial';
             }
           },
         },

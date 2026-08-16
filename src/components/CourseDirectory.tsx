@@ -18,18 +18,20 @@ import {
   Check,
 } from 'lucide-react';
 import { CourseDirectoryItem, College } from '../types';
+import { initialCoursesData } from '../data/coursesData';
+import { initialCollegesData } from '../data/collegesUniversitiesData';
 import { CourseDetailPage } from './CourseDetailPage';
 import { CollegeCourseDetailPage } from './CollegeCourseDetailPage';
 
 interface CourseDirectoryProps {
-  courses: CourseDirectoryItem[];
-  colleges: College[];
+  courses?: CourseDirectoryItem[];
+  colleges?: College[];
   onSelectCollege?: (college: College) => void;
 }
 
 export const CourseDirectory: React.FC<CourseDirectoryProps> = ({
-  courses,
-  colleges,
+  courses = initialCoursesData,
+  colleges = initialCollegesData,
   onSelectCollege,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');

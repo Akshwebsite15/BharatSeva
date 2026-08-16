@@ -93,8 +93,19 @@ Guidelines for your responses:
   }
 });
 
+// In-memory cache for live updates (10-minute TTL to ensure fast responses and protect AI quota)
+let liveUpdatesCache: { timestamp: number; data: any } | null = null;
+const LIVE_CACHE_TTL = 10 * 60 * 1000;
+
 // Dynamic Live Updates API (Jobs, Admit Cards, Results, Today's Current Affairs)
-app.post("/api/live-updates", async (_req, res) => {
+const handleLiveUpdatesRoute = async (_req: express.Request, res: express.Response) => {
+  res.setHeader("Cache-Control", "public, max-age=300, stale-while-revalidate=600");
+
+  const now = Date.now();
+  if (liveUpdatesCache && (now - liveUpdatesCache.timestamp < LIVE_CACHE_TTL)) {
+    return res.json(liveUpdatesCache.data);
+  }
+
   try {
     const todayStr = new Date().toISOString().split("T")[0];
     const ai = getGenAI();
@@ -290,14 +301,21 @@ Return ONLY a valid JSON object matching this schema:
     const text = response.text || "";
     const parsed = JSON.parse(text);
 
-    res.json({
+    const payload = {
       todayDate: todayStr,
       source: "gemini_live",
       jobs: parsed.jobs || fallbackData.jobs,
       admitCards: parsed.admitCards || fallbackData.admitCards,
       results: parsed.results || fallbackData.results,
       currentAffairs: parsed.currentAffairs || fallbackData.currentAffairs,
-    });
+    };
+
+    liveUpdatesCache = {
+      timestamp: Date.now(),
+      data: payload,
+    };
+
+    res.json(payload);
   } catch (err) {
     console.error("Error in /api/live-updates:", err);
     res.json({
@@ -309,7 +327,10 @@ Return ONLY a valid JSON object matching this schema:
       currentAffairs: [],
     });
   }
-});
+};
+
+app.post("/api/live-updates", handleLiveUpdatesRoute);
+app.get("/api/live-updates", handleLiveUpdatesRoute);
 
 async function startServer() {
   if (process.env.NODE_ENV !== "production") {
@@ -320,7 +341,19 @@ async function startServer() {
     app.use(vite.middlewares);
   } else {
     const distPath = path.join(process.cwd(), "dist");
-    app.use(express.static(distPath));
+    app.use(
+      express.static(distPath, {
+        maxAge: "1y",
+        immutable: true,
+        setHeaders: (res, filePath) => {
+          if (filePath.endsWith(".html")) {
+            res.setHeader("Cache-Control", "public, max-age=0, must-revalidate");
+          } else {
+            res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+          }
+        },
+      })
+    );
     app.get("*", (_req, res) => {
       res.sendFile(path.join(distPath, "index.html"));
     });

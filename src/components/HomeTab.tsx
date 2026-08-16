@@ -48,7 +48,39 @@ import {
   initialDeadlinesData,
 } from '../data/portalData';
 import { initialCurrentAffairsArticles } from '../data/currentAffairsData';
-import { initialCollegesData, initialUniversitiesData } from '../data/collegesUniversitiesData';
+
+const FEATURED_TOP_COLLEGES = [
+  {
+    id: 'iit-patna',
+    name: 'IIT Patna - Indian Institute of Technology',
+    type: 'Govt / Institute of National Importance',
+    nirfRank: 41,
+    city: 'Patna',
+    state: 'Bihar',
+    avgAnnualFeeInr: 220000,
+    placement: { highestPackageLpa: 82.05 },
+  },
+  {
+    id: 'aiims-patna',
+    name: 'AIIMS Patna - All India Institute of Medical Sciences',
+    type: 'Govt Medical Autonomous Institute',
+    nirfRank: 26,
+    city: 'Patna',
+    state: 'Bihar',
+    avgAnnualFeeInr: 5856,
+    placement: { highestPackageLpa: 28.0 },
+  },
+  {
+    id: 'nit-patna',
+    name: 'NIT Patna - National Institute of Technology',
+    type: 'Govt Autonomous Central Institute',
+    nirfRank: 55,
+    city: 'Patna',
+    state: 'Bihar',
+    avgAnnualFeeInr: 165000,
+    placement: { highestPackageLpa: 52.0 },
+  },
+];
 
 interface HomeTabProps {
   setActiveTab: (tab: string) => void;
@@ -97,8 +129,6 @@ export const HomeTab: React.FC<HomeTabProps> = ({
 }) => {
   const jobsList = jobs || initialJobsData;
   const articlesList = currentAffairsArticles || initialCurrentAffairsArticles;
-  const collegesList = colleges || initialCollegesData;
-  const universitiesList = universities || initialUniversitiesData;
   const [searchInput, setSearchInput] = useState('');
 
   // Primary CTA Job Finder Quick State
@@ -484,7 +514,7 @@ export const HomeTab: React.FC<HomeTabProps> = ({
                 className="px-4 py-2 bg-teal-500 hover:bg-teal-400 text-slate-950 font-black text-xs rounded-xl shadow-md transition cursor-pointer flex items-center gap-1.5"
               >
                 <GraduationCap className="w-4 h-4" />
-                <span>Colleges ({collegesList.length})</span>
+                <span>Colleges Directory</span>
               </button>
 
               <button
@@ -492,18 +522,18 @@ export const HomeTab: React.FC<HomeTabProps> = ({
                 className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs rounded-xl border border-slate-700 transition cursor-pointer flex items-center gap-1.5"
               >
                 <Building2 className="w-4 h-4 text-indigo-400" />
-                <span>Universities ({universitiesList.length})</span>
+                <span>Universities Directory</span>
               </button>
             </div>
           </div>
 
           {/* Featured Top Colleges Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {collegesList.slice(0, 3).map((college) => (
+            {(colleges && colleges.length > 0 ? colleges.slice(0, 3) : FEATURED_TOP_COLLEGES).map((college: any) => (
               <div
                 key={college.id}
                 onClick={() => {
-                  if (onSelectCollege) onSelectCollege(college);
+                  if (onSelectCollege) onSelectCollege(college as College);
                   else setActiveTab('colleges');
                 }}
                 className="bg-slate-900/90 border border-slate-800 hover:border-teal-500/50 p-4 rounded-2xl shadow-md transition cursor-pointer group flex flex-col justify-between space-y-3"

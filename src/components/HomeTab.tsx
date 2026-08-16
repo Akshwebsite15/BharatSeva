@@ -37,6 +37,7 @@ import {
 import { JurisdictionState, GovJob, CurrentAffairsArticle, College, University } from '../types';
 import { LiveSyncBanner } from './LiveSyncBanner';
 import { StudentPowerHubSection } from './StudentPowerHubSection';
+import { PublicServicesTrendingSection } from './PublicServicesTrendingSection';
 import { calculateDaysRemaining, getDeadlineBadgeInfo } from '../utils/deadlineUtils';
 import { formatFriendlyDate } from '../utils/dateUtils';
 import {
@@ -67,6 +68,7 @@ interface HomeTabProps {
   onOpenAgeCalculator?: () => void;
   onOpenPhotoTool?: () => void;
   onOpenStudyPlanner?: () => void;
+  onOpenPublicToolModal?: (toolId?: string) => void;
   coins?: number;
   streakDays?: number;
 }
@@ -89,6 +91,7 @@ export const HomeTab: React.FC<HomeTabProps> = ({
   onOpenAgeCalculator,
   onOpenPhotoTool,
   onOpenStudyPlanner,
+  onOpenPublicToolModal,
   coins = 100,
   streakDays = 3,
 }) => {
@@ -421,6 +424,13 @@ export const HomeTab: React.FC<HomeTabProps> = ({
           onOpenStudyPlanner={onOpenStudyPlanner || (() => {})}
           coins={coins}
           streakDays={streakDays}
+        />
+      </div>
+
+      {/* 🇮🇳 TRENDING CITIZEN SERVICES & PUBLIC STATUS UTILITIES HUB */}
+      <div className="max-w-7xl mx-auto px-2 sm:px-4">
+        <PublicServicesTrendingSection
+          onOpenPublicToolModal={onOpenPublicToolModal || (() => {})}
         />
       </div>
 

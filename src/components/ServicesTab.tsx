@@ -13,12 +13,14 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 import { CitizenService, JurisdictionState } from '../types';
+import { PublicServicesTrendingSection } from './PublicServicesTrendingSection';
 
 interface ServicesTabProps {
   services: CitizenService[];
   selectedJurisdiction: JurisdictionState;
   onViewService: (service: CitizenService) => void;
   onSaveService: (title: string, type: 'Service') => void;
+  onOpenPublicToolModal?: (toolId?: string) => void;
 }
 
 export const ServicesTab: React.FC<ServicesTabProps> = ({
@@ -26,6 +28,7 @@ export const ServicesTab: React.FC<ServicesTabProps> = ({
   selectedJurisdiction,
   onViewService,
   onSaveService,
+  onOpenPublicToolModal,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<string>('All');
@@ -55,13 +58,18 @@ export const ServicesTab: React.FC<ServicesTabProps> = ({
 
   return (
     <div className="space-y-8">
+      {/* 🇮🇳 TRENDING CITIZEN SERVICES & PUBLIC STATUS UTILITIES HUB */}
+      <PublicServicesTrendingSection
+        onOpenPublicToolModal={onOpenPublicToolModal || (() => {})}
+      />
+
       {/* Header */}
       <div>
         <span className="text-teal-600 font-extrabold uppercase tracking-wider text-xs">
           OFFICIAL DIRECTORY
         </span>
         <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">
-          Government Services & RTPS Certificates
+          State & Central Government Services (RTPS / Certificates)
         </h1>
         <p className="text-slate-600 text-xs sm:text-sm mt-1">
           Explore step-by-step guides, required documents, fees, processing SLAs, and direct links to RTPS Bihar & National portals.

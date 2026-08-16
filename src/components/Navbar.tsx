@@ -48,6 +48,7 @@ interface NavbarProps {
   onOpenAgeCalculator?: () => void;
   onOpenPhotoTool?: () => void;
   onOpenStudyPlanner?: () => void;
+  onOpenPublicToolModal?: (toolId?: string) => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -68,6 +69,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenAgeCalculator,
   onOpenPhotoTool,
   onOpenStudyPlanner,
+  onOpenPublicToolModal,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -191,6 +193,19 @@ export const Navbar: React.FC<NavbarProps> = ({
             >
               <Search className="w-4 h-4 text-indigo-600 shrink-0" />
               <span className="hidden md:inline">Search...</span>
+            </button>
+          )}
+
+          {/* Citizen Public Services Quick Trigger */}
+          {onOpenPublicToolModal && (
+            <button
+              onClick={() => onOpenPublicToolModal('ration-card')}
+              className="inline-flex items-center space-x-1.5 bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600 text-white px-3 py-2.5 rounded-xl font-black text-xs transition cursor-pointer shadow-xs border border-emerald-400/40"
+              title="Daily Public Utilities (Ration, PM Kisan, PF, Bhulekh)"
+            >
+              <FileCheck className="w-4 h-4 text-emerald-200 shrink-0" />
+              <span className="hidden sm:inline">Citizen Tools</span>
+              <span className="text-[10px] bg-white/20 px-1 rounded font-black">8 Govt Portals</span>
             </button>
           )}
 

@@ -46,6 +46,7 @@ interface MobileBottomNavProps {
   onOpenAgeCalculator?: () => void;
   onOpenPhotoTool?: () => void;
   onOpenStudyPlanner?: () => void;
+  onOpenPublicToolModal?: (toolId?: string) => void;
 }
 
 export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
@@ -65,6 +66,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
   onOpenAgeCalculator,
   onOpenPhotoTool,
   onOpenStudyPlanner,
+  onOpenPublicToolModal,
 }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -231,6 +233,77 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                     <div>
                       <span className="block text-[11px] leading-tight">Study Planner</span>
                       <span className="text-[9px] text-purple-700 font-bold">Pomodoro 25m</span>
+                    </div>
+                  </button>
+                </div>
+              </div>
+
+              {/* Citizen Public Services & Status Utilities Section */}
+              <div className="bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-blue-500/10 p-3 rounded-2xl border border-emerald-200/60 space-y-2">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-[11px] font-black uppercase tracking-wider text-emerald-950 flex items-center gap-1">
+                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                    Citizen Public Utilities (नागरिक सेवा)
+                  </h4>
+                  <span className="text-[10px] bg-emerald-200 text-emerald-950 px-1.5 py-0.2 rounded-full font-extrabold">
+                    8 Portals
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => {
+                      setDrawerOpen(false);
+                      if (onOpenPublicToolModal) onOpenPublicToolModal('ration-card');
+                    }}
+                    className="p-2.5 bg-white border border-emerald-200 rounded-xl text-left font-black text-xs text-emerald-950 flex items-center gap-2 shadow-2xs cursor-pointer active:scale-95"
+                  >
+                    <span className="text-base">🌾</span>
+                    <div>
+                      <span className="block text-[11px] leading-tight">Ration Card</span>
+                      <span className="text-[9px] text-emerald-700 font-bold">NFSA & Free Grain</span>
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setDrawerOpen(false);
+                      if (onOpenPublicToolModal) onOpenPublicToolModal('pm-kisan');
+                    }}
+                    className="p-2.5 bg-white border border-amber-200 rounded-xl text-left font-black text-xs text-amber-950 flex items-center gap-2 shadow-2xs cursor-pointer active:scale-95"
+                  >
+                    <span className="text-base">💰</span>
+                    <div>
+                      <span className="block text-[11px] leading-tight">PM Kisan ₹2000</span>
+                      <span className="text-[9px] text-amber-700 font-bold">Kist & eKYC</span>
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setDrawerOpen(false);
+                      if (onOpenPublicToolModal) onOpenPublicToolModal('epfo-passbook');
+                    }}
+                    className="p-2.5 bg-white border border-blue-200 rounded-xl text-left font-black text-xs text-blue-950 flex items-center gap-2 shadow-2xs cursor-pointer active:scale-95"
+                  >
+                    <span className="text-base">🏦</span>
+                    <div>
+                      <span className="block text-[11px] leading-tight">EPFO PF Passbook</span>
+                      <span className="text-[9px] text-blue-700 font-bold">Missed Call / SMS</span>
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setDrawerOpen(false);
+                      if (onOpenPublicToolModal) onOpenPublicToolModal('bhulekh-land');
+                    }}
+                    className="p-2.5 bg-white border border-teal-200 rounded-xl text-left font-black text-xs text-teal-950 flex items-center gap-2 shadow-2xs cursor-pointer active:scale-95"
+                  >
+                    <span className="text-base">🗺️</span>
+                    <div>
+                      <span className="block text-[11px] leading-tight">Bhulekh & Land</span>
+                      <span className="text-[9px] text-teal-700 font-bold">Jamabandi / Dakhil</span>
                     </div>
                   </button>
                 </div>

@@ -45,6 +45,7 @@ const DailySpeedQuizModal = lazy(() => import('./components/DailySpeedQuizModal'
 const GovtPhotoToolModal = lazy(() => import('./components/GovtPhotoToolModal').then(m => ({ default: m.GovtPhotoToolModal })));
 const GovtAgeEligibilityCalculatorModal = lazy(() => import('./components/GovtAgeEligibilityCalculatorModal').then(m => ({ default: m.GovtAgeEligibilityCalculatorModal })));
 const DailyStudyPlannerModal = lazy(() => import('./components/DailyStudyPlannerModal').then(m => ({ default: m.DailyStudyPlannerModal })));
+const CitizenPublicToolsHubModal = lazy(() => import('./components/CitizenPublicToolsHubModal').then(m => ({ default: m.CitizenPublicToolsHubModal })));
 
 import { initialCoursesData } from './data/coursesData';
 import { initialAdmissionsData } from './data/admissionsData';
@@ -156,6 +157,15 @@ export default function App() {
   const [photoToolModalOpen, setPhotoToolModalOpen] = useState(false);
   const [ageCalcModalOpen, setAgeCalcModalOpen] = useState(false);
   const [studyPlannerModalOpen, setStudyPlannerModalOpen] = useState(false);
+  const [publicToolModalOpen, setPublicToolModalOpen] = useState(false);
+  const [selectedPublicToolId, setSelectedPublicToolId] = useState<string>('ration-card');
+
+  const handleOpenPublicToolModal = (toolId?: string) => {
+    if (toolId) {
+      setSelectedPublicToolId(toolId);
+    }
+    setPublicToolModalOpen(true);
+  };
 
   // Dynamic SEO Page Metadata Calculation
   const currentSeoMeta: SEOPageMeta = React.useMemo(() => {
@@ -522,6 +532,7 @@ export default function App() {
         onOpenAgeCalculator={() => setAgeCalcModalOpen(true)}
         onOpenPhotoTool={() => setPhotoToolModalOpen(true)}
         onOpenStudyPlanner={() => setStudyPlannerModalOpen(true)}
+        onOpenPublicToolModal={handleOpenPublicToolModal}
       />
 
       {/* Admin CMS Modal Overlay */}
@@ -583,6 +594,7 @@ export default function App() {
               onOpenAgeCalculator={() => setAgeCalcModalOpen(true)}
               onOpenPhotoTool={() => setPhotoToolModalOpen(true)}
               onOpenStudyPlanner={() => setStudyPlannerModalOpen(true)}
+              onOpenPublicToolModal={handleOpenPublicToolModal}
               coins={coins}
               streakDays={streakDays}
             />
@@ -646,6 +658,7 @@ export default function App() {
               selectedJurisdiction={selectedJurisdiction}
               onViewService={handleOpenDetailService}
               onSaveService={(title) => handleSaveItem(title, 'Service')}
+              onOpenPublicToolModal={handleOpenPublicToolModal}
             />
           )}
 
@@ -887,6 +900,16 @@ export default function App() {
             showToast={showToast}
           />
         )}
+
+        {/* Citizen Public Services & Status Utilities Interactive Hub Modal */}
+        {publicToolModalOpen && (
+          <CitizenPublicToolsHubModal
+            isOpen={publicToolModalOpen}
+            onClose={() => setPublicToolModalOpen(false)}
+            initialToolId={selectedPublicToolId}
+            showToast={showToast}
+          />
+        )}
       </Suspense>
 
       {/* SEO Engine System Injection */}
@@ -910,6 +933,7 @@ export default function App() {
         onOpenAgeCalculator={() => setAgeCalcModalOpen(true)}
         onOpenPhotoTool={() => setPhotoToolModalOpen(true)}
         onOpenStudyPlanner={() => setStudyPlannerModalOpen(true)}
+        onOpenPublicToolModal={handleOpenPublicToolModal}
       />
 
       {/* Footer */}

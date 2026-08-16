@@ -1,11 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Zap,
   Calculator,
   Scissors,
   Clock,
-  Send,
-  MessageCircle,
   Sparkles,
   Trophy,
   Flame,
@@ -35,17 +33,6 @@ export const StudentPowerHubSection: React.FC<StudentPowerHubSectionProps> = ({
   coins = 100,
   streakDays = 3,
 }) => {
-  const [copiedLink, setCopiedLink] = useState(false);
-
-  const handleShareWhatsAppCommunity = () => {
-    const text = `🔥 Join BharatSeva Official Sarkari Jobs, Admit Card & Daily GK Alerts WhatsApp Group free: https://bharatseva.in`;
-    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
-  };
-
-  const handleJoinTelegram = () => {
-    window.open('https://t.me/bharatsevaportal', '_blank');
-  };
-
   return (
     <section className="space-y-4 my-8">
       {/* Section Header */}
@@ -214,55 +201,6 @@ export const StudentPowerHubSection: React.FC<StudentPowerHubSectionProps> = ({
               <ArrowRight className="w-4 h-4" />
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Community Alert & Broadcast Banners */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-        {/* WhatsApp Channel */}
-        <div
-          onClick={handleShareWhatsAppCommunity}
-          className="bg-emerald-950 text-white p-4 rounded-2xl border border-emerald-800 flex items-center justify-between cursor-pointer hover:bg-emerald-900 transition shadow-2xs group"
-        >
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0">
-              <MessageCircle className="w-5 h-5 fill-white" />
-            </div>
-            <div>
-              <h4 className="text-xs sm:text-sm font-black text-white group-hover:text-emerald-300 transition">
-                Join Official WhatsApp Alert Channel
-              </h4>
-              <p className="text-[11px] text-emerald-300 font-medium">
-                Instant flash updates on admit cards, answer keys & result declarations.
-              </p>
-            </div>
-          </div>
-          <span className="px-3 py-1.5 rounded-xl bg-emerald-600 text-white font-extrabold text-xs shrink-0 group-hover:scale-105 transition">
-            Join Group
-          </span>
-        </div>
-
-        {/* Telegram Channel */}
-        <div
-          onClick={handleJoinTelegram}
-          className="bg-blue-950 text-white p-4 rounded-2xl border border-blue-800 flex items-center justify-between cursor-pointer hover:bg-blue-900 transition shadow-2xs group"
-        >
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0">
-              <Send className="w-5 h-5 fill-white" />
-            </div>
-            <div>
-              <h4 className="text-xs sm:text-sm font-black text-white group-hover:text-blue-300 transition">
-                Join Telegram Sarkari PDF Channel
-              </h4>
-              <p className="text-[11px] text-blue-300 font-medium">
-                Free daily Current Affairs PDFs, PYQ Question Papers & syllabi.
-              </p>
-            </div>
-          </div>
-          <span className="px-3 py-1.5 rounded-xl bg-blue-600 text-white font-extrabold text-xs shrink-0 group-hover:scale-105 transition">
-            Join Telegram
-          </span>
         </div>
       </div>
     </section>

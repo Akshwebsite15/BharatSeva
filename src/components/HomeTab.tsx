@@ -290,12 +290,12 @@ export const HomeTab: React.FC<HomeTabProps> = ({
   const mostUrgentJob = dynamicClosingSoon[0];
 
   return (
-    <div className="space-y-12">
+    <div className="space-y-16 sm:space-y-20 lg:space-y-24">
       {/* 4. 🆕 TODAY'S UPDATES (Live Government Notification Ticker) */}
-      <div className="bg-gradient-to-r from-amber-500/10 via-teal-500/10 to-blue-500/10 border-y border-amber-500/20 py-2.5 px-4 sm:px-8">
+      <div className="bg-gradient-to-r from-amber-500/10 via-teal-500/10 to-blue-500/10 border border-amber-500/20 py-3.5 px-4 sm:px-8 rounded-2xl shadow-xs">
         <div className="max-w-7xl mx-auto flex items-center space-x-3 text-xs sm:text-sm font-medium text-slate-800 overflow-x-auto whitespace-nowrap scrollbar-none">
-          <span className="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-extrabold bg-amber-500 text-slate-900 shrink-0 uppercase tracking-wide shadow-2xs">
-            <Bell className="w-3 h-3 mr-1 animate-pulse" /> 🆕 TODAY'S UPDATES
+          <span className="inline-flex items-center px-3 py-1 rounded-lg text-xs font-black bg-amber-500 text-slate-900 shrink-0 uppercase tracking-wide shadow-2xs">
+            <Bell className="w-3.5 h-3.5 mr-1.5 animate-pulse" /> 🆕 TODAY'S UPDATES
           </span>
           <span className="text-slate-800 font-extrabold">
             • {mostUrgentJob ? `${mostUrgentJob.title}: Deadline ${mostUrgentJob.badgeText} (${mostUrgentJob.formattedDate})` : 'BPSC 71st CCE Notification: 1,245 Posts Application Active'}
@@ -316,34 +316,43 @@ export const HomeTab: React.FC<HomeTabProps> = ({
       </div>
 
       {/* 1. 🔎 FIND GOVERNMENT JOBS FOR ME (PRIMARY CTA HERO) */}
-      <section className="relative rounded-3xl bg-gradient-to-br from-slate-950 via-blue-950 to-teal-950 text-white py-10 sm:py-14 px-4 sm:px-8 overflow-hidden shadow-2xl border border-teal-500/30">
+      <section className="relative rounded-3xl bg-gradient-to-br from-slate-950 via-blue-950 to-teal-950 text-white py-12 sm:py-16 lg:py-20 px-6 sm:px-10 lg:px-14 overflow-hidden shadow-2xl border border-teal-500/30">
         <div className="absolute inset-0 opacity-15 bg-[radial-gradient(#38bdf8_1px,transparent_1px)] [background-size:20px_20px]"></div>
 
-        <div className="max-w-4xl mx-auto text-center relative z-10 space-y-6">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-black bg-teal-400 text-slate-950 uppercase tracking-wider shadow-md">
-            <Sparkles className="w-4 h-4 text-slate-950" />
-            <span>PRIMARY JOB MATCH ENGINE • {selectedJurisdiction} & ALL INDIA</span>
+        <div className="max-w-4xl mx-auto text-center relative z-10 space-y-8">
+          <div className="space-y-4">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-black bg-teal-400 text-slate-950 uppercase tracking-wider shadow-md">
+              <Sparkles className="w-4 h-4 text-slate-950" />
+              <span>PRIMARY JOB MATCH ENGINE • {selectedJurisdiction} & ALL INDIA</span>
+            </div>
+
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-tight text-white">
+              🔎 Find Government Jobs For Me
+            </h1>
+
+            <p className="text-sm sm:text-base text-slate-200 max-w-2xl mx-auto font-medium leading-relaxed">
+              Select your qualification, state, and category to instantly filter 1.2 Lakh+ active government vacancies with 100% accurate eligibility tagging.
+            </p>
           </div>
 
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-tight text-white">
-            🔎 Find Government Jobs For Me
-          </h1>
-
-          <p className="text-xs sm:text-base text-slate-300 max-w-2xl mx-auto font-medium leading-relaxed">
-            Select your qualification, state, and category to instantly filter 1.2 Lakh+ active government vacancies with 100% accurate eligibility tagging.
-          </p>
-
           {/* Quick Match Selectors Bar */}
-          <div className="bg-white/10 backdrop-blur-md p-4 sm:p-5 rounded-3xl border border-white/20 max-w-3xl mx-auto text-left space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="bg-slate-900/90 backdrop-blur-md p-6 sm:p-8 rounded-3xl border border-teal-500/30 max-w-3xl mx-auto text-left space-y-6 shadow-xl">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+              <span className="text-xs font-black uppercase tracking-wider text-teal-300 flex items-center gap-1.5">
+                <Sparkles className="w-4 h-4" /> 🎯 1-Click Eligibility Matching
+              </span>
+              <span className="text-[11px] text-slate-400 font-bold">100% Verified Vacancies</span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5">
               <div>
-                <label className="block text-[10px] font-black uppercase text-teal-300 mb-1">
+                <label className="block text-xs font-black uppercase text-teal-300 mb-2">
                   🎓 Qualification
                 </label>
                 <select
                   value={quickQual}
                   onChange={(e) => setQuickQual(e.target.value)}
-                  className="w-full bg-slate-900 border border-slate-700 text-white text-xs font-bold rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-teal-400 focus:outline-hidden"
+                  className="w-full bg-slate-950 border border-slate-700 text-white text-xs sm:text-sm font-bold rounded-xl px-3.5 py-3 focus:ring-2 focus:ring-teal-400 focus:outline-hidden"
                 >
                   <option value="10th">10th Pass</option>
                   <option value="12th">12th Pass</option>
@@ -355,13 +364,13 @@ export const HomeTab: React.FC<HomeTabProps> = ({
               </div>
 
               <div>
-                <label className="block text-[10px] font-black uppercase text-teal-300 mb-1">
+                <label className="block text-xs font-black uppercase text-teal-300 mb-2">
                   📍 State Quota
                 </label>
                 <select
                   value={quickState}
                   onChange={(e) => setQuickState(e.target.value)}
-                  className="w-full bg-slate-900 border border-slate-700 text-white text-xs font-bold rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-teal-400 focus:outline-hidden"
+                  className="w-full bg-slate-950 border border-slate-700 text-white text-xs sm:text-sm font-bold rounded-xl px-3.5 py-3 focus:ring-2 focus:ring-teal-400 focus:outline-hidden"
                 >
                   <option value="Bihar">Bihar Domicile</option>
                   <option value="All India">All India (Central Jobs)</option>
@@ -371,13 +380,13 @@ export const HomeTab: React.FC<HomeTabProps> = ({
               </div>
 
               <div>
-                <label className="block text-[10px] font-black uppercase text-teal-300 mb-1">
+                <label className="block text-xs font-black uppercase text-teal-300 mb-2">
                   🏷️ Category Quota
                 </label>
                 <select
                   value={quickCategory}
                   onChange={(e) => setQuickCategory(e.target.value)}
-                  className="w-full bg-slate-900 border border-slate-700 text-white text-xs font-bold rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-teal-400 focus:outline-hidden"
+                  className="w-full bg-slate-950 border border-slate-700 text-white text-xs sm:text-sm font-bold rounded-xl px-3.5 py-3 focus:ring-2 focus:ring-teal-400 focus:outline-hidden"
                 >
                   <option value="UR">General / Unreserved</option>
                   <option value="EBC">EBC (Bihar)</option>
@@ -390,7 +399,7 @@ export const HomeTab: React.FC<HomeTabProps> = ({
 
             <button
               onClick={() => setActiveTab('jobs-for-you')}
-              className="w-full bg-gradient-to-r from-teal-400 to-emerald-400 hover:from-teal-300 hover:to-emerald-300 text-slate-950 font-black py-3.5 px-6 rounded-2xl text-sm transition shadow-lg flex items-center justify-center space-x-2 cursor-pointer transform hover:scale-[1.01]"
+              className="w-full bg-gradient-to-r from-teal-400 to-emerald-400 hover:from-teal-300 hover:to-emerald-300 text-slate-950 font-black py-4 px-6 rounded-2xl text-sm sm:text-base transition shadow-lg flex items-center justify-center space-x-2.5 cursor-pointer transform hover:scale-[1.01]"
             >
               <Briefcase className="w-5 h-5" />
               <span>Find My 100% Eligible Jobs Now</span>
@@ -398,49 +407,52 @@ export const HomeTab: React.FC<HomeTabProps> = ({
             </button>
           </div>
 
-          {/* Global Keyword Search Form */}
-          <form
-            onSubmit={handleSearchSubmit}
-            className="bg-white p-2.5 rounded-2xl shadow-xl max-w-2xl mx-auto flex flex-col sm:flex-row items-center border border-slate-200 gap-2 text-slate-800 mt-4"
-          >
-            <div className="flex items-center w-full px-3">
-              <Search className="w-5 h-5 text-slate-400 shrink-0" />
-              <input
-                type="text"
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-                placeholder="Or search by title: BPSC 71st, Bihar police, Caste Certificate..."
-                className="w-full px-3 py-2 text-slate-800 placeholder-slate-400 text-xs sm:text-sm focus:outline-hidden bg-transparent font-medium"
-              />
-            </div>
-            <button
-              type="submit"
-              className="w-full sm:w-auto bg-slate-900 hover:bg-slate-800 text-white font-extrabold px-5 py-2.5 rounded-xl transition shrink-0 cursor-pointer text-xs"
+          {/* Direct Keyword Search & Hot Queries */}
+          <div className="pt-6 sm:pt-8 border-t border-white/15 space-y-4 max-w-3xl mx-auto">
+            {/* Global Keyword Search Form */}
+            <form
+              onSubmit={handleSearchSubmit}
+              className="bg-white p-2 sm:p-2.5 rounded-2xl shadow-xl flex flex-col sm:flex-row items-center border border-slate-200 gap-2 text-slate-800"
             >
-              Search
-            </button>
-          </form>
-
-          {/* Popular Search Chips */}
-          <div className="pt-1 flex flex-wrap items-center justify-center gap-1.5 text-xs text-slate-300">
-            <span className="text-slate-400 font-bold flex items-center text-[11px]">
-              <TrendingUp className="w-3.5 h-3.5 mr-1 text-teal-400" /> Hot Searches:
-            </span>
-            {[
-              'BPSC 71st CCE',
-              'Bihar Police Constable',
-              'Caste Certificate',
-              'Post Matric Scholarship',
-              'SSC CGL 2026',
-            ].map((chip) => (
+              <div className="flex items-center w-full px-3 py-1">
+                <Search className="w-5 h-5 text-slate-400 shrink-0" />
+                <input
+                  type="text"
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
+                  placeholder="Or search by title: BPSC 71st, Bihar police, Caste Certificate..."
+                  className="w-full px-3 py-2 text-slate-800 placeholder-slate-400 text-xs sm:text-sm focus:outline-hidden bg-transparent font-medium"
+                />
+              </div>
               <button
-                key={chip}
-                onClick={() => handleChipClick(chip)}
-                className="bg-white/10 hover:bg-white/20 px-2.5 py-1 rounded-lg text-slate-200 border border-white/10 transition cursor-pointer font-bold text-[11px]"
+                type="submit"
+                className="w-full sm:w-auto bg-slate-900 hover:bg-slate-800 text-white font-extrabold px-6 py-3 rounded-xl transition shrink-0 cursor-pointer text-xs sm:text-sm"
               >
-                {chip}
+                Search
               </button>
-            ))}
+            </form>
+
+            {/* Popular Search Chips */}
+            <div className="pt-2 flex flex-wrap items-center justify-center gap-2 text-xs text-slate-300">
+              <span className="text-slate-300 font-bold flex items-center text-xs">
+                <TrendingUp className="w-4 h-4 mr-1 text-teal-400" /> Hot Searches:
+              </span>
+              {[
+                'BPSC 71st CCE',
+                'Bihar Police Constable',
+                'Caste Certificate',
+                'Post Matric Scholarship',
+                'SSC CGL 2026',
+              ].map((chip) => (
+                <button
+                  key={chip}
+                  onClick={() => handleChipClick(chip)}
+                  className="bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-xl text-slate-200 border border-white/15 transition cursor-pointer font-bold text-xs"
+                >
+                  {chip}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -476,26 +488,26 @@ export const HomeTab: React.FC<HomeTabProps> = ({
       )}
 
       {/* 🎓 HIGHER EDUCATION DIRECTORY (COLLEGES & UNIVERSITIES) */}
-      <section className="max-w-7xl mx-auto px-2 sm:px-4 space-y-4">
-        <div className="bg-gradient-to-r from-slate-900 via-teal-950 to-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 text-white space-y-6 shadow-xl relative overflow-hidden">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800/80 pb-4">
-            <div className="space-y-1">
-              <div className="inline-flex items-center space-x-2 bg-teal-500/10 border border-teal-500/30 px-3 py-1 rounded-full text-xs font-black text-teal-300">
+      <section className="max-w-7xl mx-auto px-2 sm:px-4 space-y-6">
+        <div className="bg-gradient-to-r from-slate-900 via-teal-950 to-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-10 text-white space-y-8 shadow-xl relative overflow-hidden">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 border-b border-slate-800/80 pb-6">
+            <div className="space-y-2">
+              <div className="inline-flex items-center space-x-2 bg-teal-500/10 border border-teal-500/30 px-3.5 py-1 rounded-full text-xs font-black text-teal-300">
                 <GraduationCap className="w-4 h-4 text-teal-400" />
                 <span>Higher Education Portal 2026</span>
               </div>
-              <h2 className="text-xl sm:text-2xl font-black text-white">
+              <h2 className="text-2xl sm:text-3xl font-black text-white">
                 Colleges & Universities Directory
               </h2>
-              <p className="text-xs text-slate-300">
+              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
                 Search government & private colleges, fees, cutoff ranks, entrance exams, and UGC universities.
               </p>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2.5">
               <button
                 onClick={() => setActiveTab('admissions')}
-                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-black text-xs rounded-xl shadow-md transition cursor-pointer flex items-center gap-1.5"
+                className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-black text-xs rounded-xl shadow-md transition cursor-pointer flex items-center gap-1.5"
               >
                 <Calendar className="w-4 h-4 text-amber-300" />
                 <span>Admissions ⭐</span>
@@ -503,7 +515,7 @@ export const HomeTab: React.FC<HomeTabProps> = ({
 
               <button
                 onClick={() => setActiveTab('courses')}
-                className="px-4 py-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs rounded-xl shadow-md transition cursor-pointer flex items-center gap-1.5"
+                className="px-4 py-2.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs rounded-xl shadow-md transition cursor-pointer flex items-center gap-1.5"
               >
                 <BookOpen className="w-4 h-4 text-amber-950" />
                 <span>Course Directory ⭐</span>
@@ -511,7 +523,7 @@ export const HomeTab: React.FC<HomeTabProps> = ({
 
               <button
                 onClick={() => setActiveTab('colleges')}
-                className="px-4 py-2 bg-teal-500 hover:bg-teal-400 text-slate-950 font-black text-xs rounded-xl shadow-md transition cursor-pointer flex items-center gap-1.5"
+                className="px-4 py-2.5 bg-teal-500 hover:bg-teal-400 text-slate-950 font-black text-xs rounded-xl shadow-md transition cursor-pointer flex items-center gap-1.5"
               >
                 <GraduationCap className="w-4 h-4" />
                 <span>Colleges Directory</span>
@@ -519,7 +531,7 @@ export const HomeTab: React.FC<HomeTabProps> = ({
 
               <button
                 onClick={() => setActiveTab('universities')}
-                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs rounded-xl border border-slate-700 transition cursor-pointer flex items-center gap-1.5"
+                className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs rounded-xl border border-slate-700 transition cursor-pointer flex items-center gap-1.5"
               >
                 <Building2 className="w-4 h-4 text-indigo-400" />
                 <span>Universities Directory</span>
@@ -528,7 +540,7 @@ export const HomeTab: React.FC<HomeTabProps> = ({
           </div>
 
           {/* Featured Top Colleges Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
             {(colleges && colleges.length > 0 ? colleges.slice(0, 3) : FEATURED_TOP_COLLEGES).map((college: any) => (
               <div
                 key={college.id}
@@ -536,32 +548,32 @@ export const HomeTab: React.FC<HomeTabProps> = ({
                   if (onSelectCollege) onSelectCollege(college as College);
                   else setActiveTab('colleges');
                 }}
-                className="bg-slate-900/90 border border-slate-800 hover:border-teal-500/50 p-4 rounded-2xl shadow-md transition cursor-pointer group flex flex-col justify-between space-y-3"
+                className="bg-slate-900/90 border border-slate-800 hover:border-teal-500/50 p-6 rounded-3xl shadow-md transition cursor-pointer group flex flex-col justify-between space-y-4"
               >
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="px-2 py-0.5 bg-teal-500/10 text-teal-300 border border-teal-500/30 text-[10px] font-black rounded uppercase">
+                    <span className="px-2.5 py-1 bg-teal-500/10 text-teal-300 border border-teal-500/30 text-[10px] font-black rounded uppercase">
                       {college.type}
                     </span>
-                    <span className="text-[10px] text-amber-300 font-extrabold">NIRF #{college.nirfRank}</span>
+                    <span className="text-[11px] text-amber-300 font-extrabold">NIRF #{college.nirfRank}</span>
                   </div>
 
-                  <h3 className="text-sm font-extrabold text-white group-hover:text-teal-300 transition-colors line-clamp-1">
+                  <h3 className="text-base font-extrabold text-white group-hover:text-teal-300 transition-colors line-clamp-1">
                     {college.name}
                   </h3>
 
-                  <p className="text-xs text-slate-400 flex items-center gap-1">
+                  <p className="text-xs text-slate-400 flex items-center gap-1.5">
                     <MapPin className="w-3.5 h-3.5 text-teal-400" />
                     {college.city}, {college.state}
                   </p>
 
-                  <div className="text-xs text-slate-300 bg-slate-950/60 p-2.5 rounded-xl border border-slate-800 flex justify-between">
+                  <div className="text-xs text-slate-300 bg-slate-950/60 p-3 rounded-2xl border border-slate-800 flex justify-between">
                     <span>Avg Fee: <strong className="text-amber-400">₹{(college.avgAnnualFeeInr / 100000).toFixed(1)}L/yr</strong></span>
                     <span>Highest CTC: <strong className="text-emerald-400">₹{college.placement.highestPackageLpa} LPA</strong></span>
                   </div>
                 </div>
 
-                <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-xs font-bold text-teal-400">
+                <div className="pt-3 border-t border-slate-800 flex items-center justify-between text-xs font-bold text-teal-400">
                   <span>View 16-Section SEO Page</span>
                   <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </div>
@@ -572,50 +584,50 @@ export const HomeTab: React.FC<HomeTabProps> = ({
       </section>
 
       {/* 2. 🔥 LATEST GOVERNMENT JOBS & 3. 🚨 CLOSING SOON (TWO COLUMN GRID) */}
-      <div className="max-w-7xl mx-auto px-2 sm:px-4 grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="max-w-7xl mx-auto px-2 sm:px-4 grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-10">
         {/* Left Column: 🔥 Latest Government Jobs (2 Cols wide on desktop) */}
-        <div className="lg:col-span-2 space-y-4">
-          <div className="flex items-center justify-between pb-2 border-b border-slate-200">
-            <div className="flex items-center space-x-2">
-              <span className="w-8 h-8 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center font-black">
+        <div className="lg:col-span-2 space-y-6">
+          <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+            <div className="flex items-center space-x-3">
+              <span className="w-9 h-9 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center font-black">
                 🔥
               </span>
-              <h2 className="text-xl font-extrabold text-slate-900">Latest Government Jobs</h2>
+              <h2 className="text-2xl font-black text-slate-900">Latest Government Jobs</h2>
             </div>
             <button
               onClick={() => setActiveTab('jobs')}
-              className="text-xs font-extrabold text-blue-900 hover:underline flex items-center"
+              className="text-xs sm:text-sm font-extrabold text-blue-900 hover:underline flex items-center"
             >
               <span>View All 21k+ Jobs</span>
               <ChevronRight className="w-4 h-4 ml-0.5" />
             </button>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6">
             {jobsList.slice(0, 4).map((job) => (
               <div
                 key={job.id}
                 onClick={() => setActiveTab('jobs')}
-                className="bg-white rounded-2xl p-4 border border-slate-200 shadow-2xs hover:shadow-md hover:border-blue-400 transition cursor-pointer flex flex-col justify-between"
+                className="bg-white rounded-3xl p-6 border border-slate-200 shadow-2xs hover:shadow-md hover:border-blue-400 transition cursor-pointer flex flex-col justify-between space-y-4"
               >
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="px-2.5 py-0.5 bg-blue-50 text-blue-900 text-[10px] font-black rounded-md uppercase">
+                    <span className="px-3 py-1 bg-blue-50 text-blue-900 text-[10px] font-black rounded-md uppercase">
                       {job.type} • {job.qualification}
                     </span>
-                    <span className="text-[10px] font-bold text-slate-400">{job.deadlineDate}</span>
+                    <span className="text-[11px] font-bold text-slate-400">{job.deadlineDate}</span>
                   </div>
 
-                  <h3 className="font-extrabold text-slate-900 text-xs sm:text-sm leading-snug line-clamp-2">
+                  <h3 className="font-extrabold text-slate-900 text-sm sm:text-base leading-snug line-clamp-2">
                     {job.title}
                   </h3>
 
-                  <p className="text-[11px] text-teal-800 font-bold">{job.vacancy}</p>
+                  <p className="text-xs text-teal-800 font-bold">{job.vacancy}</p>
                 </div>
 
-                <div className="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-blue-900">
+                <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-blue-900">
                   <span>View Details</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
+                  <ArrowRight className="w-4 h-4" />
                 </div>
               </div>
             ))}
@@ -623,26 +635,26 @@ export const HomeTab: React.FC<HomeTabProps> = ({
         </div>
 
         {/* Right Column: 🚨 Closing Soon (1 Col wide) */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between pb-2 border-b border-slate-200">
-            <div className="flex items-center space-x-2">
-              <span className="w-8 h-8 rounded-xl bg-rose-100 text-rose-800 flex items-center justify-center font-black">
+        <div className="space-y-6">
+          <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+            <div className="flex items-center space-x-3">
+              <span className="w-9 h-9 rounded-xl bg-rose-100 text-rose-800 flex items-center justify-center font-black">
                 🚨
               </span>
-              <h2 className="text-xl font-extrabold text-slate-900">Closing Soon</h2>
+              <h2 className="text-2xl font-black text-slate-900">Closing Soon</h2>
             </div>
             <button
               onClick={() => setActiveTab('deadlines')}
-              className="text-xs font-extrabold text-rose-700 hover:underline flex items-center"
+              className="text-xs sm:text-sm font-extrabold text-rose-700 hover:underline flex items-center"
             >
               <span>Tracker</span>
               <ChevronRight className="w-4 h-4 ml-0.5" />
             </button>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-4">
             {dynamicClosingSoon.length === 0 ? (
-              <div className="bg-white p-4 rounded-2xl border border-slate-200 text-center text-xs text-slate-500">
+              <div className="bg-white p-6 rounded-3xl border border-slate-200 text-center text-xs text-slate-500">
                 No immediate recruitment deadlines closing this week.
               </div>
             ) : (
@@ -656,17 +668,17 @@ export const HomeTab: React.FC<HomeTabProps> = ({
                       setActiveTab('deadlines');
                     }
                   }}
-                  className="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-2xs hover:border-rose-400 hover:shadow-sm transition cursor-pointer flex items-center justify-between gap-3"
+                  className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-2xs hover:border-rose-400 hover:shadow-sm transition cursor-pointer flex items-center justify-between gap-3"
                 >
-                  <div className="space-y-1 min-w-0">
-                    <h4 className="text-xs font-extrabold text-slate-900 line-clamp-1 hover:text-rose-700">
+                  <div className="space-y-1.5 min-w-0">
+                    <h4 className="text-xs sm:text-sm font-extrabold text-slate-900 line-clamp-1 hover:text-rose-700">
                       {dl.title}
                     </h4>
-                    <p className="text-[10px] text-slate-500">Last Date: {dl.formattedDate}</p>
+                    <p className="text-[11px] text-slate-500">Last Date: {dl.formattedDate}</p>
                   </div>
 
                   <span
-                    className={`px-2.5 py-1 rounded-xl text-[10px] font-black shrink-0 ${
+                    className={`px-3 py-1 rounded-xl text-[10px] font-black shrink-0 ${
                       dl.urgent
                         ? 'bg-rose-500 text-white animate-pulse'
                         : 'bg-amber-100 text-amber-900 border border-amber-300'
@@ -682,51 +694,51 @@ export const HomeTab: React.FC<HomeTabProps> = ({
       </div>
 
       {/* 5. 🎫 LATEST ADMIT CARDS & 6. 🏆 LATEST RESULTS (TWO EQUAL COLS) */}
-      <div className="max-w-7xl mx-auto px-2 sm:px-4 grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="max-w-7xl mx-auto px-2 sm:px-4 grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10">
         {/* 5. 🎫 Latest Admit Cards */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between pb-2 border-b border-slate-200">
-            <div className="flex items-center space-x-2">
-              <span className="w-8 h-8 rounded-xl bg-purple-100 text-purple-800 flex items-center justify-center font-black">
+        <div className="space-y-6">
+          <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+            <div className="flex items-center space-x-3">
+              <span className="w-9 h-9 rounded-xl bg-purple-100 text-purple-800 flex items-center justify-center font-black">
                 🎫
               </span>
-              <h2 className="text-xl font-extrabold text-slate-900">Latest Admit Cards</h2>
+              <h2 className="text-2xl font-black text-slate-900">Latest Admit Cards</h2>
             </div>
             <button
               onClick={() => setActiveTab('admit-cards')}
-              className="text-xs font-extrabold text-purple-900 hover:underline flex items-center"
+              className="text-xs sm:text-sm font-extrabold text-purple-900 hover:underline flex items-center"
             >
               <span>View All Admit Cards</span>
               <ChevronRight className="w-4 h-4 ml-0.5" />
             </button>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-4">
             {admitCardsList.map((card) => (
               <div
                 key={card.id}
-                className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs hover:shadow-xs transition flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3"
+                className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-2xs hover:shadow-xs transition flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
               >
-                <div className="space-y-1">
+                <div className="space-y-1.5">
                   <div className="flex items-center space-x-2">
-                    <span className="px-2 py-0.5 bg-purple-100 text-purple-900 text-[9px] font-black rounded uppercase">
+                    <span className="px-2.5 py-0.5 bg-purple-100 text-purple-900 text-[10px] font-black rounded uppercase">
                       {card.badge}
                     </span>
-                    <span className="text-[10px] text-slate-400">{card.organization}</span>
+                    <span className="text-[11px] text-slate-400 font-semibold">{card.organization}</span>
                   </div>
-                  <h3 className="text-xs sm:text-sm font-extrabold text-slate-900 leading-snug">
+                  <h3 className="text-sm font-extrabold text-slate-900 leading-snug">
                     {card.title}
                   </h3>
-                  <p className="text-[11px] text-slate-500">Exam Date: {card.examDate}</p>
+                  <p className="text-xs text-slate-500">Exam Date: {card.examDate}</p>
                 </div>
 
                 <a
                   href={card.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-3.5 py-2 bg-purple-900 hover:bg-purple-800 text-white rounded-xl text-xs font-bold transition shrink-0 flex items-center space-x-1.5 w-full sm:w-auto justify-center"
+                  className="px-4 py-2.5 bg-purple-900 hover:bg-purple-800 text-white rounded-xl text-xs font-bold transition shrink-0 flex items-center space-x-1.5 w-full sm:w-auto justify-center"
                 >
-                  <Download className="w-3.5 h-3.5" />
+                  <Download className="w-4 h-4" />
                   <span>Download</span>
                 </a>
               </div>
@@ -735,43 +747,43 @@ export const HomeTab: React.FC<HomeTabProps> = ({
         </div>
 
         {/* 6. 🏆 Latest Results */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between pb-2 border-b border-slate-200">
-            <div className="flex items-center space-x-2">
-              <span className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-black">
+        <div className="space-y-6">
+          <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+            <div className="flex items-center space-x-3">
+              <span className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-black">
                 🏆
               </span>
-              <h2 className="text-xl font-extrabold text-slate-900">Latest Results & Cutoffs</h2>
+              <h2 className="text-2xl font-black text-slate-900">Latest Results & Cutoffs</h2>
             </div>
             <span className="text-xs text-slate-400 font-bold">Official Releases</span>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-4">
             {resultsList.map((res) => (
               <div
                 key={res.id}
-                className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs hover:shadow-xs transition flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3"
+                className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-2xs hover:shadow-xs transition flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
               >
-                <div className="space-y-1">
+                <div className="space-y-1.5">
                   <div className="flex items-center space-x-2">
-                    <span className="px-2 py-0.5 bg-emerald-100 text-emerald-900 text-[9px] font-black rounded uppercase">
+                    <span className="px-2.5 py-0.5 bg-emerald-100 text-emerald-900 text-[10px] font-black rounded uppercase">
                       {res.status}
                     </span>
-                    <span className="text-[10px] text-slate-400">{res.declaredDate}</span>
+                    <span className="text-[11px] text-slate-400 font-semibold">{res.declaredDate}</span>
                   </div>
-                  <h3 className="text-xs sm:text-sm font-extrabold text-slate-900 leading-snug">
+                  <h3 className="text-sm font-extrabold text-slate-900 leading-snug">
                     {res.title}
                   </h3>
-                  <p className="text-[11px] text-slate-600 font-bold">{res.cutoff}</p>
+                  <p className="text-xs text-slate-600 font-bold">{res.cutoff}</p>
                 </div>
 
                 <a
                   href={res.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-3.5 py-2 bg-emerald-800 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition shrink-0 flex items-center space-x-1.5 w-full sm:w-auto justify-center"
+                  className="px-4 py-2.5 bg-emerald-800 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition shrink-0 flex items-center space-x-1.5 w-full sm:w-auto justify-center"
                 >
-                  <ExternalLink className="w-3.5 h-3.5" />
+                  <ExternalLink className="w-4 h-4" />
                   <span>Check Result</span>
                 </a>
               </div>
@@ -781,32 +793,32 @@ export const HomeTab: React.FC<HomeTabProps> = ({
       </div>
 
       {/* 7. 📚 POPULAR EXAMS */}
-      <section className="max-w-7xl mx-auto px-2 sm:px-4 space-y-4">
-        <div className="flex items-center justify-between pb-2 border-b border-slate-200">
-          <div className="flex items-center space-x-2">
-            <span className="w-8 h-8 rounded-xl bg-blue-100 text-blue-900 flex items-center justify-center font-black">
+      <section className="max-w-7xl mx-auto px-2 sm:px-4 space-y-6">
+        <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+          <div className="flex items-center space-x-3">
+            <span className="w-9 h-9 rounded-xl bg-blue-100 text-blue-900 flex items-center justify-center font-black">
               📚
             </span>
-            <h2 className="text-xl font-extrabold text-slate-900">Popular Competitive Exams</h2>
+            <h2 className="text-2xl font-black text-slate-900">Popular Competitive Exams</h2>
           </div>
           <button
             onClick={() => setActiveTab('exams')}
-            className="text-xs font-extrabold text-blue-900 hover:underline flex items-center"
+            className="text-xs sm:text-sm font-extrabold text-blue-900 hover:underline flex items-center"
           >
             <span>All Exams</span>
             <ChevronRight className="w-4 h-4 ml-0.5" />
           </button>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-5">
           {initialExamsData.slice(0, 6).map((exam) => (
             <div
               key={exam.id}
               onClick={() => setActiveTab('exams')}
-              className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs hover:border-teal-500 hover:shadow-md transition cursor-pointer text-center space-y-2 flex flex-col justify-between"
+              className="bg-white p-5 rounded-3xl border border-slate-200 shadow-2xs hover:border-teal-500 hover:shadow-md transition cursor-pointer text-center space-y-3 flex flex-col justify-between min-h-[170px]"
             >
               <div>
-                <span className="px-2 py-0.5 bg-slate-100 text-slate-700 text-[9px] font-black rounded uppercase block mx-auto mb-2 w-fit">
+                <span className="px-2.5 py-0.5 bg-slate-100 text-slate-700 text-[10px] font-black rounded uppercase block mx-auto mb-2 w-fit">
                   {exam.category}
                 </span>
                 <h3 className="font-extrabold text-slate-900 text-xs sm:text-sm line-clamp-2 leading-snug">
@@ -814,11 +826,11 @@ export const HomeTab: React.FC<HomeTabProps> = ({
                 </h3>
               </div>
 
-              <div className="pt-2 border-t border-slate-100 space-y-1">
-                <span className="text-[10px] text-teal-800 font-extrabold block">
+              <div className="pt-3 border-t border-slate-100 space-y-1">
+                <span className="text-[11px] text-teal-800 font-extrabold block">
                   {exam.examDate}
                 </span>
-                <span className="text-[9px] text-slate-400 block font-medium">
+                <span className="text-[10px] text-slate-400 block font-medium">
                   {exam.status}
                 </span>
               </div>
@@ -828,50 +840,50 @@ export const HomeTab: React.FC<HomeTabProps> = ({
       </section>
 
       {/* 8. 📰 CURRENT AFFAIRS */}
-      <section className="max-w-7xl mx-auto px-2 sm:px-4 space-y-4">
-        <div className="flex items-center justify-between pb-2 border-b border-slate-200">
-          <div className="flex items-center space-x-2">
-            <span className="w-8 h-8 rounded-xl bg-teal-100 text-teal-900 flex items-center justify-center font-black">
+      <section className="max-w-7xl mx-auto px-2 sm:px-4 space-y-6">
+        <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+          <div className="flex items-center space-x-3">
+            <span className="w-9 h-9 rounded-xl bg-teal-100 text-teal-900 flex items-center justify-center font-black">
               📰
             </span>
-            <h2 className="text-xl font-extrabold text-slate-900">Today's Current Affairs & Daily Quiz</h2>
+            <h2 className="text-2xl font-black text-slate-900">Today's Current Affairs & Daily Quiz</h2>
           </div>
           <button
             onClick={() => setActiveTab('current-affairs')}
-            className="text-xs font-extrabold text-teal-800 hover:underline flex items-center"
+            className="text-xs sm:text-sm font-extrabold text-teal-800 hover:underline flex items-center"
           >
             <span>Read All & Quiz</span>
             <ChevronRight className="w-4 h-4 ml-0.5" />
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
           {articlesList.slice(0, 3).map((art) => (
             <div
               key={art.id}
               onClick={() => setActiveTab('current-affairs')}
-              className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs hover:shadow-md transition cursor-pointer flex flex-col justify-between space-y-3"
+              className="bg-white p-6 rounded-3xl border border-slate-200 shadow-2xs hover:shadow-md transition cursor-pointer flex flex-col justify-between space-y-4 min-h-[220px]"
             >
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-[10px] font-bold">
-                  <span className="px-2.5 py-0.5 bg-teal-50 text-teal-900 border border-teal-200 rounded-full font-black uppercase">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between text-[11px] font-bold">
+                  <span className="px-3 py-1 bg-teal-50 text-teal-900 border border-teal-200 rounded-full font-black uppercase">
                     {art.category}
                   </span>
                   <span className="text-slate-400">{art.date}</span>
                 </div>
 
-                <h3 className="font-extrabold text-slate-900 text-xs sm:text-sm leading-snug line-clamp-2">
+                <h3 className="font-extrabold text-slate-900 text-sm sm:text-base leading-snug line-clamp-2">
                   {art.title}
                 </h3>
 
-                <p className="text-[11px] text-slate-600 line-clamp-3 leading-relaxed">
+                <p className="text-xs text-slate-600 line-clamp-3 leading-relaxed">
                   {art.summary}
                 </p>
               </div>
 
-              <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-teal-800">
+              <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-teal-800">
                 <span>Read Key Analysis & Take Quiz</span>
-                <ArrowRight className="w-3.5 h-3.5" />
+                <ArrowRight className="w-4 h-4" />
               </div>
             </div>
           ))}
@@ -879,43 +891,43 @@ export const HomeTab: React.FC<HomeTabProps> = ({
       </section>
 
       {/* 9. 🏛️ GOVERNMENT SERVICES & 10. 💰 GOVERNMENT SCHEMES */}
-      <div className="max-w-7xl mx-auto px-2 sm:px-4 grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="max-w-7xl mx-auto px-2 sm:px-4 grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10">
         {/* 9. 🏛️ Government Services */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between pb-2 border-b border-slate-200">
-            <div className="flex items-center space-x-2">
-              <span className="w-8 h-8 rounded-xl bg-blue-100 text-blue-900 flex items-center justify-center font-black">
+        <div className="space-y-6">
+          <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+            <div className="flex items-center space-x-3">
+              <span className="w-9 h-9 rounded-xl bg-blue-100 text-blue-900 flex items-center justify-center font-black">
                 🏛️
               </span>
-              <h2 className="text-xl font-extrabold text-slate-900">Government Services & RTPS</h2>
+              <h2 className="text-2xl font-black text-slate-900">Government Services & RTPS</h2>
             </div>
             <button
               onClick={() => setActiveTab('services')}
-              className="text-xs font-extrabold text-blue-900 hover:underline flex items-center"
+              className="text-xs sm:text-sm font-extrabold text-blue-900 hover:underline flex items-center"
             >
               <span>View Services</span>
               <ChevronRight className="w-4 h-4 ml-0.5" />
             </button>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-4">
             {initialServicesData.slice(0, 3).map((srv) => (
               <div
                 key={srv.id}
                 onClick={() => setActiveTab('services')}
-                className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs hover:shadow-xs transition cursor-pointer flex items-center justify-between"
+                className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-2xs hover:shadow-xs transition cursor-pointer flex items-center justify-between gap-4"
               >
-                <div className="space-y-1">
-                  <span className="px-2 py-0.5 bg-blue-50 text-blue-900 text-[9px] font-black rounded uppercase">
+                <div className="space-y-1.5">
+                  <span className="px-2.5 py-0.5 bg-blue-50 text-blue-900 text-[10px] font-black rounded uppercase">
                     {srv.category} • {srv.processingTime}
                   </span>
-                  <h3 className="text-xs sm:text-sm font-extrabold text-slate-900">
+                  <h3 className="text-sm font-extrabold text-slate-900">
                     {srv.title}
                   </h3>
-                  <p className="text-[11px] text-slate-500">Official Portal Fee: {srv.fees}</p>
+                  <p className="text-xs text-slate-500">Official Portal Fee: {srv.fees}</p>
                 </div>
 
-                <div className="w-8 h-8 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
+                <div className="w-9 h-9 rounded-2xl bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
                   <ArrowRight className="w-4 h-4" />
                 </div>
               </div>
@@ -924,41 +936,41 @@ export const HomeTab: React.FC<HomeTabProps> = ({
         </div>
 
         {/* 10. 💰 Government Schemes */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between pb-2 border-b border-slate-200">
-            <div className="flex items-center space-x-2">
-              <span className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-900 flex items-center justify-center font-black">
+        <div className="space-y-6">
+          <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+            <div className="flex items-center space-x-3">
+              <span className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-900 flex items-center justify-center font-black">
                 💰
               </span>
-              <h2 className="text-xl font-extrabold text-slate-900">Welfare Schemes & Subsidies</h2>
+              <h2 className="text-2xl font-black text-slate-900">Welfare Schemes & Subsidies</h2>
             </div>
             <button
               onClick={() => setActiveTab('schemes')}
-              className="text-xs font-extrabold text-emerald-800 hover:underline flex items-center"
+              className="text-xs sm:text-sm font-extrabold text-emerald-800 hover:underline flex items-center"
             >
               <span>View Schemes</span>
               <ChevronRight className="w-4 h-4 ml-0.5" />
             </button>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-4">
             {initialSchemesData.slice(0, 3).map((schm) => (
               <div
                 key={schm.id}
                 onClick={() => setActiveTab('schemes')}
-                className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs hover:shadow-xs transition cursor-pointer flex items-center justify-between"
+                className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-2xs hover:shadow-xs transition cursor-pointer flex items-center justify-between gap-4"
               >
-                <div className="space-y-1">
-                  <span className="px-2 py-0.5 bg-emerald-50 text-emerald-900 text-[9px] font-black rounded uppercase">
+                <div className="space-y-1.5">
+                  <span className="px-2.5 py-0.5 bg-emerald-50 text-emerald-900 text-[10px] font-black rounded uppercase">
                     {schm.category} • DBT Direct Transfer
                   </span>
-                  <h3 className="text-xs sm:text-sm font-extrabold text-slate-900">
+                  <h3 className="text-sm font-extrabold text-slate-900">
                     {schm.title}
                   </h3>
-                  <p className="text-[11px] text-emerald-800 font-bold">{schm.benefits}</p>
+                  <p className="text-xs text-emerald-800 font-bold">{schm.benefits}</p>
                 </div>
 
-                <div className="w-8 h-8 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
+                <div className="w-9 h-9 rounded-2xl bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
                   <ArrowRight className="w-4 h-4" />
                 </div>
               </div>
@@ -968,37 +980,37 @@ export const HomeTab: React.FC<HomeTabProps> = ({
       </div>
 
       {/* 11. 🧮 TOOLS (CITIZEN & APPLICANT UTILITY CALCULATORS) */}
-      <section className="max-w-7xl mx-auto px-2 sm:px-4 space-y-4">
-        <div className="flex items-center justify-between pb-2 border-b border-slate-200">
-          <div className="flex items-center space-x-2">
-            <span className="w-8 h-8 rounded-xl bg-indigo-100 text-indigo-900 flex items-center justify-center font-black">
+      <section className="max-w-7xl mx-auto px-2 sm:px-4 space-y-6">
+        <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+          <div className="flex items-center space-x-3">
+            <span className="w-9 h-9 rounded-xl bg-indigo-100 text-indigo-900 flex items-center justify-center font-black">
               🧮
             </span>
-            <h2 className="text-xl font-extrabold text-slate-900">
+            <h2 className="text-2xl font-black text-slate-900">
               Applicant Tools & Utility Calculators
             </h2>
           </div>
           <span className="text-xs text-slate-400 font-bold">100% Free Tools</span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
           {/* Tool 1: Age Calculator */}
           <div
             onClick={() => (onOpenAgeCalculator ? onOpenAgeCalculator() : setActiveToolModal('age-calc'))}
-            className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs hover:border-indigo-500 hover:shadow-md transition cursor-pointer space-y-3 flex flex-col justify-between"
+            className="bg-white p-6 rounded-3xl border border-slate-200 shadow-2xs hover:border-indigo-500 hover:shadow-md transition cursor-pointer space-y-4 flex flex-col justify-between min-h-[220px]"
           >
-            <div className="space-y-2">
-              <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center font-bold">
-                <Calculator className="w-5 h-5" />
+            <div className="space-y-3">
+              <div className="w-11 h-11 rounded-2xl bg-indigo-50 text-indigo-700 flex items-center justify-center font-bold">
+                <Calculator className="w-6 h-6" />
               </div>
-              <h3 className="font-extrabold text-slate-900 text-sm">
+              <h3 className="font-extrabold text-slate-900 text-base">
                 Govt Exam Age & Eligibility Calculator
               </h3>
               <p className="text-xs text-slate-500 leading-relaxed">
                 Calculate exact age and check OBC, SC/ST & PwD relaxation across 35+ SSC, UPSC & BPSC exams.
               </p>
             </div>
-            <button className="w-full py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-900 font-extrabold text-xs rounded-xl transition">
+            <button className="w-full py-2.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-900 font-extrabold text-xs rounded-xl transition">
               Open Live Age Calculator
             </button>
           </div>
@@ -1006,20 +1018,20 @@ export const HomeTab: React.FC<HomeTabProps> = ({
           {/* Tool 2: CGPA to Percentage */}
           <div
             onClick={() => setActiveToolModal('cgpa-calc')}
-            className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs hover:border-teal-500 hover:shadow-md transition cursor-pointer space-y-3 flex flex-col justify-between"
+            className="bg-white p-6 rounded-3xl border border-slate-200 shadow-2xs hover:border-teal-500 hover:shadow-md transition cursor-pointer space-y-4 flex flex-col justify-between min-h-[220px]"
           >
-            <div className="space-y-2">
-              <div className="w-10 h-10 rounded-xl bg-teal-50 text-teal-700 flex items-center justify-center font-bold">
-                <Percent className="w-5 h-5" />
+            <div className="space-y-3">
+              <div className="w-11 h-11 rounded-2xl bg-teal-50 text-teal-700 flex items-center justify-center font-bold">
+                <Percent className="w-6 h-6" />
               </div>
-              <h3 className="font-extrabold text-slate-900 text-sm">
+              <h3 className="font-extrabold text-slate-900 text-base">
                 CGPA to Percentage Converter
               </h3>
               <p className="text-xs text-slate-500 leading-relaxed">
                 Convert CBSE 10th / University CGPA (10 point scale) to exact percentage for online forms.
               </p>
             </div>
-            <button className="w-full py-2 bg-teal-50 hover:bg-teal-100 text-teal-900 font-extrabold text-xs rounded-xl transition">
+            <button className="w-full py-2.5 bg-teal-50 hover:bg-teal-100 text-teal-900 font-extrabold text-xs rounded-xl transition">
               Open Converter
             </button>
           </div>
@@ -1027,20 +1039,20 @@ export const HomeTab: React.FC<HomeTabProps> = ({
           {/* Tool 3: Typing Speed Standards */}
           <div
             onClick={() => setActiveToolModal('typing-guide')}
-            className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs hover:border-purple-500 hover:shadow-md transition cursor-pointer space-y-3 flex flex-col justify-between"
+            className="bg-white p-6 rounded-3xl border border-slate-200 shadow-2xs hover:border-purple-500 hover:shadow-md transition cursor-pointer space-y-4 flex flex-col justify-between min-h-[220px]"
           >
-            <div className="space-y-2">
-              <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-700 flex items-center justify-center font-bold">
-                <Keyboard className="w-5 h-5" />
+            <div className="space-y-3">
+              <div className="w-11 h-11 rounded-2xl bg-purple-50 text-purple-700 flex items-center justify-center font-bold">
+                <Keyboard className="w-6 h-6" />
               </div>
-              <h3 className="font-extrabold text-slate-900 text-sm">
+              <h3 className="font-extrabold text-slate-900 text-base">
                 Typing Speed & Font Checker
               </h3>
               <p className="text-xs text-slate-500 leading-relaxed">
                 Check required WPM & font (KrutiDev / Mangal Remix) for BSSC Clerk, High Court, and SSC Exams.
               </p>
             </div>
-            <button className="w-full py-2 bg-purple-50 hover:bg-purple-100 text-purple-900 font-extrabold text-xs rounded-xl transition">
+            <button className="w-full py-2.5 bg-purple-50 hover:bg-purple-100 text-purple-900 font-extrabold text-xs rounded-xl transition">
               Check Font Rules
             </button>
           </div>
@@ -1048,20 +1060,20 @@ export const HomeTab: React.FC<HomeTabProps> = ({
           {/* Tool 4: Photo & Signature Resizer */}
           <div
             onClick={() => (onOpenPhotoTool ? onOpenPhotoTool() : setActiveToolModal('photo-guide'))}
-            className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs hover:border-amber-500 hover:shadow-md transition cursor-pointer space-y-3 flex flex-col justify-between"
+            className="bg-white p-6 rounded-3xl border border-slate-200 shadow-2xs hover:border-amber-500 hover:shadow-md transition cursor-pointer space-y-4 flex flex-col justify-between min-h-[220px]"
           >
-            <div className="space-y-2">
-              <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center font-bold">
-                <FileText className="w-5 h-5" />
+            <div className="space-y-3">
+              <div className="w-11 h-11 rounded-2xl bg-amber-50 text-amber-700 flex items-center justify-center font-bold">
+                <FileText className="w-6 h-6" />
               </div>
-              <h3 className="font-extrabold text-slate-900 text-sm">
+              <h3 className="font-extrabold text-slate-900 text-base">
                 Photo & Sign Resizer & Spec Tool
               </h3>
               <p className="text-xs text-slate-500 leading-relaxed">
                 Resize, crop & compress JPG to exact 20-50 KB limits for SSC, CSBC, BPSC and NTA uploads.
               </p>
             </div>
-            <button className="w-full py-2 bg-amber-50 hover:bg-amber-100 text-amber-900 font-extrabold text-xs rounded-xl transition">
+            <button className="w-full py-2.5 bg-amber-50 hover:bg-amber-100 text-amber-900 font-extrabold text-xs rounded-xl transition">
               Open Image Resizer & Compressor
             </button>
           </div>

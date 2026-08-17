@@ -402,7 +402,7 @@ export interface BiharModuleItem {
 // Search Intent Hub Types
 export interface IntentPageData {
   slug: string;
-  category: 'Jobs' | 'Exam' | 'Results' | 'Services';
+  category: 'Jobs' | 'Exam' | 'Results' | 'Services' | 'Finance';
   queryTitle: string; // e.g. "10th pass government jobs 2026"
   headline: string;
   lastUpdated: string;

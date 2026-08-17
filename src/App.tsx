@@ -29,6 +29,7 @@ const UniversityDirectory = lazy(() => import('./components/UniversityDirectory'
 const CourseDirectory = lazy(() => import('./components/CourseDirectory').then(m => ({ default: m.CourseDirectory })));
 const AdmissionDirectory = lazy(() => import('./components/AdmissionDirectory').then(m => ({ default: m.AdmissionDirectory })));
 const AdmitCardsTab = lazy(() => import('./components/AdmitCardsTab').then(m => ({ default: m.AdmitCardsTab })));
+const FinanceInsuranceTab = lazy(() => import('./components/FinanceInsuranceTab').then(m => ({ default: m.FinanceInsuranceTab })));
 
 // Lazy load Modals
 const DetailModal = lazy(() => import('./components/DetailModal').then(m => ({ default: m.DetailModal })));
@@ -241,6 +242,49 @@ export default function App() {
             { label: 'Courses', url: '#courses' },
           ],
         };
+      case 'finance':
+      case 'insurance':
+      case 'finance-insurance':
+        return {
+          title: 'Government Insurance & Finance Hub 2026 - Ayushman Bharat, PMJJBY, Mudra Loan & EMI Calculators | BharatSeva',
+          description: 'Official verified guides for Ayushman Bharat ₹5 Lakh Free Health Insurance, PMJJBY, PMSBY, Atal Pension, Bihar Student Credit Card @ 1%, Mudra Loans, and free interactive loan EMI & tax calculators.',
+          h1: 'Government Insurance, Subsidized Loans & Financial Calculators Portal',
+          canonicalUrl: 'https://bharatseva.in/finance-insurance',
+          breadcrumbs: [
+            { label: 'Home', url: '/' },
+            { label: 'Finance & Insurance', url: '/finance-insurance' },
+          ],
+          internalLinks: [
+            { label: 'Welfare Schemes', url: '#schemes' },
+            { label: 'Bihar Student Credit Card', url: '#finance-insurance' },
+            { label: 'Ayushman Bharat Card', url: '#finance-insurance' },
+            { label: 'Loan EMI Calculator', url: '#calculators-suite' },
+          ],
+          faqSchema: [
+            {
+              question: 'Which government health insurance provides ₹5 Lakhs free hospitalization in India?',
+              answer: 'Ayushman Bharat Pradhan Mantri Jan Arogya Yojana (PM-JAY) provides up to ₹5,00,000 per family per year for secondary and tertiary care hospitalization in 27,000+ empaneled private and public hospitals completely cashless.'
+            },
+            {
+              question: 'How can Bihar students get up to ₹4 Lakhs education loan at 1% interest?',
+              answer: 'Under the Bihar Student Credit Card Scheme (MNSSBY), students can apply online on the MNSSBY portal to get up to ₹4,00,000 education loan for technical and professional courses at 1% interest for girls/divyang and 4% for boys with moratorium period.'
+            },
+            {
+              question: 'What is PMJJBY and how much does it cost?',
+              answer: 'Pradhan Mantri Jeevan Jyoti Bima Yojana (PMJJBY) provides ₹2,00,000 life insurance coverage in case of demise due to any cause for just ₹436 per year auto-debited from bank or post office accounts.'
+            }
+          ],
+          structuredData: {
+            '@context': 'https://schema.org',
+            '@type': 'FinancialProduct',
+            name: 'Government Social Security & Subsidized Financial Services',
+            description: 'Comprehensive directory of Central & Bihar government insurance schemes, pension plans, subsidized loans and calculators.',
+            provider: {
+              '@type': 'GovernmentOrganization',
+              name: 'Ministry of Finance & Government of Bihar'
+            }
+          }
+        };
       default:
         return {
           title: 'BharatSeva - Bihar & Central Citizen Services, Govt Jobs, Admissions & Exams Portal 2026',
@@ -425,6 +469,20 @@ export default function App() {
       q.includes('ssc')
     ) {
       setActiveTab('jobs');
+    } else if (
+      q.includes('insurance') ||
+      q.includes('bima') ||
+      q.includes('loan') ||
+      q.includes('mudra') ||
+      q.includes('emi') ||
+      q.includes('pension') ||
+      q.includes('ayushman') ||
+      q.includes('ppf') ||
+      q.includes('sukanya') ||
+      q.includes('tax') ||
+      q.includes('finance')
+    ) {
+      setActiveTab('finance-insurance');
     } else if (q.includes('exam') || q.includes('upsc') || q.includes('bssc')) {
       setActiveTab('exams');
     } else if (q.includes('scholarship') || q.includes('grant') || q.includes('pms')) {
@@ -727,6 +785,13 @@ export default function App() {
               onFetchLiveUpdates={handleFetchLiveUpdates}
               isSyncingLive={isSyncingLive}
               lastSyncedTime={lastSyncedTime}
+            />
+          )}
+
+          {(activeTab === 'finance' || activeTab === 'insurance' || activeTab === 'finance-insurance') && (
+            <FinanceInsuranceTab
+              onSaveItem={(title, type) => handleSaveItem(title, type as any)}
+              onOpenPublicToolModal={handleOpenPublicToolModal}
             />
           )}
 

@@ -75,6 +75,11 @@ export const Footer: React.FC<FooterProps> = ({
           <h4 className="font-bold text-white text-sm mb-4">Portal Directory</h4>
           <ul className="space-y-2 text-xs">
             <li>
+              <button onClick={() => setActiveTab('finance-insurance')} className="hover:text-emerald-400 font-extrabold text-emerald-300 transition py-1 cursor-pointer flex items-center gap-1.5">
+                <span>Finance & Insurance Hub 🛡️</span>
+              </button>
+            </li>
+            <li>
               <button onClick={() => setActiveTab('services')} className="hover:text-white transition py-1 cursor-pointer">
                 Services & Certificates (RTPS)
               </button>

@@ -345,6 +345,7 @@ export const HomeTab: React.FC<HomeTabProps> = ({
     { id: 'sec-popular-exams', label: '📚 Competitive Exams', icon: '📚' },
     { id: 'sec-current-affairs', label: '📰 Current Affairs', icon: '📰' },
     { id: 'sec-services-schemes', label: '💰 Welfare Schemes', icon: '💰' },
+    { id: 'sec-finance-insurance', label: '🛡️ Finance & Loans', icon: '🛡️' },
     { id: 'sec-utility-calculators', label: '🧮 Calculators', icon: '🧮' },
   ];
 
@@ -1247,6 +1248,129 @@ export const HomeTab: React.FC<HomeTabProps> = ({
           </div>
         </div>
       </div>
+
+      {/* DIVIDER: FINANCE & INSURANCE */}
+      <SectionDivider
+        label="Government Insurance, Subsidized Loans & Financial Calculators"
+        icon={<ShieldCheck className="w-4 h-4 text-emerald-600" />}
+        colorClass="text-emerald-900 bg-emerald-50/80 border-emerald-200"
+      />
+
+      {/* 🛡️ FINANCE & INSURANCE HUB SECTION */}
+      <section id="sec-finance-insurance" className="max-w-7xl mx-auto px-2 sm:px-4 bg-emerald-50/40 p-6 sm:p-8 lg:p-10 rounded-3xl border border-emerald-100/90 shadow-xs space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-3 border-b border-emerald-200/80">
+          <div className="flex items-center space-x-3">
+            <span className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-900 flex items-center justify-center font-black">
+              🛡️
+            </span>
+            <div>
+              <h2 className="text-2xl font-black text-slate-900">
+                Finance, Insurance & Subsidized Loans Hub
+              </h2>
+              <p className="text-xs text-slate-500 font-bold">
+                Ayushman Bharat, Student Credit Card @ 1%, PMJJBY, Mudra Loans & Loan EMI Simulator
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => setActiveTab('finance-insurance')}
+            className="self-start sm:self-auto text-xs font-black text-emerald-900 hover:text-emerald-700 flex items-center gap-1.5 px-4 py-2 bg-emerald-100/80 hover:bg-emerald-200/80 rounded-xl transition cursor-pointer"
+          >
+            <span>Open Complete Finance Portal</span>
+            <ArrowRight className="w-4 h-4" />
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {/* Card 1: Ayushman Bharat */}
+          <div
+            onClick={() => setActiveTab('finance-insurance')}
+            className="bg-white p-5 rounded-2xl border border-slate-200 hover:border-emerald-500 hover:shadow-md transition cursor-pointer space-y-3 flex flex-col justify-between"
+          >
+            <div className="space-y-2">
+              <span className="px-2.5 py-0.5 bg-emerald-100 text-emerald-900 rounded-md text-[10px] font-black uppercase">
+                Health Insurance
+              </span>
+              <h3 className="font-extrabold text-slate-900 text-sm">
+                Ayushman Bharat (PM-JAY)
+              </h3>
+              <p className="text-xs text-slate-500 line-clamp-2">
+                ₹5,00,000 free annual cashless hospitalization per family in 27,000+ empaneled hospitals.
+              </p>
+            </div>
+            <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs font-black text-emerald-800">
+              <span>Free Coverage</span>
+              <ChevronRight className="w-4 h-4" />
+            </div>
+          </div>
+
+          {/* Card 2: Bihar Student Credit Card */}
+          <div
+            onClick={() => setActiveTab('finance-insurance')}
+            className="bg-white p-5 rounded-2xl border border-slate-200 hover:border-emerald-500 hover:shadow-md transition cursor-pointer space-y-3 flex flex-col justify-between"
+          >
+            <div className="space-y-2">
+              <span className="px-2.5 py-0.5 bg-purple-100 text-purple-900 rounded-md text-[10px] font-black uppercase">
+                Higher Education Loan
+              </span>
+              <h3 className="font-extrabold text-slate-900 text-sm">
+                Bihar Student Credit Card (MNSSBY)
+              </h3>
+              <p className="text-xs text-slate-500 line-clamp-2">
+                ₹4 Lakh education loan for B.Tech, MBBS, BCA & degrees at 1% interest for girls / 4% for boys.
+              </p>
+            </div>
+            <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs font-black text-purple-800">
+              <span>1% Simple Interest</span>
+              <ChevronRight className="w-4 h-4" />
+            </div>
+          </div>
+
+          {/* Card 3: PMJJBY */}
+          <div
+            onClick={() => setActiveTab('finance-insurance')}
+            className="bg-white p-5 rounded-2xl border border-slate-200 hover:border-emerald-500 hover:shadow-md transition cursor-pointer space-y-3 flex flex-col justify-between"
+          >
+            <div className="space-y-2">
+              <span className="px-2.5 py-0.5 bg-blue-100 text-blue-900 rounded-md text-[10px] font-black uppercase">
+                Life Insurance
+              </span>
+              <h3 className="font-extrabold text-slate-900 text-sm">
+                PM Jeevan Jyoti Bima (PMJJBY)
+              </h3>
+              <p className="text-xs text-slate-500 line-clamp-2">
+                ₹2,00,000 life insurance death cover for ₹436/year auto-debited from bank account.
+              </p>
+            </div>
+            <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs font-black text-blue-800">
+              <span>₹436 / Year</span>
+              <ChevronRight className="w-4 h-4" />
+            </div>
+          </div>
+
+          {/* Card 4: Interactive EMI & Tax Simulator */}
+          <div
+            onClick={() => setActiveTab('finance-insurance')}
+            className="bg-gradient-to-br from-slate-900 to-emerald-950 text-white p-5 rounded-2xl border border-emerald-500/40 hover:shadow-md transition cursor-pointer space-y-3 flex flex-col justify-between"
+          >
+            <div className="space-y-2">
+              <span className="px-2.5 py-0.5 bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 rounded-md text-[10px] font-black uppercase">
+                Interactive Calculators
+              </span>
+              <h3 className="font-extrabold text-white text-sm">
+                Loan EMI & Tax Simulator
+              </h3>
+              <p className="text-xs text-slate-300 line-clamp-2">
+                Calculate home, education, and Mudra loan EMIs + compare New vs Old Tax Regime savings.
+              </p>
+            </div>
+            <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-xs font-black text-emerald-400">
+              <span>Launch Calculators</span>
+              <ChevronRight className="w-4 h-4" />
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* DIVIDER 9 */}
       <SectionDivider

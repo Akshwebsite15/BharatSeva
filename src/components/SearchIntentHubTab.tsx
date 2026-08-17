@@ -31,7 +31,7 @@ export const SearchIntentHubTab: React.FC<SearchIntentHubTabProps> = ({
   initialSlug,
   onSaveItem,
 }) => {
-  const [selectedCategory, setSelectedCategory] = useState<'All' | 'Jobs' | 'Exam' | 'Results' | 'Services'>('All');
+  const [selectedCategory, setSelectedCategory] = useState<'All' | 'Jobs' | 'Exam' | 'Results' | 'Services' | 'Finance'>('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [activeSlug, setActiveSlug] = useState<string | null>(initialSlug || null);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
@@ -279,7 +279,7 @@ export const SearchIntentHubTab: React.FC<SearchIntentHubTabProps> = ({
 
             {/* Category Filter Pills */}
             <div className="flex items-center space-x-2 overflow-x-auto pb-1 scrollbar-none">
-              {(['All', 'Jobs', 'Exam', 'Results', 'Services'] as const).map((cat) => {
+              {(['All', 'Jobs', 'Exam', 'Results', 'Services', 'Finance'] as const).map((cat) => {
                 const isSel = selectedCategory === cat;
                 return (
                   <button
@@ -291,7 +291,7 @@ export const SearchIntentHubTab: React.FC<SearchIntentHubTabProps> = ({
                         : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                     }`}
                   >
-                    {cat === 'All' ? 'All Intent Pages' : `${cat} Hub`}
+                    {cat === 'All' ? 'All Intent Pages' : cat === 'Finance' ? 'Finance & Insurance' : `${cat} Hub`}
                   </button>
                 );
               })}

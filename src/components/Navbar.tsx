@@ -86,6 +86,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'admit-cards', label: 'Admit Cards 🎫', icon: Ticket },
     { id: 'exams', label: 'Exams', icon: PenSquare },
     { id: 'bharatseva-bihar', label: 'Bihar Hub', icon: Landmark },
+    { id: 'finance-insurance', label: 'Finance & Insurance 🛡️', icon: ShieldCheck, highlight: true },
     { id: 'services', label: 'Services', icon: FileCheck },
     { id: 'schemes', label: 'Schemes', icon: Building2 },
     { id: 'dashboard', label: 'Dashboard', icon: UserCheck },

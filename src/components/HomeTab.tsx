@@ -24,6 +24,8 @@ import {
   Clock,
   ExternalLink,
   ChevronRight,
+  ChevronDown,
+  ChevronUp,
   Download,
   FileText,
   X,
@@ -33,6 +35,7 @@ import {
   Check,
   MapPin,
   BookOpen,
+  Zap,
 } from 'lucide-react';
 import { JurisdictionState, GovJob, CurrentAffairsArticle, College, University } from '../types';
 import { LiveSyncBanner } from './LiveSyncBanner';
@@ -80,7 +83,54 @@ const FEATURED_TOP_COLLEGES = [
     avgAnnualFeeInr: 165000,
     placement: { highestPackageLpa: 52.0 },
   },
+  {
+    id: 'iim-bodhgaya',
+    name: 'IIM Bodh Gaya - Indian Institute of Management',
+    type: 'Govt / National Importance',
+    nirfRank: 33,
+    city: 'Bodh Gaya',
+    state: 'Bihar',
+    avgAnnualFeeInr: 750000,
+    placement: { highestPackageLpa: 48.25 },
+  },
+  {
+    id: 'pmch-patna',
+    name: 'PMCH - Patna Medical College and Hospital',
+    type: 'Govt State Medical College',
+    nirfRank: 88,
+    city: 'Patna',
+    state: 'Bihar',
+    avgAnnualFeeInr: 12500,
+    placement: { highestPackageLpa: 22.5 },
+  },
+  {
+    id: 'cuj-ranchi',
+    name: 'Central University of South Bihar (CUSB Gaya)',
+    type: 'Central University',
+    nirfRank: 95,
+    city: 'Gaya',
+    state: 'Bihar',
+    avgAnnualFeeInr: 28000,
+    placement: { highestPackageLpa: 14.5 },
+  },
 ];
+
+const SectionDivider: React.FC<{ label: string; icon: React.ReactNode; colorClass?: string }> = ({
+  label,
+  icon,
+  colorClass = 'text-slate-600 bg-white border-slate-200',
+}) => (
+  <div className="max-w-7xl mx-auto px-4 flex items-center justify-center gap-4 my-8 sm:my-12">
+    <div className="h-px bg-gradient-to-r from-transparent via-slate-300 to-transparent flex-1" />
+    <span
+      className={`text-[11px] font-black uppercase tracking-widest flex items-center gap-2 px-4 py-2 rounded-full border shadow-2xs ${colorClass}`}
+    >
+      {icon}
+      <span>{label}</span>
+    </span>
+    <div className="h-px bg-gradient-to-r from-transparent via-slate-300 to-transparent flex-1" />
+  </div>
+);
 
 interface HomeTabProps {
   setActiveTab: (tab: string) => void;
@@ -264,6 +314,40 @@ export const HomeTab: React.FC<HomeTabProps> = ({
     },
   ];
 
+  // Collapsible / View More States
+  const [showAllJobs, setShowAllJobs] = useState(false);
+  const [showAllClosing, setShowAllClosing] = useState(false);
+  const [showAllAdmitCards, setShowAllAdmitCards] = useState(false);
+  const [showAllResults, setShowAllResults] = useState(false);
+  const [showAllExams, setShowAllExams] = useState(false);
+  const [showAllServices, setShowAllServices] = useState(false);
+  const [showAllSchemes, setShowAllSchemes] = useState(false);
+  const [showAllColleges, setShowAllColleges] = useState(false);
+
+  // Smooth Section Jump Helper
+  const scrollToSection = (id: string) => {
+    const el = document.getElementById(id);
+    if (el) {
+      const yOffset = -75;
+      const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+  };
+
+  const quickJumpNav = [
+    { id: 'sec-job-finder', label: '🔎 Job Match', icon: '🎯' },
+    { id: 'sec-aspirant-hub', label: '⚡ Daily Quiz & Tools', icon: '⚡' },
+    { id: 'sec-citizen-services', label: '🏛️ Citizen Services', icon: '🏛️' },
+    { id: 'sec-higher-ed', label: '🎓 Higher Education', icon: '🎓' },
+    { id: 'sec-latest-jobs', label: '🔥 Latest Jobs', icon: '🔥' },
+    { id: 'sec-closing-soon', label: '🚨 Closing Soon', icon: '🚨' },
+    { id: 'sec-admit-results', label: '🎫 Admit & Results', icon: '🎫' },
+    { id: 'sec-popular-exams', label: '📚 Competitive Exams', icon: '📚' },
+    { id: 'sec-current-affairs', label: '📰 Current Affairs', icon: '📰' },
+    { id: 'sec-services-schemes', label: '💰 Welfare Schemes', icon: '💰' },
+    { id: 'sec-utility-calculators', label: '🧮 Calculators', icon: '🧮' },
+  ];
+
   // Dynamic Closing Soon calculation from live jobs data
   const dynamicClosingSoon = useMemo(() => {
     return [...jobsList]
@@ -283,16 +367,15 @@ export const HomeTab: React.FC<HomeTabProps> = ({
         };
       })
       .filter((item) => item.daysLeft >= 0)
-      .sort((a, b) => a.daysLeft - b.daysLeft)
-      .slice(0, 5);
+      .sort((a, b) => a.daysLeft - b.daysLeft);
   }, [jobsList]);
 
   const mostUrgentJob = dynamicClosingSoon[0];
 
   return (
-    <div className="space-y-16 sm:space-y-20 lg:space-y-24">
+    <div className="space-y-12 sm:space-y-16 lg:space-y-20 pb-16">
       {/* 4. 🆕 TODAY'S UPDATES (Live Government Notification Ticker) */}
-      <div className="bg-gradient-to-r from-amber-500/10 via-teal-500/10 to-blue-500/10 border border-amber-500/20 py-3.5 px-4 sm:px-8 rounded-2xl shadow-xs">
+      <div className="bg-gradient-to-r from-amber-500/15 via-teal-500/15 to-blue-500/15 border border-amber-500/25 py-3.5 px-4 sm:px-8 rounded-2xl shadow-xs">
         <div className="max-w-7xl mx-auto flex items-center space-x-3 text-xs sm:text-sm font-medium text-slate-800 overflow-x-auto whitespace-nowrap scrollbar-none">
           <span className="inline-flex items-center px-3 py-1 rounded-lg text-xs font-black bg-amber-500 text-slate-900 shrink-0 uppercase tracking-wide shadow-2xs">
             <Bell className="w-3.5 h-3.5 mr-1.5 animate-pulse" /> 🆕 TODAY'S UPDATES
@@ -315,8 +398,26 @@ export const HomeTab: React.FC<HomeTabProps> = ({
         </div>
       </div>
 
+      {/* 🧭 STICKY QUICK CATEGORY NAVIGATION JUMP BAR */}
+      <div className="sticky top-2 z-30 max-w-7xl mx-auto px-2 sm:px-4">
+        <div className="bg-white/95 backdrop-blur-md border border-slate-200/90 shadow-md rounded-2xl p-1.5 sm:p-2 flex items-center gap-1.5 sm:gap-2 overflow-x-auto scrollbar-none">
+          <span className="text-[11px] font-black uppercase text-slate-400 px-2.5 shrink-0 hidden md:inline-flex items-center gap-1">
+            <Zap className="w-3.5 h-3.5 text-amber-500" /> Quick Jump:
+          </span>
+          {quickJumpNav.map((nav) => (
+            <button
+              key={nav.id}
+              onClick={() => scrollToSection(nav.id)}
+              className="px-3 py-1.5 bg-slate-100 hover:bg-slate-900 hover:text-white text-slate-700 text-xs font-bold rounded-xl border border-slate-200/70 transition-all shrink-0 cursor-pointer whitespace-nowrap active:scale-95 shadow-2xs"
+            >
+              {nav.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* 1. 🔎 FIND GOVERNMENT JOBS FOR ME (PRIMARY CTA HERO) */}
-      <section className="relative rounded-3xl bg-gradient-to-br from-slate-950 via-blue-950 to-teal-950 text-white py-12 sm:py-16 lg:py-20 px-6 sm:px-10 lg:px-14 overflow-hidden shadow-2xl border border-teal-500/30">
+      <section id="sec-job-finder" className="relative rounded-3xl bg-gradient-to-br from-slate-950 via-blue-950 to-teal-950 text-white py-12 sm:py-16 lg:py-20 px-6 sm:px-10 lg:px-14 overflow-hidden shadow-2xl border border-teal-500/30">
         <div className="absolute inset-0 opacity-15 bg-[radial-gradient(#38bdf8_1px,transparent_1px)] [background-size:20px_20px]"></div>
 
         <div className="max-w-4xl mx-auto text-center relative z-10 space-y-8">
@@ -457,8 +558,15 @@ export const HomeTab: React.FC<HomeTabProps> = ({
         </div>
       </section>
 
+      {/* DIVIDER 1 */}
+      <SectionDivider
+        label="Student & Aspirant Power Suite"
+        icon={<Sparkles className="w-4 h-4 text-amber-500" />}
+        colorClass="text-amber-900 bg-amber-50/80 border-amber-200"
+      />
+
       {/* 🚀 DAILY STUDENT & ASPIRANT POWER HUB */}
-      <div className="max-w-7xl mx-auto px-2 sm:px-4">
+      <div id="sec-aspirant-hub" className="max-w-7xl mx-auto px-2 sm:px-4">
         <StudentPowerHubSection
           onOpenSpeedQuiz={onOpenSpeedQuiz || (() => {})}
           onOpenAgeCalculator={onOpenAgeCalculator || (() => {})}
@@ -469,8 +577,15 @@ export const HomeTab: React.FC<HomeTabProps> = ({
         />
       </div>
 
+      {/* DIVIDER 2 */}
+      <SectionDivider
+        label="Citizen & Public Status Utilities"
+        icon={<Landmark className="w-4 h-4 text-emerald-600" />}
+        colorClass="text-emerald-900 bg-emerald-50/80 border-emerald-200"
+      />
+
       {/* 🇮🇳 TRENDING CITIZEN SERVICES & PUBLIC STATUS UTILITIES HUB */}
-      <div className="max-w-7xl mx-auto px-2 sm:px-4">
+      <div id="sec-citizen-services" className="max-w-7xl mx-auto px-2 sm:px-4">
         <PublicServicesTrendingSection
           onOpenPublicToolModal={onOpenPublicToolModal || (() => {})}
         />
@@ -487,8 +602,15 @@ export const HomeTab: React.FC<HomeTabProps> = ({
         </div>
       )}
 
+      {/* DIVIDER 3 */}
+      <SectionDivider
+        label="Higher Education & NIRF Colleges"
+        icon={<GraduationCap className="w-4 h-4 text-indigo-500" />}
+        colorClass="text-indigo-900 bg-indigo-50/80 border-indigo-200"
+      />
+
       {/* 🎓 HIGHER EDUCATION DIRECTORY (COLLEGES & UNIVERSITIES) */}
-      <section className="max-w-7xl mx-auto px-2 sm:px-4 space-y-6">
+      <section id="sec-higher-ed" className="max-w-7xl mx-auto px-2 sm:px-4 space-y-6">
         <div className="bg-gradient-to-r from-slate-900 via-teal-950 to-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-10 text-white space-y-8 shadow-xl relative overflow-hidden">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 border-b border-slate-800/80 pb-6">
             <div className="space-y-2">
@@ -541,7 +663,14 @@ export const HomeTab: React.FC<HomeTabProps> = ({
 
           {/* Featured Top Colleges Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
-            {(colleges && colleges.length > 0 ? colleges.slice(0, 3) : FEATURED_TOP_COLLEGES).map((college: any) => (
+            {(colleges && colleges.length > 0
+              ? showAllColleges
+                ? colleges.slice(0, 6)
+                : colleges.slice(0, 3)
+              : showAllColleges
+              ? FEATURED_TOP_COLLEGES
+              : FEATURED_TOP_COLLEGES.slice(0, 3)
+            ).map((college: any) => (
               <div
                 key={college.id}
                 onClick={() => {
@@ -580,221 +709,313 @@ export const HomeTab: React.FC<HomeTabProps> = ({
               </div>
             ))}
           </div>
+
+          {/* Collapsible View More Button */}
+          <div className="pt-4 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <button
+              onClick={() => setShowAllColleges(!showAllColleges)}
+              className="text-xs font-bold text-teal-300 hover:text-white flex items-center gap-1 px-4 py-2 rounded-xl bg-slate-800/60 hover:bg-slate-800 border border-slate-700 transition cursor-pointer"
+            >
+              <span>{showAllColleges ? 'Show Fewer Colleges' : 'Show More Featured Colleges (6 Items)'}</span>
+              {showAllColleges ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+            </button>
+
+            <button
+              onClick={() => setActiveTab('colleges')}
+              className="text-xs font-extrabold text-amber-300 hover:underline flex items-center gap-1"
+            >
+              <span>Explore All 350+ Colleges in Full Portal</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       </section>
 
-      {/* 2. 🔥 LATEST GOVERNMENT JOBS & 3. 🚨 CLOSING SOON (TWO COLUMN GRID) */}
-      <div className="max-w-7xl mx-auto px-2 sm:px-4 grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-10">
-        {/* Left Column: 🔥 Latest Government Jobs (2 Cols wide on desktop) */}
-        <div className="lg:col-span-2 space-y-6">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-200">
-            <div className="flex items-center space-x-3">
-              <span className="w-9 h-9 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center font-black">
-                🔥
-              </span>
-              <h2 className="text-2xl font-black text-slate-900">Latest Government Jobs</h2>
-            </div>
-            <button
-              onClick={() => setActiveTab('jobs')}
-              className="text-xs sm:text-sm font-extrabold text-blue-900 hover:underline flex items-center"
-            >
-              <span>View All 21k+ Jobs</span>
-              <ChevronRight className="w-4 h-4 ml-0.5" />
-            </button>
-          </div>
+      {/* DIVIDER 4 */}
+      <SectionDivider
+        label="Active Government Job Vacancies"
+        icon={<Award className="w-4 h-4 text-blue-600" />}
+        colorClass="text-blue-900 bg-blue-50/80 border-blue-200"
+      />
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6">
-            {jobsList.slice(0, 4).map((job) => (
-              <div
-                key={job.id}
+      {/* 2. 🔥 LATEST GOVERNMENT JOBS & 3. 🚨 CLOSING SOON (TWO COLUMN GRID IN WRAPPER) */}
+      <div className="max-w-7xl mx-auto px-2 sm:px-4 bg-gradient-to-b from-slate-50/80 via-white to-slate-50/80 p-6 sm:p-8 lg:p-10 rounded-3xl border border-slate-200 shadow-xs">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-10">
+          {/* Left Column: 🔥 Latest Government Jobs (2 Cols wide on desktop) */}
+          <div id="sec-latest-jobs" className="lg:col-span-2 space-y-6">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+              <div className="flex items-center space-x-3">
+                <span className="w-9 h-9 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center font-black">
+                  🔥
+                </span>
+                <h2 className="text-2xl font-black text-slate-900">Latest Government Jobs</h2>
+              </div>
+              <button
                 onClick={() => setActiveTab('jobs')}
-                className="bg-white rounded-3xl p-6 border border-slate-200 shadow-2xs hover:shadow-md hover:border-blue-400 transition cursor-pointer flex flex-col justify-between space-y-4"
+                className="text-xs sm:text-sm font-extrabold text-blue-900 hover:underline flex items-center"
               >
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="px-3 py-1 bg-blue-50 text-blue-900 text-[10px] font-black rounded-md uppercase">
-                      {job.type} • {job.qualification}
-                    </span>
-                    <span className="text-[11px] font-bold text-slate-400">{job.deadlineDate}</span>
-                  </div>
-
-                  <h3 className="font-extrabold text-slate-900 text-sm sm:text-base leading-snug line-clamp-2">
-                    {job.title}
-                  </h3>
-
-                  <p className="text-xs text-teal-800 font-bold">{job.vacancy}</p>
-                </div>
-
-                <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-blue-900">
-                  <span>View Details</span>
-                  <ArrowRight className="w-4 h-4" />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Right Column: 🚨 Closing Soon (1 Col wide) */}
-        <div className="space-y-6">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-200">
-            <div className="flex items-center space-x-3">
-              <span className="w-9 h-9 rounded-xl bg-rose-100 text-rose-800 flex items-center justify-center font-black">
-                🚨
-              </span>
-              <h2 className="text-2xl font-black text-slate-900">Closing Soon</h2>
+                <span>View All 21k+ Jobs</span>
+                <ChevronRight className="w-4 h-4 ml-0.5" />
+              </button>
             </div>
-            <button
-              onClick={() => setActiveTab('deadlines')}
-              className="text-xs sm:text-sm font-extrabold text-rose-700 hover:underline flex items-center"
-            >
-              <span>Tracker</span>
-              <ChevronRight className="w-4 h-4 ml-0.5" />
-            </button>
-          </div>
 
-          <div className="space-y-4">
-            {dynamicClosingSoon.length === 0 ? (
-              <div className="bg-white p-6 rounded-3xl border border-slate-200 text-center text-xs text-slate-500">
-                No immediate recruitment deadlines closing this week.
-              </div>
-            ) : (
-              dynamicClosingSoon.map((dl, idx) => (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6">
+              {jobsList.slice(0, showAllJobs ? 8 : 4).map((job) => (
                 <div
-                  key={idx}
-                  onClick={() => {
-                    if (onViewJob) {
-                      onViewJob(dl.job);
-                    } else {
-                      setActiveTab('deadlines');
-                    }
-                  }}
-                  className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-2xs hover:border-rose-400 hover:shadow-sm transition cursor-pointer flex items-center justify-between gap-3"
+                  key={job.id}
+                  onClick={() => setActiveTab('jobs')}
+                  className="bg-white rounded-3xl p-6 border border-slate-200 shadow-2xs hover:shadow-md hover:border-blue-400 transition cursor-pointer flex flex-col justify-between space-y-4"
                 >
-                  <div className="space-y-1.5 min-w-0">
-                    <h4 className="text-xs sm:text-sm font-extrabold text-slate-900 line-clamp-1 hover:text-rose-700">
-                      {dl.title}
-                    </h4>
-                    <p className="text-[11px] text-slate-500">Last Date: {dl.formattedDate}</p>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="px-3 py-1 bg-blue-50 text-blue-900 text-[10px] font-black rounded-md uppercase">
+                        {job.type} • {job.qualification}
+                      </span>
+                      <span className="text-[11px] font-bold text-slate-400">{job.deadlineDate}</span>
+                    </div>
+
+                    <h3 className="font-extrabold text-slate-900 text-sm sm:text-base leading-snug line-clamp-2">
+                      {job.title}
+                    </h3>
+
+                    <p className="text-xs text-teal-800 font-bold">{job.vacancy}</p>
                   </div>
 
-                  <span
-                    className={`px-3 py-1 rounded-xl text-[10px] font-black shrink-0 ${
-                      dl.urgent
-                        ? 'bg-rose-500 text-white animate-pulse'
-                        : 'bg-amber-100 text-amber-900 border border-amber-300'
-                    }`}
-                  >
-                    {dl.badgeText}
-                  </span>
+                  <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-blue-900">
+                    <span>View Details</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </div>
                 </div>
-              ))
+              ))}
+            </div>
+
+            {/* Collapsible View More */}
+            <div className="pt-2 flex items-center justify-between">
+              <button
+                onClick={() => setShowAllJobs(!showAllJobs)}
+                className="text-xs font-bold text-blue-900 hover:text-blue-700 flex items-center gap-1.5 px-4 py-2 bg-blue-50 hover:bg-blue-100 rounded-xl transition cursor-pointer"
+              >
+                <span>{showAllJobs ? 'Show Top 4 Jobs' : `Show More (${jobsList.length > 8 ? 8 : jobsList.length} Jobs)`}</span>
+                {showAllJobs ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+              </button>
+
+              <button
+                onClick={() => setActiveTab('jobs')}
+                className="text-xs font-extrabold text-slate-600 hover:text-slate-900"
+              >
+                Browse Full Catalog →
+              </button>
+            </div>
+          </div>
+
+          {/* Right Column: 🚨 Closing Soon (1 Col wide) */}
+          <div id="sec-closing-soon" className="space-y-6">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+              <div className="flex items-center space-x-3">
+                <span className="w-9 h-9 rounded-xl bg-rose-100 text-rose-800 flex items-center justify-center font-black">
+                  🚨
+                </span>
+                <h2 className="text-2xl font-black text-slate-900">Closing Soon</h2>
+              </div>
+              <button
+                onClick={() => setActiveTab('deadlines')}
+                className="text-xs sm:text-sm font-extrabold text-rose-700 hover:underline flex items-center"
+              >
+                <span>Tracker</span>
+                <ChevronRight className="w-4 h-4 ml-0.5" />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              {dynamicClosingSoon.length === 0 ? (
+                <div className="bg-white p-6 rounded-3xl border border-slate-200 text-center text-xs text-slate-500">
+                  No immediate recruitment deadlines closing this week.
+                </div>
+              ) : (
+                dynamicClosingSoon.slice(0, showAllClosing ? 5 : 3).map((dl, idx) => (
+                  <div
+                    key={idx}
+                    onClick={() => {
+                      if (onViewJob) {
+                        onViewJob(dl.job);
+                      } else {
+                        setActiveTab('deadlines');
+                      }
+                    }}
+                    className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-2xs hover:border-rose-400 hover:shadow-sm transition cursor-pointer flex items-center justify-between gap-3"
+                  >
+                    <div className="space-y-1.5 min-w-0">
+                      <h4 className="text-xs sm:text-sm font-extrabold text-slate-900 line-clamp-1 hover:text-rose-700">
+                        {dl.title}
+                      </h4>
+                      <p className="text-[11px] text-slate-500">Last Date: {dl.formattedDate}</p>
+                    </div>
+
+                    <span
+                      className={`px-3 py-1 rounded-xl text-[10px] font-black shrink-0 ${
+                        dl.urgent
+                          ? 'bg-rose-500 text-white animate-pulse'
+                          : 'bg-amber-100 text-amber-900 border border-amber-300'
+                      }`}
+                    >
+                      {dl.badgeText}
+                    </span>
+                  </div>
+                ))
+              )}
+            </div>
+
+            {dynamicClosingSoon.length > 3 && (
+              <button
+                onClick={() => setShowAllClosing(!showAllClosing)}
+                className="w-full text-xs font-bold text-rose-800 bg-rose-50 hover:bg-rose-100 py-2.5 rounded-xl border border-rose-200 flex items-center justify-center gap-1.5 transition cursor-pointer"
+              >
+                <span>{showAllClosing ? 'Show Top 3 Deadlines' : `Show More (${dynamicClosingSoon.length} Deadlines)`}</span>
+                {showAllClosing ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+              </button>
             )}
           </div>
         </div>
       </div>
 
+      {/* DIVIDER 5 */}
+      <SectionDivider
+        label="Admit Cards & Official Examination Results"
+        icon={<FileCheck className="w-4 h-4 text-purple-600" />}
+        colorClass="text-purple-900 bg-purple-50/80 border-purple-200"
+      />
+
       {/* 5. 🎫 LATEST ADMIT CARDS & 6. 🏆 LATEST RESULTS (TWO EQUAL COLS) */}
-      <div className="max-w-7xl mx-auto px-2 sm:px-4 grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10">
-        {/* 5. 🎫 Latest Admit Cards */}
-        <div className="space-y-6">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-200">
-            <div className="flex items-center space-x-3">
-              <span className="w-9 h-9 rounded-xl bg-purple-100 text-purple-800 flex items-center justify-center font-black">
-                🎫
-              </span>
-              <h2 className="text-2xl font-black text-slate-900">Latest Admit Cards</h2>
-            </div>
-            <button
-              onClick={() => setActiveTab('admit-cards')}
-              className="text-xs sm:text-sm font-extrabold text-purple-900 hover:underline flex items-center"
-            >
-              <span>View All Admit Cards</span>
-              <ChevronRight className="w-4 h-4 ml-0.5" />
-            </button>
-          </div>
-
-          <div className="space-y-4">
-            {admitCardsList.map((card) => (
-              <div
-                key={card.id}
-                className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-2xs hover:shadow-xs transition flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
-              >
-                <div className="space-y-1.5">
-                  <div className="flex items-center space-x-2">
-                    <span className="px-2.5 py-0.5 bg-purple-100 text-purple-900 text-[10px] font-black rounded uppercase">
-                      {card.badge}
-                    </span>
-                    <span className="text-[11px] text-slate-400 font-semibold">{card.organization}</span>
-                  </div>
-                  <h3 className="text-sm font-extrabold text-slate-900 leading-snug">
-                    {card.title}
-                  </h3>
-                  <p className="text-xs text-slate-500">Exam Date: {card.examDate}</p>
-                </div>
-
-                <a
-                  href={card.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-4 py-2.5 bg-purple-900 hover:bg-purple-800 text-white rounded-xl text-xs font-bold transition shrink-0 flex items-center space-x-1.5 w-full sm:w-auto justify-center"
-                >
-                  <Download className="w-4 h-4" />
-                  <span>Download</span>
-                </a>
+      <div id="sec-admit-results" className="max-w-7xl mx-auto px-2 sm:px-4 bg-gradient-to-br from-purple-50/30 via-white to-emerald-50/30 p-6 sm:p-8 lg:p-10 rounded-3xl border border-slate-200 shadow-xs">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10">
+          {/* 5. 🎫 Latest Admit Cards */}
+          <div className="space-y-6">
+            <div className="flex items-center justify-between pb-3 border-b border-purple-200/80">
+              <div className="flex items-center space-x-3">
+                <span className="w-9 h-9 rounded-xl bg-purple-100 text-purple-800 flex items-center justify-center font-black">
+                  🎫
+                </span>
+                <h2 className="text-2xl font-black text-slate-900">Latest Admit Cards</h2>
               </div>
-            ))}
-          </div>
-        </div>
-
-        {/* 6. 🏆 Latest Results */}
-        <div className="space-y-6">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-200">
-            <div className="flex items-center space-x-3">
-              <span className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-black">
-                🏆
-              </span>
-              <h2 className="text-2xl font-black text-slate-900">Latest Results & Cutoffs</h2>
-            </div>
-            <span className="text-xs text-slate-400 font-bold">Official Releases</span>
-          </div>
-
-          <div className="space-y-4">
-            {resultsList.map((res) => (
-              <div
-                key={res.id}
-                className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-2xs hover:shadow-xs transition flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+              <button
+                onClick={() => setActiveTab('admit-cards')}
+                className="text-xs sm:text-sm font-extrabold text-purple-900 hover:underline flex items-center"
               >
-                <div className="space-y-1.5">
-                  <div className="flex items-center space-x-2">
-                    <span className="px-2.5 py-0.5 bg-emerald-100 text-emerald-900 text-[10px] font-black rounded uppercase">
-                      {res.status}
-                    </span>
-                    <span className="text-[11px] text-slate-400 font-semibold">{res.declaredDate}</span>
-                  </div>
-                  <h3 className="text-sm font-extrabold text-slate-900 leading-snug">
-                    {res.title}
-                  </h3>
-                  <p className="text-xs text-slate-600 font-bold">{res.cutoff}</p>
-                </div>
+                <span>View All</span>
+                <ChevronRight className="w-4 h-4 ml-0.5" />
+              </button>
+            </div>
 
-                <a
-                  href={res.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-4 py-2.5 bg-emerald-800 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition shrink-0 flex items-center space-x-1.5 w-full sm:w-auto justify-center"
+            <div className="space-y-4">
+              {admitCardsList.slice(0, showAllAdmitCards ? 4 : 2).map((card) => (
+                <div
+                  key={card.id}
+                  className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-2xs hover:shadow-xs transition flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
                 >
-                  <ExternalLink className="w-4 h-4" />
-                  <span>Check Result</span>
-                </a>
+                  <div className="space-y-1.5">
+                    <div className="flex items-center space-x-2">
+                      <span className="px-2.5 py-0.5 bg-purple-100 text-purple-900 text-[10px] font-black rounded uppercase">
+                        {card.badge}
+                      </span>
+                      <span className="text-[11px] text-slate-400 font-semibold">{card.organization}</span>
+                    </div>
+                    <h3 className="text-sm font-extrabold text-slate-900 leading-snug">
+                      {card.title}
+                    </h3>
+                    <p className="text-xs text-slate-500">Exam Date: {card.examDate}</p>
+                  </div>
+
+                  <a
+                    href={card.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-4 py-2.5 bg-purple-900 hover:bg-purple-800 text-white rounded-xl text-xs font-bold transition shrink-0 flex items-center space-x-1.5 w-full sm:w-auto justify-center"
+                  >
+                    <Download className="w-4 h-4" />
+                    <span>Download</span>
+                  </a>
+                </div>
+              ))}
+            </div>
+
+            <div className="pt-2">
+              <button
+                onClick={() => setShowAllAdmitCards(!showAllAdmitCards)}
+                className="text-xs font-bold text-purple-900 hover:text-purple-700 flex items-center gap-1.5 px-4 py-2 bg-purple-50 hover:bg-purple-100 rounded-xl transition cursor-pointer"
+              >
+                <span>{showAllAdmitCards ? 'Show Top 2 Admit Cards' : 'Show More Admit Cards (4 Items)'}</span>
+                {showAllAdmitCards ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+              </button>
+            </div>
+          </div>
+
+          {/* 6. 🏆 Latest Results */}
+          <div className="space-y-6">
+            <div className="flex items-center justify-between pb-3 border-b border-emerald-200/80">
+              <div className="flex items-center space-x-3">
+                <span className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-black">
+                  🏆
+                </span>
+                <h2 className="text-2xl font-black text-slate-900">Latest Results & Cutoffs</h2>
               </div>
-            ))}
+              <span className="text-xs text-slate-400 font-bold">Official Releases</span>
+            </div>
+
+            <div className="space-y-4">
+              {resultsList.slice(0, showAllResults ? 4 : 2).map((res) => (
+                <div
+                  key={res.id}
+                  className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-2xs hover:shadow-xs transition flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+                >
+                  <div className="space-y-1.5">
+                    <div className="flex items-center space-x-2">
+                      <span className="px-2.5 py-0.5 bg-emerald-100 text-emerald-900 text-[10px] font-black rounded uppercase">
+                        {res.status}
+                      </span>
+                      <span className="text-[11px] text-slate-400 font-semibold">{res.declaredDate}</span>
+                    </div>
+                    <h3 className="text-sm font-extrabold text-slate-900 leading-snug">
+                      {res.title}
+                    </h3>
+                    <p className="text-xs text-slate-600 font-bold">{res.cutoff}</p>
+                  </div>
+
+                  <a
+                    href={res.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-4 py-2.5 bg-emerald-800 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition shrink-0 flex items-center space-x-1.5 w-full sm:w-auto justify-center"
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                    <span>Check Result</span>
+                  </a>
+                </div>
+              ))}
+            </div>
+
+            <div className="pt-2">
+              <button
+                onClick={() => setShowAllResults(!showAllResults)}
+                className="text-xs font-bold text-emerald-900 hover:text-emerald-700 flex items-center gap-1.5 px-4 py-2 bg-emerald-50 hover:bg-emerald-100 rounded-xl transition cursor-pointer"
+              >
+                <span>{showAllResults ? 'Show Top 2 Results' : 'Show More Results (4 Items)'}</span>
+                {showAllResults ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
+      {/* DIVIDER 6 */}
+      <SectionDivider
+        label="Popular State & Central Exams"
+        icon={<Layers className="w-4 h-4 text-blue-600" />}
+        colorClass="text-blue-900 bg-blue-50/80 border-blue-200"
+      />
+
       {/* 7. 📚 POPULAR EXAMS */}
-      <section className="max-w-7xl mx-auto px-2 sm:px-4 space-y-6">
-        <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+      <section id="sec-popular-exams" className="max-w-7xl mx-auto px-2 sm:px-4 bg-amber-50/25 p-6 sm:p-8 lg:p-10 rounded-3xl border border-amber-200/60 shadow-xs space-y-6">
+        <div className="flex items-center justify-between pb-3 border-b border-amber-200">
           <div className="flex items-center space-x-3">
             <span className="w-9 h-9 rounded-xl bg-blue-100 text-blue-900 flex items-center justify-center font-black">
               📚
@@ -811,7 +1032,7 @@ export const HomeTab: React.FC<HomeTabProps> = ({
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-5">
-          {initialExamsData.slice(0, 6).map((exam) => (
+          {initialExamsData.slice(0, showAllExams ? 12 : 6).map((exam) => (
             <div
               key={exam.id}
               onClick={() => setActiveTab('exams')}
@@ -837,11 +1058,30 @@ export const HomeTab: React.FC<HomeTabProps> = ({
             </div>
           ))}
         </div>
+
+        {initialExamsData.length > 6 && (
+          <div className="pt-2 flex justify-center">
+            <button
+              onClick={() => setShowAllExams(!showAllExams)}
+              className="text-xs font-bold text-blue-900 bg-white hover:bg-blue-50 px-5 py-2.5 rounded-xl border border-blue-200 shadow-2xs flex items-center gap-1.5 transition cursor-pointer"
+            >
+              <span>{showAllExams ? 'Show Top 6 Exams' : 'Show More Competitive Exams (12 Items)'}</span>
+              {showAllExams ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+            </button>
+          </div>
+        )}
       </section>
 
+      {/* DIVIDER 7 */}
+      <SectionDivider
+        label="Daily Current Affairs & Analysis"
+        icon={<Newspaper className="w-4 h-4 text-teal-600" />}
+        colorClass="text-teal-900 bg-teal-50/80 border-teal-200"
+      />
+
       {/* 8. 📰 CURRENT AFFAIRS */}
-      <section className="max-w-7xl mx-auto px-2 sm:px-4 space-y-6">
-        <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+      <section id="sec-current-affairs" className="max-w-7xl mx-auto px-2 sm:px-4 bg-teal-50/40 p-6 sm:p-8 lg:p-10 rounded-3xl border border-teal-200/60 shadow-xs space-y-6">
+        <div className="flex items-center justify-between pb-3 border-b border-teal-200">
           <div className="flex items-center space-x-3">
             <span className="w-9 h-9 rounded-xl bg-teal-100 text-teal-900 flex items-center justify-center font-black">
               📰
@@ -890,98 +1130,134 @@ export const HomeTab: React.FC<HomeTabProps> = ({
         </div>
       </section>
 
+      {/* DIVIDER 8 */}
+      <SectionDivider
+        label="Public Services & Direct Benefit Schemes"
+        icon={<Users className="w-4 h-4 text-emerald-600" />}
+        colorClass="text-emerald-900 bg-emerald-50/80 border-emerald-200"
+      />
+
       {/* 9. 🏛️ GOVERNMENT SERVICES & 10. 💰 GOVERNMENT SCHEMES */}
-      <div className="max-w-7xl mx-auto px-2 sm:px-4 grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10">
-        {/* 9. 🏛️ Government Services */}
-        <div className="space-y-6">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-200">
-            <div className="flex items-center space-x-3">
-              <span className="w-9 h-9 rounded-xl bg-blue-100 text-blue-900 flex items-center justify-center font-black">
-                🏛️
-              </span>
-              <h2 className="text-2xl font-black text-slate-900">Government Services & RTPS</h2>
-            </div>
-            <button
-              onClick={() => setActiveTab('services')}
-              className="text-xs sm:text-sm font-extrabold text-blue-900 hover:underline flex items-center"
-            >
-              <span>View Services</span>
-              <ChevronRight className="w-4 h-4 ml-0.5" />
-            </button>
-          </div>
-
-          <div className="space-y-4">
-            {initialServicesData.slice(0, 3).map((srv) => (
-              <div
-                key={srv.id}
+      <div id="sec-services-schemes" className="max-w-7xl mx-auto px-2 sm:px-4 bg-gradient-to-b from-slate-50 via-white to-slate-50 p-6 sm:p-8 lg:p-10 rounded-3xl border border-slate-200 shadow-xs">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10">
+          {/* 9. 🏛️ Government Services */}
+          <div id="sec-govt-services" className="space-y-6">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+              <div className="flex items-center space-x-3">
+                <span className="w-9 h-9 rounded-xl bg-blue-100 text-blue-900 flex items-center justify-center font-black">
+                  🏛️
+                </span>
+                <h2 className="text-2xl font-black text-slate-900">Government Services & RTPS</h2>
+              </div>
+              <button
                 onClick={() => setActiveTab('services')}
-                className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-2xs hover:shadow-xs transition cursor-pointer flex items-center justify-between gap-4"
+                className="text-xs sm:text-sm font-extrabold text-blue-900 hover:underline flex items-center"
               >
-                <div className="space-y-1.5">
-                  <span className="px-2.5 py-0.5 bg-blue-50 text-blue-900 text-[10px] font-black rounded uppercase">
-                    {srv.category} • {srv.processingTime}
-                  </span>
-                  <h3 className="text-sm font-extrabold text-slate-900">
-                    {srv.title}
-                  </h3>
-                  <p className="text-xs text-slate-500">Official Portal Fee: {srv.fees}</p>
-                </div>
-
-                <div className="w-9 h-9 rounded-2xl bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
-                  <ArrowRight className="w-4 h-4" />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* 10. 💰 Government Schemes */}
-        <div className="space-y-6">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-200">
-            <div className="flex items-center space-x-3">
-              <span className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-900 flex items-center justify-center font-black">
-                💰
-              </span>
-              <h2 className="text-2xl font-black text-slate-900">Welfare Schemes & Subsidies</h2>
+                <span>View Services</span>
+                <ChevronRight className="w-4 h-4 ml-0.5" />
+              </button>
             </div>
-            <button
-              onClick={() => setActiveTab('schemes')}
-              className="text-xs sm:text-sm font-extrabold text-emerald-800 hover:underline flex items-center"
-            >
-              <span>View Schemes</span>
-              <ChevronRight className="w-4 h-4 ml-0.5" />
-            </button>
+
+            <div className="space-y-4">
+              {initialServicesData.slice(0, showAllServices ? 4 : 2).map((srv) => (
+                <div
+                  key={srv.id}
+                  onClick={() => setActiveTab('services')}
+                  className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-2xs hover:shadow-xs transition cursor-pointer flex items-center justify-between gap-4"
+                >
+                  <div className="space-y-1.5">
+                    <span className="px-2.5 py-0.5 bg-blue-50 text-blue-900 text-[10px] font-black rounded uppercase">
+                      {srv.category} • {srv.processingTime}
+                    </span>
+                    <h3 className="text-sm font-extrabold text-slate-900">
+                      {srv.title}
+                    </h3>
+                    <p className="text-xs text-slate-500">Official Portal Fee: {srv.fees}</p>
+                  </div>
+
+                  <div className="w-9 h-9 rounded-2xl bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
+                    <ArrowRight className="w-4 h-4" />
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="pt-2">
+              <button
+                onClick={() => setShowAllServices(!showAllServices)}
+                className="text-xs font-bold text-blue-900 hover:text-blue-700 flex items-center gap-1.5 px-4 py-2 bg-blue-50 hover:bg-blue-100 rounded-xl transition cursor-pointer"
+              >
+                <span>{showAllServices ? 'Show Top 2 Services' : 'Show More Services (4 Items)'}</span>
+                {showAllServices ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+              </button>
+            </div>
           </div>
 
-          <div className="space-y-4">
-            {initialSchemesData.slice(0, 3).map((schm) => (
-              <div
-                key={schm.id}
-                onClick={() => setActiveTab('schemes')}
-                className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-2xs hover:shadow-xs transition cursor-pointer flex items-center justify-between gap-4"
-              >
-                <div className="space-y-1.5">
-                  <span className="px-2.5 py-0.5 bg-emerald-50 text-emerald-900 text-[10px] font-black rounded uppercase">
-                    {schm.category} • DBT Direct Transfer
-                  </span>
-                  <h3 className="text-sm font-extrabold text-slate-900">
-                    {schm.title}
-                  </h3>
-                  <p className="text-xs text-emerald-800 font-bold">{schm.benefits}</p>
-                </div>
-
-                <div className="w-9 h-9 rounded-2xl bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
-                  <ArrowRight className="w-4 h-4" />
-                </div>
+          {/* 10. 💰 Government Schemes */}
+          <div id="sec-welfare-schemes" className="space-y-6">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+              <div className="flex items-center space-x-3">
+                <span className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-900 flex items-center justify-center font-black">
+                  💰
+                </span>
+                <h2 className="text-2xl font-black text-slate-900">Welfare Schemes & Subsidies</h2>
               </div>
-            ))}
+              <button
+                onClick={() => setActiveTab('schemes')}
+                className="text-xs sm:text-sm font-extrabold text-emerald-800 hover:underline flex items-center"
+              >
+                <span>View Schemes</span>
+                <ChevronRight className="w-4 h-4 ml-0.5" />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              {initialSchemesData.slice(0, showAllSchemes ? 4 : 2).map((schm) => (
+                <div
+                  key={schm.id}
+                  onClick={() => setActiveTab('schemes')}
+                  className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-2xs hover:shadow-xs transition cursor-pointer flex items-center justify-between gap-4"
+                >
+                  <div className="space-y-1.5">
+                    <span className="px-2.5 py-0.5 bg-emerald-50 text-emerald-900 text-[10px] font-black rounded uppercase">
+                      {schm.category} • DBT Direct Transfer
+                    </span>
+                    <h3 className="text-sm font-extrabold text-slate-900">
+                      {schm.title}
+                    </h3>
+                    <p className="text-xs text-emerald-800 font-bold">{schm.benefits}</p>
+                  </div>
+
+                  <div className="w-9 h-9 rounded-2xl bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
+                    <ArrowRight className="w-4 h-4" />
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="pt-2">
+              <button
+                onClick={() => setShowAllSchemes(!showAllSchemes)}
+                className="text-xs font-bold text-emerald-900 hover:text-emerald-700 flex items-center gap-1.5 px-4 py-2 bg-emerald-50 hover:bg-emerald-100 rounded-xl transition cursor-pointer"
+              >
+                <span>{showAllSchemes ? 'Show Top 2 Schemes' : 'Show More Schemes (4 Items)'}</span>
+                {showAllSchemes ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
+      {/* DIVIDER 9 */}
+      <SectionDivider
+        label="100% Free Applicant Utility Calculators"
+        icon={<Calculator className="w-4 h-4 text-indigo-600" />}
+        colorClass="text-indigo-900 bg-indigo-50/80 border-indigo-200"
+      />
+
       {/* 11. 🧮 TOOLS (CITIZEN & APPLICANT UTILITY CALCULATORS) */}
-      <section className="max-w-7xl mx-auto px-2 sm:px-4 space-y-6">
-        <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+      <section id="sec-utility-calculators" className="max-w-7xl mx-auto px-2 sm:px-4 bg-indigo-50/35 p-6 sm:p-8 lg:p-10 rounded-3xl border border-indigo-100/80 shadow-xs space-y-6">
+        <div className="flex items-center justify-between pb-3 border-b border-indigo-200/80">
           <div className="flex items-center space-x-3">
             <span className="w-9 h-9 rounded-xl bg-indigo-100 text-indigo-900 flex items-center justify-center font-black">
               🧮

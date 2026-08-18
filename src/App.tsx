@@ -30,6 +30,8 @@ const CourseDirectory = lazy(() => import('./components/CourseDirectory').then(m
 const AdmissionDirectory = lazy(() => import('./components/AdmissionDirectory').then(m => ({ default: m.AdmissionDirectory })));
 const AdmitCardsTab = lazy(() => import('./components/AdmitCardsTab').then(m => ({ default: m.AdmitCardsTab })));
 const FinanceInsuranceTab = lazy(() => import('./components/FinanceInsuranceTab').then(m => ({ default: m.FinanceInsuranceTab })));
+const ToolsHubTab = lazy(() => import('./components/ToolsHubTab').then(m => ({ default: m.ToolsHubTab })));
+const AiUtilitiesTab = lazy(() => import('./components/AiUtilitiesTab').then(m => ({ default: m.AiUtilitiesTab })));
 
 // Lazy load Modals
 const DetailModal = lazy(() => import('./components/DetailModal').then(m => ({ default: m.DetailModal })));
@@ -706,9 +708,23 @@ export default function App() {
             />
           )}
 
-          {activeTab === 'bharatseva-bihar' && (
+          {(activeTab === 'bharatseva-bihar' || activeTab === 'business') && (
             <BharatSevaBiharTab
               onSaveItem={(title, type) => handleSaveItem(title, type)}
+            />
+          )}
+
+          {activeTab === 'tools' && (
+            <ToolsHubTab
+              onOpenAiModal={handleOpenAiModal}
+              onSaveItem={(title, type) => handleSaveItem(title, type)}
+            />
+          )}
+
+          {activeTab === 'ai-utilities' && (
+            <AiUtilitiesTab
+              onOpenDailyRewards={handleOpenDailyRewardsModal}
+              coins={coins}
             />
           )}
 

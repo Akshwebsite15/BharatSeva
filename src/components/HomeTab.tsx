@@ -115,20 +115,33 @@ const FEATURED_TOP_COLLEGES = [
   },
 ];
 
-const SectionDivider: React.FC<{ label: string; icon: React.ReactNode; colorClass?: string }> = ({
+const SectionDivider: React.FC<{
+  label: string;
+  icon: React.ReactNode;
+  colorClass?: string;
+  description?: string;
+}> = ({
   label,
   icon,
-  colorClass = 'text-slate-600 bg-white border-slate-200',
+  colorClass = 'text-slate-700 bg-white border-slate-200',
+  description,
 }) => (
-  <div className="max-w-7xl mx-auto px-4 flex items-center justify-center gap-4 my-8 sm:my-12">
-    <div className="h-px bg-gradient-to-r from-transparent via-slate-300 to-transparent flex-1" />
-    <span
-      className={`text-[11px] font-black uppercase tracking-widest flex items-center gap-2 px-4 py-2 rounded-full border shadow-2xs ${colorClass}`}
-    >
-      {icon}
-      <span>{label}</span>
-    </span>
-    <div className="h-px bg-gradient-to-r from-transparent via-slate-300 to-transparent flex-1" />
+  <div className="max-w-7xl mx-auto px-4 py-6 sm:py-10 my-8 sm:my-12 text-center">
+    <div className="flex items-center justify-center gap-3 sm:gap-4">
+      <div className="h-px bg-gradient-to-r from-transparent via-slate-300 to-transparent flex-1" />
+      <span
+        className={`text-xs sm:text-sm font-black uppercase tracking-wider flex items-center gap-2 sm:gap-2.5 px-4 sm:px-6 py-2.5 sm:py-3 rounded-full border shadow-2xs ${colorClass}`}
+      >
+        {icon}
+        <span>{label}</span>
+      </span>
+      <div className="h-px bg-gradient-to-r from-transparent via-slate-300 to-transparent flex-1" />
+    </div>
+    {description && (
+      <p className="text-xs sm:text-sm text-slate-500 font-bold mt-2.5 max-w-2xl mx-auto leading-relaxed">
+        {description}
+      </p>
+    )}
   </div>
 );
 
@@ -374,26 +387,26 @@ export const HomeTab: React.FC<HomeTabProps> = ({
   const mostUrgentJob = dynamicClosingSoon[0];
 
   return (
-    <div className="space-y-12 sm:space-y-16 lg:space-y-20 pb-16">
+    <div className="space-y-16 sm:space-y-20 lg:space-y-28 pb-24">
       {/* 4. 🆕 TODAY'S UPDATES (Live Government Notification Ticker) */}
-      <div className="bg-gradient-to-r from-amber-500/15 via-teal-500/15 to-blue-500/15 border border-amber-500/25 py-3.5 px-4 sm:px-8 rounded-2xl shadow-xs">
-        <div className="max-w-7xl mx-auto flex items-center space-x-3 text-xs sm:text-sm font-medium text-slate-800 overflow-x-auto whitespace-nowrap scrollbar-none">
-          <span className="inline-flex items-center px-3 py-1 rounded-lg text-xs font-black bg-amber-500 text-slate-900 shrink-0 uppercase tracking-wide shadow-2xs">
+      <div className="bg-gradient-to-r from-amber-500/15 via-teal-500/15 to-blue-500/15 border border-amber-500/25 py-4 px-4 sm:px-8 rounded-2xl shadow-xs">
+        <div className="max-w-7xl mx-auto flex items-center space-x-3 text-sm font-medium text-slate-800 overflow-x-auto whitespace-nowrap scrollbar-none">
+          <span className="inline-flex items-center px-3.5 py-1.5 rounded-lg text-xs font-black bg-amber-500 text-slate-900 shrink-0 uppercase tracking-wide shadow-2xs">
             <Bell className="w-3.5 h-3.5 mr-1.5 animate-pulse" /> 🆕 TODAY'S UPDATES
           </span>
-          <span className="text-slate-800 font-extrabold">
+          <span className="text-slate-900 font-extrabold text-sm">
             • {mostUrgentJob ? `${mostUrgentJob.title}: Deadline ${mostUrgentJob.badgeText} (${mostUrgentJob.formattedDate})` : 'BPSC 71st CCE Notification: 1,245 Posts Application Active'}
           </span>
           <span className="text-slate-400">•</span>
-          <span className="text-slate-800 font-extrabold">
+          <span className="text-slate-900 font-extrabold text-sm">
             • Bihar Police Constable CSBC Admit Cards Download Active for Nov 18 Exam
           </span>
           <span className="text-slate-400">•</span>
-          <span className="text-slate-800 font-extrabold">
+          <span className="text-slate-900 font-extrabold text-sm">
             • Bihar Post Matric Scholarship (PMS 2026-27) Portal Open for SC/ST/EBC
           </span>
           <span className="text-slate-400">•</span>
-          <span className="text-slate-800 font-extrabold">
+          <span className="text-slate-900 font-extrabold text-sm">
             • SSC CGL 2026 CBT Tier-1 Dates Announced (Sept 2026)
           </span>
         </div>
@@ -401,15 +414,15 @@ export const HomeTab: React.FC<HomeTabProps> = ({
 
       {/* 🧭 STICKY QUICK CATEGORY NAVIGATION JUMP BAR */}
       <div className="sticky top-2 z-30 max-w-7xl mx-auto px-2 sm:px-4">
-        <div className="bg-white/95 backdrop-blur-md border border-slate-200/90 shadow-md rounded-2xl p-1.5 sm:p-2 flex items-center gap-1.5 sm:gap-2 overflow-x-auto scrollbar-none">
-          <span className="text-[11px] font-black uppercase text-slate-400 px-2.5 shrink-0 hidden md:inline-flex items-center gap-1">
-            <Zap className="w-3.5 h-3.5 text-amber-500" /> Quick Jump:
+        <div className="bg-white/95 backdrop-blur-md border border-slate-200 shadow-md rounded-2xl p-2 sm:p-2.5 flex items-center gap-2 overflow-x-auto scrollbar-none">
+          <span className="text-xs font-black uppercase text-slate-500 px-3 shrink-0 hidden md:inline-flex items-center gap-1.5">
+            <Zap className="w-4 h-4 text-amber-500" /> Quick Jump:
           </span>
           {quickJumpNav.map((nav) => (
             <button
               key={nav.id}
               onClick={() => scrollToSection(nav.id)}
-              className="px-3 py-1.5 bg-slate-100 hover:bg-slate-900 hover:text-white text-slate-700 text-xs font-bold rounded-xl border border-slate-200/70 transition-all shrink-0 cursor-pointer whitespace-nowrap active:scale-95 shadow-2xs"
+              className="px-3.5 py-2 bg-slate-100 hover:bg-slate-900 hover:text-white text-slate-800 text-xs sm:text-sm font-bold rounded-xl border border-slate-200 transition-all shrink-0 cursor-pointer whitespace-nowrap active:scale-95 shadow-2xs"
             >
               {nav.label}
             </button>
@@ -440,21 +453,21 @@ export const HomeTab: React.FC<HomeTabProps> = ({
           {/* Quick Match Selectors Bar */}
           <div className="bg-slate-900/90 backdrop-blur-md p-6 sm:p-8 rounded-3xl border border-teal-500/30 max-w-3xl mx-auto text-left space-y-6 shadow-xl">
             <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-              <span className="text-xs font-black uppercase tracking-wider text-teal-300 flex items-center gap-1.5">
+              <span className="text-xs sm:text-sm font-black uppercase tracking-wider text-teal-300 flex items-center gap-1.5">
                 <Sparkles className="w-4 h-4" /> 🎯 1-Click Eligibility Matching
               </span>
-              <span className="text-[11px] text-slate-400 font-bold">100% Verified Vacancies</span>
+              <span className="text-xs text-slate-300 font-bold">100% Verified Vacancies</span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5">
               <div>
-                <label className="block text-xs font-black uppercase text-teal-300 mb-2">
+                <label className="block text-xs sm:text-sm font-black uppercase text-teal-300 mb-2">
                   🎓 Qualification
                 </label>
                 <select
                   value={quickQual}
                   onChange={(e) => setQuickQual(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-700 text-white text-xs sm:text-sm font-bold rounded-xl px-3.5 py-3 focus:ring-2 focus:ring-teal-400 focus:outline-hidden"
+                  className="w-full bg-slate-950 border border-slate-700 text-white text-sm font-bold rounded-xl px-3.5 py-3 focus:ring-2 focus:ring-teal-400 focus:outline-hidden"
                 >
                   <option value="10th">10th Pass</option>
                   <option value="12th">12th Pass</option>
@@ -466,13 +479,13 @@ export const HomeTab: React.FC<HomeTabProps> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-black uppercase text-teal-300 mb-2">
+                <label className="block text-xs sm:text-sm font-black uppercase text-teal-300 mb-2">
                   📍 State Quota
                 </label>
                 <select
                   value={quickState}
                   onChange={(e) => setQuickState(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-700 text-white text-xs sm:text-sm font-bold rounded-xl px-3.5 py-3 focus:ring-2 focus:ring-teal-400 focus:outline-hidden"
+                  className="w-full bg-slate-950 border border-slate-700 text-white text-sm font-bold rounded-xl px-3.5 py-3 focus:ring-2 focus:ring-teal-400 focus:outline-hidden"
                 >
                   <option value="Bihar">Bihar Domicile</option>
                   <option value="All India">All India (Central Jobs)</option>
@@ -482,13 +495,13 @@ export const HomeTab: React.FC<HomeTabProps> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-black uppercase text-teal-300 mb-2">
+                <label className="block text-xs sm:text-sm font-black uppercase text-teal-300 mb-2">
                   🏷️ Category Quota
                 </label>
                 <select
                   value={quickCategory}
                   onChange={(e) => setQuickCategory(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-700 text-white text-xs sm:text-sm font-bold rounded-xl px-3.5 py-3 focus:ring-2 focus:ring-teal-400 focus:outline-hidden"
+                  className="w-full bg-slate-950 border border-slate-700 text-white text-sm font-bold rounded-xl px-3.5 py-3 focus:ring-2 focus:ring-teal-400 focus:outline-hidden"
                 >
                   <option value="UR">General / Unreserved</option>
                   <option value="EBC">EBC (Bihar)</option>
@@ -516,19 +529,19 @@ export const HomeTab: React.FC<HomeTabProps> = ({
               onSubmit={handleSearchSubmit}
               className="bg-white p-2 sm:p-2.5 rounded-2xl shadow-xl flex flex-col sm:flex-row items-center border border-slate-200 gap-2 text-slate-800"
             >
-              <div className="flex items-center w-full px-3 py-1">
+              <div className="flex items-center w-full px-3 py-1.5">
                 <Search className="w-5 h-5 text-slate-400 shrink-0" />
                 <input
                   type="text"
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
-                  placeholder="Or search by title: BPSC 71st, Bihar police, Caste Certificate..."
-                  className="w-full px-3 py-2 text-slate-800 placeholder-slate-400 text-xs sm:text-sm focus:outline-hidden bg-transparent font-medium"
+                  placeholder="Search by recruitment or service name (e.g. BPSC 71st, CSBC Police, Caste Certificate...)"
+                  className="w-full px-3 py-2 text-slate-800 placeholder-slate-400 text-sm focus:outline-hidden bg-transparent font-medium"
                 />
               </div>
               <button
                 type="submit"
-                className="w-full sm:w-auto bg-slate-900 hover:bg-slate-800 text-white font-extrabold px-6 py-3 rounded-xl transition shrink-0 cursor-pointer text-xs sm:text-sm"
+                className="w-full sm:w-auto bg-slate-900 hover:bg-slate-800 text-white font-extrabold px-6 py-3.5 rounded-xl transition shrink-0 cursor-pointer text-sm"
               >
                 Search
               </button>
@@ -536,7 +549,7 @@ export const HomeTab: React.FC<HomeTabProps> = ({
 
             {/* Popular Search Chips */}
             <div className="pt-2 flex flex-wrap items-center justify-center gap-2 text-xs text-slate-300">
-              <span className="text-slate-300 font-bold flex items-center text-xs">
+              <span className="text-slate-300 font-bold flex items-center text-xs sm:text-sm">
                 <TrendingUp className="w-4 h-4 mr-1 text-teal-400" /> Hot Searches:
               </span>
               {[
@@ -549,7 +562,7 @@ export const HomeTab: React.FC<HomeTabProps> = ({
                 <button
                   key={chip}
                   onClick={() => handleChipClick(chip)}
-                  className="bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-xl text-slate-200 border border-white/15 transition cursor-pointer font-bold text-xs"
+                  className="bg-white/10 hover:bg-white/20 px-3.5 py-1.5 rounded-xl text-slate-200 border border-white/15 transition cursor-pointer font-bold text-xs sm:text-sm"
                 >
                   {chip}
                 </button>
@@ -563,7 +576,8 @@ export const HomeTab: React.FC<HomeTabProps> = ({
       <SectionDivider
         label="Student & Aspirant Power Suite"
         icon={<Sparkles className="w-4 h-4 text-amber-500" />}
-        colorClass="text-amber-900 bg-amber-50/80 border-amber-200"
+        colorClass="text-amber-900 bg-amber-50 border-amber-200"
+        description="Daily speed quiz challenges, coins rewards, syllabus planner & candidate age eligibility calculation."
       />
 
       {/* 🚀 DAILY STUDENT & ASPIRANT POWER HUB */}
@@ -582,7 +596,8 @@ export const HomeTab: React.FC<HomeTabProps> = ({
       <SectionDivider
         label="Citizen & Public Status Utilities"
         icon={<Landmark className="w-4 h-4 text-emerald-600" />}
-        colorClass="text-emerald-900 bg-emerald-50/80 border-emerald-200"
+        colorClass="text-emerald-900 bg-emerald-50 border-emerald-200"
+        description="1-Click direct access for Ration Card search, PM Kisan DBT status, Land Record (Bhulekh) & EPFO Passbook."
       />
 
       {/* 🇮🇳 TRENDING CITIZEN SERVICES & PUBLIC STATUS UTILITIES HUB */}
@@ -607,7 +622,8 @@ export const HomeTab: React.FC<HomeTabProps> = ({
       <SectionDivider
         label="Higher Education & NIRF Colleges"
         icon={<GraduationCap className="w-4 h-4 text-indigo-500" />}
-        colorClass="text-indigo-900 bg-indigo-50/80 border-indigo-200"
+        colorClass="text-indigo-900 bg-indigo-50 border-indigo-200"
+        description="Explore top ranked universities, engineering & medical colleges with verified cutoffs, fee structures & placements."
       />
 
       {/* 🎓 HIGHER EDUCATION DIRECTORY (COLLEGES & UNIVERSITIES) */}
@@ -736,7 +752,8 @@ export const HomeTab: React.FC<HomeTabProps> = ({
       <SectionDivider
         label="Active Government Job Vacancies"
         icon={<Award className="w-4 h-4 text-blue-600" />}
-        colorClass="text-blue-900 bg-blue-50/80 border-blue-200"
+        colorClass="text-blue-900 bg-blue-50 border-blue-200"
+        description="Fresh recruitment notifications with confirmed vacancies, eligibility criteria & direct online application portals."
       />
 
       {/* 2. 🔥 LATEST GOVERNMENT JOBS & 3. 🚨 CLOSING SOON (TWO COLUMN GRID IN WRAPPER) */}
@@ -753,7 +770,7 @@ export const HomeTab: React.FC<HomeTabProps> = ({
               </div>
               <button
                 onClick={() => setActiveTab('jobs')}
-                className="text-xs sm:text-sm font-extrabold text-blue-900 hover:underline flex items-center"
+                className="text-sm font-extrabold text-blue-900 hover:underline flex items-center"
               >
                 <span>View All 21k+ Jobs</span>
                 <ChevronRight className="w-4 h-4 ml-0.5" />
@@ -769,20 +786,20 @@ export const HomeTab: React.FC<HomeTabProps> = ({
                 >
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="px-3 py-1 bg-blue-50 text-blue-900 text-[10px] font-black rounded-md uppercase">
+                      <span className="px-3 py-1 bg-blue-50 text-blue-900 text-xs font-black rounded-md uppercase">
                         {job.type} • {job.qualification}
                       </span>
-                      <span className="text-[11px] font-bold text-slate-400">{job.deadlineDate}</span>
+                      <span className="text-xs font-bold text-slate-500">{job.deadlineDate}</span>
                     </div>
 
                     <h3 className="font-extrabold text-slate-900 text-sm sm:text-base leading-snug line-clamp-2">
                       {job.title}
                     </h3>
 
-                    <p className="text-xs text-teal-800 font-bold">{job.vacancy}</p>
+                    <p className="text-xs sm:text-sm text-teal-800 font-bold">{job.vacancy}</p>
                   </div>
 
-                  <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-blue-900">
+                  <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-xs sm:text-sm font-bold text-blue-900">
                     <span>View Details</span>
                     <ArrowRight className="w-4 h-4" />
                   </div>
@@ -794,7 +811,7 @@ export const HomeTab: React.FC<HomeTabProps> = ({
             <div className="pt-2 flex items-center justify-between">
               <button
                 onClick={() => setShowAllJobs(!showAllJobs)}
-                className="text-xs font-bold text-blue-900 hover:text-blue-700 flex items-center gap-1.5 px-4 py-2 bg-blue-50 hover:bg-blue-100 rounded-xl transition cursor-pointer"
+                className="text-xs sm:text-sm font-bold text-blue-900 hover:text-blue-700 flex items-center gap-1.5 px-4 py-2 bg-blue-50 hover:bg-blue-100 rounded-xl transition cursor-pointer"
               >
                 <span>{showAllJobs ? 'Show Top 4 Jobs' : `Show More (${jobsList.length > 8 ? 8 : jobsList.length} Jobs)`}</span>
                 {showAllJobs ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -802,7 +819,7 @@ export const HomeTab: React.FC<HomeTabProps> = ({
 
               <button
                 onClick={() => setActiveTab('jobs')}
-                className="text-xs font-extrabold text-slate-600 hover:text-slate-900"
+                className="text-xs sm:text-sm font-extrabold text-slate-600 hover:text-slate-900"
               >
                 Browse Full Catalog →
               </button>
@@ -829,7 +846,7 @@ export const HomeTab: React.FC<HomeTabProps> = ({
 
             <div className="space-y-4">
               {dynamicClosingSoon.length === 0 ? (
-                <div className="bg-white p-6 rounded-3xl border border-slate-200 text-center text-xs text-slate-500">
+                <div className="bg-white p-6 rounded-3xl border border-slate-200 text-center text-xs sm:text-sm text-slate-500">
                   No immediate recruitment deadlines closing this week.
                 </div>
               ) : (
@@ -849,11 +866,11 @@ export const HomeTab: React.FC<HomeTabProps> = ({
                       <h4 className="text-xs sm:text-sm font-extrabold text-slate-900 line-clamp-1 hover:text-rose-700">
                         {dl.title}
                       </h4>
-                      <p className="text-[11px] text-slate-500">Last Date: {dl.formattedDate}</p>
+                      <p className="text-xs text-slate-500">Last Date: {dl.formattedDate}</p>
                     </div>
 
                     <span
-                      className={`px-3 py-1 rounded-xl text-[10px] font-black shrink-0 ${
+                      className={`px-3 py-1 rounded-xl text-xs font-black shrink-0 ${
                         dl.urgent
                           ? 'bg-rose-500 text-white animate-pulse'
                           : 'bg-amber-100 text-amber-900 border border-amber-300'
@@ -869,7 +886,7 @@ export const HomeTab: React.FC<HomeTabProps> = ({
             {dynamicClosingSoon.length > 3 && (
               <button
                 onClick={() => setShowAllClosing(!showAllClosing)}
-                className="w-full text-xs font-bold text-rose-800 bg-rose-50 hover:bg-rose-100 py-2.5 rounded-xl border border-rose-200 flex items-center justify-center gap-1.5 transition cursor-pointer"
+                className="w-full text-xs sm:text-sm font-bold text-rose-800 bg-rose-50 hover:bg-rose-100 py-2.5 rounded-xl border border-rose-200 flex items-center justify-center gap-1.5 transition cursor-pointer"
               >
                 <span>{showAllClosing ? 'Show Top 3 Deadlines' : `Show More (${dynamicClosingSoon.length} Deadlines)`}</span>
                 {showAllClosing ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -883,7 +900,8 @@ export const HomeTab: React.FC<HomeTabProps> = ({
       <SectionDivider
         label="Admit Cards & Official Examination Results"
         icon={<FileCheck className="w-4 h-4 text-purple-600" />}
-        colorClass="text-purple-900 bg-purple-50/80 border-purple-200"
+        colorClass="text-purple-900 bg-purple-50 border-purple-200"
+        description="Download exam hall tickets, CBT shift timings, answer keys & official merit lists."
       />
 
       {/* 5. 🎫 LATEST ADMIT CARDS & 6. 🏆 LATEST RESULTS (TWO EQUAL COLS) */}
@@ -915,22 +933,22 @@ export const HomeTab: React.FC<HomeTabProps> = ({
                 >
                   <div className="space-y-1.5">
                     <div className="flex items-center space-x-2">
-                      <span className="px-2.5 py-0.5 bg-purple-100 text-purple-900 text-[10px] font-black rounded uppercase">
+                      <span className="px-2.5 py-0.5 bg-purple-100 text-purple-900 text-xs font-black rounded uppercase">
                         {card.badge}
                       </span>
-                      <span className="text-[11px] text-slate-400 font-semibold">{card.organization}</span>
+                      <span className="text-xs text-slate-400 font-semibold">{card.organization}</span>
                     </div>
-                    <h3 className="text-sm font-extrabold text-slate-900 leading-snug">
+                    <h3 className="text-sm sm:text-base font-extrabold text-slate-900 leading-snug">
                       {card.title}
                     </h3>
-                    <p className="text-xs text-slate-500">Exam Date: {card.examDate}</p>
+                    <p className="text-xs sm:text-sm text-slate-500">Exam Date: {card.examDate}</p>
                   </div>
 
                   <a
                     href={card.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-4 py-2.5 bg-purple-900 hover:bg-purple-800 text-white rounded-xl text-xs font-bold transition shrink-0 flex items-center space-x-1.5 w-full sm:w-auto justify-center"
+                    className="px-4 py-2.5 bg-purple-900 hover:bg-purple-800 text-white rounded-xl text-xs sm:text-sm font-bold transition shrink-0 flex items-center space-x-1.5 w-full sm:w-auto justify-center"
                   >
                     <Download className="w-4 h-4" />
                     <span>Download</span>
@@ -942,7 +960,7 @@ export const HomeTab: React.FC<HomeTabProps> = ({
             <div className="pt-2">
               <button
                 onClick={() => setShowAllAdmitCards(!showAllAdmitCards)}
-                className="text-xs font-bold text-purple-900 hover:text-purple-700 flex items-center gap-1.5 px-4 py-2 bg-purple-50 hover:bg-purple-100 rounded-xl transition cursor-pointer"
+                className="text-xs sm:text-sm font-bold text-purple-900 hover:text-purple-700 flex items-center gap-1.5 px-4 py-2 bg-purple-50 hover:bg-purple-100 rounded-xl transition cursor-pointer"
               >
                 <span>{showAllAdmitCards ? 'Show Top 2 Admit Cards' : 'Show More Admit Cards (4 Items)'}</span>
                 {showAllAdmitCards ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -970,22 +988,22 @@ export const HomeTab: React.FC<HomeTabProps> = ({
                 >
                   <div className="space-y-1.5">
                     <div className="flex items-center space-x-2">
-                      <span className="px-2.5 py-0.5 bg-emerald-100 text-emerald-900 text-[10px] font-black rounded uppercase">
+                      <span className="px-2.5 py-0.5 bg-emerald-100 text-emerald-900 text-xs font-black rounded uppercase">
                         {res.status}
                       </span>
-                      <span className="text-[11px] text-slate-400 font-semibold">{res.declaredDate}</span>
+                      <span className="text-xs text-slate-400 font-semibold">{res.declaredDate}</span>
                     </div>
-                    <h3 className="text-sm font-extrabold text-slate-900 leading-snug">
+                    <h3 className="text-sm sm:text-base font-extrabold text-slate-900 leading-snug">
                       {res.title}
                     </h3>
-                    <p className="text-xs text-slate-600 font-bold">{res.cutoff}</p>
+                    <p className="text-xs sm:text-sm text-slate-600 font-bold">{res.cutoff}</p>
                   </div>
 
                   <a
                     href={res.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-4 py-2.5 bg-emerald-800 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition shrink-0 flex items-center space-x-1.5 w-full sm:w-auto justify-center"
+                    className="px-4 py-2.5 bg-emerald-800 hover:bg-emerald-700 text-white rounded-xl text-xs sm:text-sm font-bold transition shrink-0 flex items-center space-x-1.5 w-full sm:w-auto justify-center"
                   >
                     <ExternalLink className="w-4 h-4" />
                     <span>Check Result</span>
@@ -997,7 +1015,7 @@ export const HomeTab: React.FC<HomeTabProps> = ({
             <div className="pt-2">
               <button
                 onClick={() => setShowAllResults(!showAllResults)}
-                className="text-xs font-bold text-emerald-900 hover:text-emerald-700 flex items-center gap-1.5 px-4 py-2 bg-emerald-50 hover:bg-emerald-100 rounded-xl transition cursor-pointer"
+                className="text-xs sm:text-sm font-bold text-emerald-900 hover:text-emerald-700 flex items-center gap-1.5 px-4 py-2 bg-emerald-50 hover:bg-emerald-100 rounded-xl transition cursor-pointer"
               >
                 <span>{showAllResults ? 'Show Top 2 Results' : 'Show More Results (4 Items)'}</span>
                 {showAllResults ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -1011,7 +1029,8 @@ export const HomeTab: React.FC<HomeTabProps> = ({
       <SectionDivider
         label="Popular State & Central Exams"
         icon={<Layers className="w-4 h-4 text-blue-600" />}
-        colorClass="text-blue-900 bg-blue-50/80 border-blue-200"
+        colorClass="text-blue-900 bg-blue-50 border-blue-200"
+        description="Exam patterns, syllabus, previous year papers & cutoff benchmarks for BPSC, SSC, UPSC & Railway exams."
       />
 
       {/* 7. 📚 POPULAR EXAMS */}
@@ -1040,7 +1059,7 @@ export const HomeTab: React.FC<HomeTabProps> = ({
               className="bg-white p-5 rounded-3xl border border-slate-200 shadow-2xs hover:border-teal-500 hover:shadow-md transition cursor-pointer text-center space-y-3 flex flex-col justify-between min-h-[170px]"
             >
               <div>
-                <span className="px-2.5 py-0.5 bg-slate-100 text-slate-700 text-[10px] font-black rounded uppercase block mx-auto mb-2 w-fit">
+                <span className="px-2.5 py-0.5 bg-slate-100 text-slate-700 text-xs font-black rounded uppercase block mx-auto mb-2 w-fit">
                   {exam.category}
                 </span>
                 <h3 className="font-extrabold text-slate-900 text-xs sm:text-sm line-clamp-2 leading-snug">
@@ -1049,10 +1068,10 @@ export const HomeTab: React.FC<HomeTabProps> = ({
               </div>
 
               <div className="pt-3 border-t border-slate-100 space-y-1">
-                <span className="text-[11px] text-teal-800 font-extrabold block">
+                <span className="text-xs text-teal-800 font-extrabold block">
                   {exam.examDate}
                 </span>
-                <span className="text-[10px] text-slate-400 block font-medium">
+                <span className="text-xs text-slate-500 block font-medium">
                   {exam.status}
                 </span>
               </div>
@@ -1064,7 +1083,7 @@ export const HomeTab: React.FC<HomeTabProps> = ({
           <div className="pt-2 flex justify-center">
             <button
               onClick={() => setShowAllExams(!showAllExams)}
-              className="text-xs font-bold text-blue-900 bg-white hover:bg-blue-50 px-5 py-2.5 rounded-xl border border-blue-200 shadow-2xs flex items-center gap-1.5 transition cursor-pointer"
+              className="text-xs sm:text-sm font-bold text-blue-900 bg-white hover:bg-blue-50 px-5 py-2.5 rounded-xl border border-blue-200 shadow-2xs flex items-center gap-1.5 transition cursor-pointer"
             >
               <span>{showAllExams ? 'Show Top 6 Exams' : 'Show More Competitive Exams (12 Items)'}</span>
               {showAllExams ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -1077,7 +1096,8 @@ export const HomeTab: React.FC<HomeTabProps> = ({
       <SectionDivider
         label="Daily Current Affairs & Analysis"
         icon={<Newspaper className="w-4 h-4 text-teal-600" />}
-        colorClass="text-teal-900 bg-teal-50/80 border-teal-200"
+        colorClass="text-teal-900 bg-teal-50 border-teal-200"
+        description="Daily National & State news summaries, editorial key points & interactive practice quizzes."
       />
 
       {/* 8. 📰 CURRENT AFFAIRS */}
@@ -1106,23 +1126,23 @@ export const HomeTab: React.FC<HomeTabProps> = ({
               className="bg-white p-6 rounded-3xl border border-slate-200 shadow-2xs hover:shadow-md transition cursor-pointer flex flex-col justify-between space-y-4 min-h-[220px]"
             >
               <div className="space-y-3">
-                <div className="flex items-center justify-between text-[11px] font-bold">
+                <div className="flex items-center justify-between text-xs font-bold">
                   <span className="px-3 py-1 bg-teal-50 text-teal-900 border border-teal-200 rounded-full font-black uppercase">
                     {art.category}
                   </span>
-                  <span className="text-slate-400">{art.date}</span>
+                  <span className="text-slate-500">{art.date}</span>
                 </div>
 
                 <h3 className="font-extrabold text-slate-900 text-sm sm:text-base leading-snug line-clamp-2">
                   {art.title}
                 </h3>
 
-                <p className="text-xs text-slate-600 line-clamp-3 leading-relaxed">
+                <p className="text-xs sm:text-sm text-slate-600 line-clamp-3 leading-relaxed">
                   {art.summary}
                 </p>
               </div>
 
-              <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-teal-800">
+              <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs sm:text-sm font-bold text-teal-800">
                 <span>Read Key Analysis & Take Quiz</span>
                 <ArrowRight className="w-4 h-4" />
               </div>
@@ -1135,7 +1155,8 @@ export const HomeTab: React.FC<HomeTabProps> = ({
       <SectionDivider
         label="Public Services & Direct Benefit Schemes"
         icon={<Users className="w-4 h-4 text-emerald-600" />}
-        colorClass="text-emerald-900 bg-emerald-50/80 border-emerald-200"
+        colorClass="text-emerald-900 bg-emerald-50 border-emerald-200"
+        description="Official application forms, step-by-step guides & direct eligibility checking for government welfare programs."
       />
 
       {/* 9. 🏛️ GOVERNMENT SERVICES & 10. 💰 GOVERNMENT SCHEMES */}
@@ -1167,13 +1188,13 @@ export const HomeTab: React.FC<HomeTabProps> = ({
                   className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-2xs hover:shadow-xs transition cursor-pointer flex items-center justify-between gap-4"
                 >
                   <div className="space-y-1.5">
-                    <span className="px-2.5 py-0.5 bg-blue-50 text-blue-900 text-[10px] font-black rounded uppercase">
+                    <span className="px-2.5 py-0.5 bg-blue-50 text-blue-900 text-xs font-black rounded uppercase">
                       {srv.category} • {srv.processingTime}
                     </span>
-                    <h3 className="text-sm font-extrabold text-slate-900">
+                    <h3 className="text-sm sm:text-base font-extrabold text-slate-900">
                       {srv.title}
                     </h3>
-                    <p className="text-xs text-slate-500">Official Portal Fee: {srv.fees}</p>
+                    <p className="text-xs sm:text-sm text-slate-500">Official Portal Fee: {srv.fees}</p>
                   </div>
 
                   <div className="w-9 h-9 rounded-2xl bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
@@ -1186,7 +1207,7 @@ export const HomeTab: React.FC<HomeTabProps> = ({
             <div className="pt-2">
               <button
                 onClick={() => setShowAllServices(!showAllServices)}
-                className="text-xs font-bold text-blue-900 hover:text-blue-700 flex items-center gap-1.5 px-4 py-2 bg-blue-50 hover:bg-blue-100 rounded-xl transition cursor-pointer"
+                className="text-xs sm:text-sm font-bold text-blue-900 hover:text-blue-700 flex items-center gap-1.5 px-4 py-2 bg-blue-50 hover:bg-blue-100 rounded-xl transition cursor-pointer"
               >
                 <span>{showAllServices ? 'Show Top 2 Services' : 'Show More Services (4 Items)'}</span>
                 {showAllServices ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -1220,13 +1241,13 @@ export const HomeTab: React.FC<HomeTabProps> = ({
                   className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-2xs hover:shadow-xs transition cursor-pointer flex items-center justify-between gap-4"
                 >
                   <div className="space-y-1.5">
-                    <span className="px-2.5 py-0.5 bg-emerald-50 text-emerald-900 text-[10px] font-black rounded uppercase">
+                    <span className="px-2.5 py-0.5 bg-emerald-50 text-emerald-900 text-xs font-black rounded uppercase">
                       {schm.category} • DBT Direct Transfer
                     </span>
-                    <h3 className="text-sm font-extrabold text-slate-900">
+                    <h3 className="text-sm sm:text-base font-extrabold text-slate-900">
                       {schm.title}
                     </h3>
-                    <p className="text-xs text-emerald-800 font-bold">{schm.benefits}</p>
+                    <p className="text-xs sm:text-sm text-emerald-800 font-bold">{schm.benefits}</p>
                   </div>
 
                   <div className="w-9 h-9 rounded-2xl bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
@@ -1239,7 +1260,7 @@ export const HomeTab: React.FC<HomeTabProps> = ({
             <div className="pt-2">
               <button
                 onClick={() => setShowAllSchemes(!showAllSchemes)}
-                className="text-xs font-bold text-emerald-900 hover:text-emerald-700 flex items-center gap-1.5 px-4 py-2 bg-emerald-50 hover:bg-emerald-100 rounded-xl transition cursor-pointer"
+                className="text-xs sm:text-sm font-bold text-emerald-900 hover:text-emerald-700 flex items-center gap-1.5 px-4 py-2 bg-emerald-50 hover:bg-emerald-100 rounded-xl transition cursor-pointer"
               >
                 <span>{showAllSchemes ? 'Show Top 2 Schemes' : 'Show More Schemes (4 Items)'}</span>
                 {showAllSchemes ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -1253,7 +1274,8 @@ export const HomeTab: React.FC<HomeTabProps> = ({
       <SectionDivider
         label="Government Insurance, Subsidized Loans & Financial Calculators"
         icon={<ShieldCheck className="w-4 h-4 text-emerald-600" />}
-        colorClass="text-emerald-900 bg-emerald-50/80 border-emerald-200"
+        colorClass="text-emerald-900 bg-emerald-50 border-emerald-200"
+        description="Comprehensive guide on free health cards, subsidized student & business loans, death cover & live tax comparisons."
       />
 
       {/* 🛡️ FINANCE & INSURANCE HUB SECTION */}
@@ -1267,14 +1289,14 @@ export const HomeTab: React.FC<HomeTabProps> = ({
               <h2 className="text-2xl font-black text-slate-900">
                 Finance, Insurance & Subsidized Loans Hub
               </h2>
-              <p className="text-xs text-slate-500 font-bold">
+              <p className="text-xs sm:text-sm text-slate-600 font-bold">
                 Ayushman Bharat, Student Credit Card @ 1%, PMJJBY, Mudra Loans & Loan EMI Simulator
               </p>
             </div>
           </div>
           <button
             onClick={() => setActiveTab('finance-insurance')}
-            className="self-start sm:self-auto text-xs font-black text-emerald-900 hover:text-emerald-700 flex items-center gap-1.5 px-4 py-2 bg-emerald-100/80 hover:bg-emerald-200/80 rounded-xl transition cursor-pointer"
+            className="self-start sm:self-auto text-xs sm:text-sm font-black text-emerald-900 hover:text-emerald-700 flex items-center gap-1.5 px-4 py-2.5 bg-emerald-100 hover:bg-emerald-200 rounded-xl transition cursor-pointer"
           >
             <span>Open Complete Finance Portal</span>
             <ArrowRight className="w-4 h-4" />
@@ -1288,17 +1310,17 @@ export const HomeTab: React.FC<HomeTabProps> = ({
             className="bg-white p-5 rounded-2xl border border-slate-200 hover:border-emerald-500 hover:shadow-md transition cursor-pointer space-y-3 flex flex-col justify-between"
           >
             <div className="space-y-2">
-              <span className="px-2.5 py-0.5 bg-emerald-100 text-emerald-900 rounded-md text-[10px] font-black uppercase">
+              <span className="px-2.5 py-0.5 bg-emerald-100 text-emerald-900 rounded-md text-xs font-black uppercase">
                 Health Insurance
               </span>
-              <h3 className="font-extrabold text-slate-900 text-sm">
+              <h3 className="font-extrabold text-slate-900 text-sm sm:text-base">
                 Ayushman Bharat (PM-JAY)
               </h3>
-              <p className="text-xs text-slate-500 line-clamp-2">
+              <p className="text-xs sm:text-sm text-slate-600 line-clamp-2 leading-relaxed">
                 ₹5,00,000 free annual cashless hospitalization per family in 27,000+ empaneled hospitals.
               </p>
             </div>
-            <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs font-black text-emerald-800">
+            <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs sm:text-sm font-black text-emerald-800">
               <span>Free Coverage</span>
               <ChevronRight className="w-4 h-4" />
             </div>
@@ -1310,17 +1332,17 @@ export const HomeTab: React.FC<HomeTabProps> = ({
             className="bg-white p-5 rounded-2xl border border-slate-200 hover:border-emerald-500 hover:shadow-md transition cursor-pointer space-y-3 flex flex-col justify-between"
           >
             <div className="space-y-2">
-              <span className="px-2.5 py-0.5 bg-purple-100 text-purple-900 rounded-md text-[10px] font-black uppercase">
+              <span className="px-2.5 py-0.5 bg-purple-100 text-purple-900 rounded-md text-xs font-black uppercase">
                 Higher Education Loan
               </span>
-              <h3 className="font-extrabold text-slate-900 text-sm">
+              <h3 className="font-extrabold text-slate-900 text-sm sm:text-base">
                 Bihar Student Credit Card (MNSSBY)
               </h3>
-              <p className="text-xs text-slate-500 line-clamp-2">
+              <p className="text-xs sm:text-sm text-slate-600 line-clamp-2 leading-relaxed">
                 ₹4 Lakh education loan for B.Tech, MBBS, BCA & degrees at 1% interest for girls / 4% for boys.
               </p>
             </div>
-            <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs font-black text-purple-800">
+            <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs sm:text-sm font-black text-purple-800">
               <span>1% Simple Interest</span>
               <ChevronRight className="w-4 h-4" />
             </div>
@@ -1332,17 +1354,17 @@ export const HomeTab: React.FC<HomeTabProps> = ({
             className="bg-white p-5 rounded-2xl border border-slate-200 hover:border-emerald-500 hover:shadow-md transition cursor-pointer space-y-3 flex flex-col justify-between"
           >
             <div className="space-y-2">
-              <span className="px-2.5 py-0.5 bg-blue-100 text-blue-900 rounded-md text-[10px] font-black uppercase">
+              <span className="px-2.5 py-0.5 bg-blue-100 text-blue-900 rounded-md text-xs font-black uppercase">
                 Life Insurance
               </span>
-              <h3 className="font-extrabold text-slate-900 text-sm">
+              <h3 className="font-extrabold text-slate-900 text-sm sm:text-base">
                 PM Jeevan Jyoti Bima (PMJJBY)
               </h3>
-              <p className="text-xs text-slate-500 line-clamp-2">
+              <p className="text-xs sm:text-sm text-slate-600 line-clamp-2 leading-relaxed">
                 ₹2,00,000 life insurance death cover for ₹436/year auto-debited from bank account.
               </p>
             </div>
-            <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs font-black text-blue-800">
+            <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs sm:text-sm font-black text-blue-800">
               <span>₹436 / Year</span>
               <ChevronRight className="w-4 h-4" />
             </div>
@@ -1354,17 +1376,17 @@ export const HomeTab: React.FC<HomeTabProps> = ({
             className="bg-gradient-to-br from-slate-900 to-emerald-950 text-white p-5 rounded-2xl border border-emerald-500/40 hover:shadow-md transition cursor-pointer space-y-3 flex flex-col justify-between"
           >
             <div className="space-y-2">
-              <span className="px-2.5 py-0.5 bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 rounded-md text-[10px] font-black uppercase">
+              <span className="px-2.5 py-0.5 bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 rounded-md text-xs font-black uppercase">
                 Interactive Calculators
               </span>
-              <h3 className="font-extrabold text-white text-sm">
+              <h3 className="font-extrabold text-white text-sm sm:text-base">
                 Loan EMI & Tax Simulator
               </h3>
-              <p className="text-xs text-slate-300 line-clamp-2">
+              <p className="text-xs sm:text-sm text-slate-300 line-clamp-2 leading-relaxed">
                 Calculate home, education, and Mudra loan EMIs + compare New vs Old Tax Regime savings.
               </p>
             </div>
-            <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-xs font-black text-emerald-400">
+            <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-xs sm:text-sm font-black text-emerald-400">
               <span>Launch Calculators</span>
               <ChevronRight className="w-4 h-4" />
             </div>
@@ -1376,7 +1398,8 @@ export const HomeTab: React.FC<HomeTabProps> = ({
       <SectionDivider
         label="100% Free Applicant Utility Calculators"
         icon={<Calculator className="w-4 h-4 text-indigo-600" />}
-        colorClass="text-indigo-900 bg-indigo-50/80 border-indigo-200"
+        colorClass="text-indigo-900 bg-indigo-50 border-indigo-200"
+        description="Instant utilities to calculate exact exam age limits, convert university CGPA to marks, and check official typing speed standards."
       />
 
       {/* 11. 🧮 TOOLS (CITIZEN & APPLICANT UTILITY CALCULATORS) */}
@@ -1406,11 +1429,11 @@ export const HomeTab: React.FC<HomeTabProps> = ({
               <h3 className="font-extrabold text-slate-900 text-base">
                 Govt Exam Age & Eligibility Calculator
               </h3>
-              <p className="text-xs text-slate-500 leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
                 Calculate exact age and check OBC, SC/ST & PwD relaxation across 35+ SSC, UPSC & BPSC exams.
               </p>
             </div>
-            <button className="w-full py-2.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-900 font-extrabold text-xs rounded-xl transition">
+            <button className="w-full py-2.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-900 font-extrabold text-xs sm:text-sm rounded-xl transition">
               Open Live Age Calculator
             </button>
           </div>
@@ -1427,11 +1450,11 @@ export const HomeTab: React.FC<HomeTabProps> = ({
               <h3 className="font-extrabold text-slate-900 text-base">
                 CGPA to Percentage Converter
               </h3>
-              <p className="text-xs text-slate-500 leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
                 Convert CBSE 10th / University CGPA (10 point scale) to exact percentage for online forms.
               </p>
             </div>
-            <button className="w-full py-2.5 bg-teal-50 hover:bg-teal-100 text-teal-900 font-extrabold text-xs rounded-xl transition">
+            <button className="w-full py-2.5 bg-teal-50 hover:bg-teal-100 text-teal-900 font-extrabold text-xs sm:text-sm rounded-xl transition">
               Open Converter
             </button>
           </div>
@@ -1448,11 +1471,11 @@ export const HomeTab: React.FC<HomeTabProps> = ({
               <h3 className="font-extrabold text-slate-900 text-base">
                 Typing Speed & Font Checker
               </h3>
-              <p className="text-xs text-slate-500 leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
                 Check required WPM & font (KrutiDev / Mangal Remix) for BSSC Clerk, High Court, and SSC Exams.
               </p>
             </div>
-            <button className="w-full py-2.5 bg-purple-50 hover:bg-purple-100 text-purple-900 font-extrabold text-xs rounded-xl transition">
+            <button className="w-full py-2.5 bg-purple-50 hover:bg-purple-100 text-purple-900 font-extrabold text-xs sm:text-sm rounded-xl transition">
               Check Font Rules
             </button>
           </div>
@@ -1469,11 +1492,11 @@ export const HomeTab: React.FC<HomeTabProps> = ({
               <h3 className="font-extrabold text-slate-900 text-base">
                 Photo & Sign Resizer & Spec Tool
               </h3>
-              <p className="text-xs text-slate-500 leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
                 Resize, crop & compress JPG to exact 20-50 KB limits for SSC, CSBC, BPSC and NTA uploads.
               </p>
             </div>
-            <button className="w-full py-2.5 bg-amber-50 hover:bg-amber-100 text-amber-900 font-extrabold text-xs rounded-xl transition">
+            <button className="w-full py-2.5 bg-amber-50 hover:bg-amber-100 text-amber-900 font-extrabold text-xs sm:text-sm rounded-xl transition">
               Open Image Resizer & Compressor
             </button>
           </div>

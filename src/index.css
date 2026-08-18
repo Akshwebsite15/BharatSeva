@@ -10,6 +10,7 @@
 html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
+  font-size: 16px;
 }
 
 body {
@@ -22,6 +23,17 @@ body {
   -webkit-tap-highlight-color: transparent;
   background-color: #f8fafc;
   color: #0f172a;
+  line-height: 1.6;
+}
+
+/* Mobile Content Readability Enhancements */
+@media (max-width: 640px) {
+  body {
+    font-size: 15px;
+  }
+  p, li {
+    line-height: 1.6;
+  }
 }
 
 @layer utilities {
@@ -39,3 +51,4 @@ body {
     padding-top: max(0.5rem, env(safe-area-inset-top, 0px));
   }
 }
+

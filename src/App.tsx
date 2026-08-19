@@ -129,6 +129,10 @@ export default function App() {
     () => cmsAdmitCards.filter((ac) => ac.publishStatus === 'Published'),
     [cmsAdmitCards]
   );
+  const publishedResults = React.useMemo(
+    () => cmsResults.filter((r) => r.publishStatus === 'Published'),
+    [cmsResults]
+  );
 
   // Datasets
   const [services] = useState<CitizenService[]>(initialServicesData);
@@ -657,6 +661,8 @@ export default function App() {
               selectedJurisdiction={selectedJurisdiction}
               onGlobalSearch={handleGlobalSearch}
               jobs={publishedJobs}
+              results={publishedResults}
+              admitCards={publishedAdmitCards}
               currentAffairsArticles={currentAffairsArticles}
               onSelectCollege={setSelectedCollegeForPage}
               onSelectUniversity={setSelectedUniversityForPage}

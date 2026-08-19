@@ -27,8 +27,25 @@ import {
   Coins,
   Percent,
   Clock,
+  Ticket,
+  Trophy,
+  Flame,
+  Download,
+  RotateCw,
+  AlertCircle,
+  FileSpreadsheet,
+  Calendar,
+  Layers,
 } from 'lucide-react';
-import { JurisdictionState, GovJob, CurrentAffairsArticle, College, University } from '../types';
+import {
+  JurisdictionState,
+  GovJob,
+  CurrentAffairsArticle,
+  College,
+  University,
+  CMSResultItem,
+  CMSAdmitCardItem,
+} from '../types';
 import {
   POPULAR_TOOLS_DATA,
   AI_UTILITIES_DATA,
@@ -38,6 +55,7 @@ import {
   TrendingSchemeItem,
   ExamPrepCategory,
 } from '../data/bharatSevaToolsData';
+import { initialCMSResults, initialCMSAdmitCards, initialCMSJobs } from '../data/cmsInitialData';
 import { BharatSevaPlusModal } from './BharatSevaPlusModal';
 
 interface HomeTabProps {
@@ -45,6 +63,8 @@ interface HomeTabProps {
   selectedJurisdiction: JurisdictionState;
   onGlobalSearch: (query: string) => void;
   jobs?: GovJob[];
+  results?: CMSResultItem[];
+  admitCards?: CMSAdmitCardItem[];
   currentAffairsArticles?: CurrentAffairsArticle[];
   onSelectCollege?: (college: College) => void;
   onSelectUniversity?: (university: University) => void;
@@ -66,6 +86,8 @@ export const HomeTab: React.FC<HomeTabProps> = ({
   selectedJurisdiction,
   onGlobalSearch,
   jobs = [],
+  results = [],
+  admitCards = [],
   currentAffairsArticles = [],
   onSelectCollege,
   onSelectUniversity,
@@ -85,6 +107,23 @@ export const HomeTab: React.FC<HomeTabProps> = ({
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [newsletterSubscribed, setNewsletterSubscribed] = useState(false);
   const [isPlusModalOpen, setIsPlusModalOpen] = useState(false);
+
+  // Sarkari Top Hub Tab Selection: 'all' | 'jobs' | 'results' | 'admit-cards'
+  const [sarkariActiveFilter, setSarkariActiveFilter] = useState<'all' | 'jobs' | 'results' | 'admit-cards'>('all');
+  const [sarkariSearchTerm, setSarkariSearchTerm] = useState('');
+
+  // Fallback to initialCMS data if props empty
+  const activeJobs = useMemo(() => {
+    return jobs.length > 0 ? jobs : (initialCMSJobs as any);
+  }, [jobs]);
+
+  const activeResults = useMemo(() => {
+    return results.length > 0 ? results : initialCMSResults;
+  }, [results]);
+
+  const activeAdmitCards = useMemo(() => {
+    return admitCards.length > 0 ? admitCards : initialCMSAdmitCards;
+  }, [admitCards]);
 
   // College Finder Quick Form State
   const [selectedState, setSelectedState] = useState('Bihar');
@@ -119,32 +158,72 @@ export const HomeTab: React.FC<HomeTabProps> = ({
     setActiveTab('colleges');
   };
 
+  // Filtered Sarkari updates based on search
+  const filteredJobs = useMemo(() => {
+    if (!sarkariSearchTerm.trim()) return activeJobs.slice(0, 5);
+    const q = sarkariSearchTerm.toLowerCase();
+    return activeJobs.filter(
+      (j: any) =>
+        j.title?.toLowerCase().includes(q) ||
+        j.organization?.toLowerCase().includes(q) ||
+        j.qualification?.toLowerCase().includes(q)
+    ).slice(0, 5);
+  }, [activeJobs, sarkariSearchTerm]);
+
+  const filteredAdmitCards = useMemo(() => {
+    if (!sarkariSearchTerm.trim()) return activeAdmitCards.slice(0, 5);
+    const q = sarkariSearchTerm.toLowerCase();
+    return activeAdmitCards.filter(
+      (ac: any) =>
+        ac.admitCardName?.toLowerCase().includes(q) ||
+        ac.examName?.toLowerCase().includes(q) ||
+        ac.organization?.toLowerCase().includes(q) ||
+        ac.category?.toLowerCase().includes(q)
+    ).slice(0, 5);
+  }, [activeAdmitCards, sarkariSearchTerm]);
+
+  const filteredResults = useMemo(() => {
+    if (!sarkariSearchTerm.trim()) return activeResults.slice(0, 5);
+    const q = sarkariSearchTerm.toLowerCase();
+    return activeResults.filter(
+      (r: any) =>
+        r.title?.toLowerCase().includes(q) ||
+        r.examName?.toLowerCase().includes(q) ||
+        r.conductingBody?.toLowerCase().includes(q) ||
+        r.category?.toLowerCase().includes(q)
+    ).slice(0, 5);
+  }, [activeResults, sarkariSearchTerm]);
+
   return (
-    <div className="min-h-screen bg-slate-50/50 pb-16 space-y-10 sm:space-y-14">
+    <div className="min-h-screen bg-slate-50/50 pb-16 space-y-8 sm:space-y-12">
       {/* 👑 BharatSeva Plus Modal */}
       <BharatSevaPlusModal
         isOpen={isPlusModalOpen}
         onClose={() => setIsPlusModalOpen(false)}
         onUnlockSuccess={() => {
-          // Callback when user activates simulation
+          // Simulation unlock callback
         }}
       />
 
       {/* ──────────────────────────────────────────────────────────────────────────
-          1. HERO SECTION (Exact layout matching the visual reference)
+          1. HERO SECTION
       ────────────────────────────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-blue-50/70 via-white to-slate-50 border-b border-slate-200/80 pt-8 pb-12 sm:pt-14 sm:pb-16">
+      <section className="relative overflow-hidden bg-gradient-to-b from-blue-50/70 via-white to-slate-50 border-b border-slate-200/80 pt-6 pb-10 sm:pt-12 sm:pb-14">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             {/* Left Hero Column */}
-            <div className="lg:col-span-7 space-y-5 sm:space-y-6">
-              <div className="space-y-3">
+            <div className="lg:col-span-7 space-y-4 sm:space-y-5">
+              <div className="space-y-2.5">
+                <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-500/10 border border-amber-500/30 text-amber-900 rounded-full text-xs font-bold shadow-2xs">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                  <span>BharatSeva: Sahi Jankari, Sahi Faisla</span>
+                </div>
                 <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 tracking-tight leading-[1.15]">
                   India’s One-Stop Platform <br className="hidden sm:inline" />
                   for <span className="text-blue-900">Opportunities</span> & <span className="text-amber-600">Growth</span>
                 </h1>
                 <p className="text-sm sm:text-lg text-slate-600 leading-relaxed max-w-xl font-medium">
-                  Government Schemes, Scholarships, Exam Preparation, Career Tools, Finance, Insurance & much more...
+                  Latest Government Jobs, Results, Admit Cards, Scholarships, Exam Prep, Career Tools & Digital Utilities.
                 </p>
               </div>
 
@@ -156,7 +235,7 @@ export const HomeTab: React.FC<HomeTabProps> = ({
                     type="text"
                     value={heroSearchInput}
                     onChange={(e) => setHeroSearchInput(e.target.value)}
-                    placeholder="Search for schemes, colleges, exams, tools..."
+                    placeholder="Search jobs, results, admit cards, schemes, tools..."
                     className="w-full px-3 py-2.5 text-xs sm:text-base text-slate-900 bg-transparent focus:outline-none placeholder:text-slate-400"
                   />
                   <button
@@ -170,13 +249,13 @@ export const HomeTab: React.FC<HomeTabProps> = ({
               </form>
 
               {/* Popular Search Pills */}
-              <div className="flex flex-wrap items-center gap-2 pt-1 text-xs text-slate-500">
-                <span className="font-semibold text-slate-600">Popular Searches:</span>
-                {['PM Kisan', 'Scholarship 2026', 'NEET 2026', 'SBI PO', 'BPSC 71st', 'Mudra Loan'].map((tag) => (
+              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 pt-1 text-xs text-slate-500">
+                <span className="font-semibold text-slate-600">Trending:</span>
+                {['BPSC 71st', 'Bihar Police', 'SSC CGL', 'Admit Card 2026', 'PM Kisan', 'Mudra Loan'].map((tag) => (
                   <button
                     key={tag}
                     onClick={() => handleQuickTagClick(tag)}
-                    className="px-3 py-1 bg-white hover:bg-blue-50 text-slate-700 hover:text-blue-900 border border-slate-200 hover:border-blue-300 rounded-full font-medium text-xs transition cursor-pointer shadow-2xs"
+                    className="px-2.5 sm:px-3 py-1 bg-white hover:bg-blue-50 text-slate-700 hover:text-blue-900 border border-slate-200 hover:border-blue-300 rounded-full font-medium text-xs transition cursor-pointer shadow-2xs"
                   >
                     {tag}
                   </button>
@@ -184,61 +263,83 @@ export const HomeTab: React.FC<HomeTabProps> = ({
               </div>
             </div>
 
-            {/* Right Hero Column: Landmark Montage & 4 Key Stat Badges */}
+            {/* Right Hero Column: Key Stat Badges & Quick Live Sync Indicator */}
             <div className="lg:col-span-5 relative flex flex-col items-center justify-center">
-              {/* Subtle Monument Silhouette Gradient Backdrop */}
-              <div className="w-full h-48 sm:h-64 rounded-3xl bg-gradient-to-br from-amber-500/10 via-blue-900/10 to-emerald-500/10 border border-slate-200/80 p-4 flex flex-col justify-end relative overflow-hidden shadow-xs mb-4">
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-amber-100/40 via-transparent to-transparent"></div>
-                <div className="relative z-10 text-center space-y-1">
-                  <div className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-white/90 backdrop-blur-sm border border-slate-200 rounded-full text-[11px] font-bold text-slate-700 shadow-2xs">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-                    Verified National & State Directory
+              <div className="w-full rounded-3xl bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-950 border border-slate-800 p-5 sm:p-6 text-white shadow-xl space-y-4 mb-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+                    <span className="text-xs font-black uppercase tracking-wider text-emerald-400">
+                      Live Notification Desk
+                    </span>
                   </div>
-                  <h3 className="text-lg font-extrabold text-blue-950">
-                    Trusted by 10 Lakh+ Indian Citizens & Aspirants
-                  </h3>
+                  {onFetchLiveUpdates && (
+                    <button
+                      onClick={onFetchLiveUpdates}
+                      disabled={isSyncingLive}
+                      className="px-2.5 py-1 bg-white/10 hover:bg-white/20 text-white rounded-lg text-xs font-bold flex items-center gap-1.5 transition cursor-pointer"
+                    >
+                      <RotateCw className={`w-3.5 h-3.5 ${isSyncingLive ? 'animate-spin' : ''}`} />
+                      <span>{isSyncingLive ? 'Syncing...' : 'Sync Live'}</span>
+                    </button>
+                  )}
                 </div>
+
+                <div className="space-y-1">
+                  <h3 className="text-lg sm:text-xl font-black text-white">
+                    Verified Sarkari Jobs, Results & Hall Tickets
+                  </h3>
+                  <p className="text-xs text-slate-300 leading-relaxed">
+                    Direct real-time feeds from BPSC, CSBC, SSC, UPSC, NTA, BSEB & Central Ministries.
+                  </p>
+                </div>
+
+                {lastSyncedTime && (
+                  <div className="text-[11px] text-blue-200/80 font-medium">
+                    ⚡ Last Synced: Today at {lastSyncedTime}
+                  </div>
+                )}
               </div>
 
-              {/* 4 Key Stat Cards Grid */}
+              {/* 4 Stat Cards */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 w-full">
-                <div className="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-xs flex items-center space-x-3">
-                  <div className="w-9 h-9 rounded-xl bg-blue-100 text-blue-900 flex items-center justify-center shrink-0">
-                    <Landmark className="w-5 h-5" />
+                <div className="bg-white p-3 rounded-2xl border border-slate-200 shadow-xs flex items-center space-x-2.5">
+                  <div className="w-8 h-8 rounded-xl bg-blue-100 text-blue-900 flex items-center justify-center shrink-0">
+                    <Briefcase className="w-4 h-4" />
                   </div>
                   <div>
-                    <div className="text-base sm:text-lg font-black text-slate-900 leading-tight">25K+</div>
-                    <div className="text-[10px] sm:text-xs font-semibold text-slate-500">Schemes</div>
+                    <div className="text-sm sm:text-base font-black text-slate-900 leading-tight">50K+</div>
+                    <div className="text-[10px] font-semibold text-slate-500">Govt Jobs</div>
                   </div>
                 </div>
 
-                <div className="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-xs flex items-center space-x-3">
-                  <div className="w-9 h-9 rounded-xl bg-amber-100 text-amber-900 flex items-center justify-center shrink-0">
-                    <GraduationCap className="w-5 h-5" />
+                <div className="bg-white p-3 rounded-2xl border border-slate-200 shadow-xs flex items-center space-x-2.5">
+                  <div className="w-8 h-8 rounded-xl bg-amber-100 text-amber-900 flex items-center justify-center shrink-0">
+                    <Ticket className="w-4 h-4" />
                   </div>
                   <div>
-                    <div className="text-base sm:text-lg font-black text-slate-900 leading-tight">10K+</div>
-                    <div className="text-[10px] sm:text-xs font-semibold text-slate-500">Scholarships</div>
+                    <div className="text-sm sm:text-base font-black text-slate-900 leading-tight">Live</div>
+                    <div className="text-[10px] font-semibold text-slate-500">Admit Cards</div>
                   </div>
                 </div>
 
-                <div className="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-xs flex items-center space-x-3">
-                  <div className="w-9 h-9 rounded-xl bg-indigo-100 text-indigo-900 flex items-center justify-center shrink-0">
-                    <Building2 className="w-5 h-5" />
+                <div className="bg-white p-3 rounded-2xl border border-slate-200 shadow-xs flex items-center space-x-2.5">
+                  <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-900 flex items-center justify-center shrink-0">
+                    <Trophy className="w-4 h-4" />
                   </div>
                   <div>
-                    <div className="text-base sm:text-lg font-black text-slate-900 leading-tight">2K+</div>
-                    <div className="text-[10px] sm:text-xs font-semibold text-slate-500">Colleges</div>
+                    <div className="text-sm sm:text-base font-black text-slate-900 leading-tight">100%</div>
+                    <div className="text-[10px] font-semibold text-slate-500">Results</div>
                   </div>
                 </div>
 
-                <div className="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-xs flex items-center space-x-3">
-                  <div className="w-9 h-9 rounded-xl bg-teal-100 text-teal-900 flex items-center justify-center shrink-0">
-                    <Calculator className="w-5 h-5" />
+                <div className="bg-white p-3 rounded-2xl border border-slate-200 shadow-xs flex items-center space-x-2.5">
+                  <div className="w-8 h-8 rounded-xl bg-teal-100 text-teal-900 flex items-center justify-center shrink-0">
+                    <Calculator className="w-4 h-4" />
                   </div>
                   <div>
-                    <div className="text-base sm:text-lg font-black text-slate-900 leading-tight">500+</div>
-                    <div className="text-[10px] sm:text-xs font-semibold text-slate-500">Tools</div>
+                    <div className="text-sm sm:text-base font-black text-slate-900 leading-tight">500+</div>
+                    <div className="text-[10px] font-semibold text-slate-500">Tools</div>
                   </div>
                 </div>
               </div>
@@ -248,7 +349,289 @@ export const HomeTab: React.FC<HomeTabProps> = ({
       </section>
 
       {/* ──────────────────────────────────────────────────────────────────────────
-          2. 10 CATEGORY CARDS (Grid matching the visual reference)
+          2. TOP PROMINENT SARKARI LIVE UPDATES HUB (Latest Govt Jobs, Results, Admit Cards)
+      ────────────────────────────────────────────────────────────────────────── */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
+        {/* Section Header with Quick Tabs & Search */}
+        <div className="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200 shadow-xs space-y-3">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-rose-500 to-amber-500 text-white flex items-center justify-center font-black shadow-xs">
+                <Flame className="w-5 h-5" />
+              </div>
+              <div>
+                <h2 className="text-lg sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                  <span>Top Sarkari Updates & Live Feeds</span>
+                  <span className="bg-rose-100 text-rose-700 text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">
+                    LIVE
+                  </span>
+                </h2>
+                <p className="text-xs text-slate-500 font-medium">
+                  Direct verified alerts for new recruitments, scorecards, merit lists, and hall tickets.
+                </p>
+              </div>
+            </div>
+
+            {/* Quick Filter Tabs for Sarkari Hub */}
+            <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto scrollbar-none">
+              {[
+                { id: 'all', label: 'All 3 Columns' },
+                { id: 'jobs', label: 'Latest Jobs 💼' },
+                { id: 'admit-cards', label: 'Admit Cards 🎫' },
+                { id: 'results', label: 'Results 🏆' },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setSarkariActiveFilter(tab.id as any)}
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition cursor-pointer ${
+                    sarkariActiveFilter === tab.id
+                      ? 'bg-blue-900 text-white shadow-xs'
+                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Quick Filter Search inside Sarkari Updates */}
+          <div className="flex items-center justify-between gap-3 pt-1">
+            <div className="relative flex-1 max-w-md">
+              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" />
+              <input
+                type="text"
+                value={sarkariSearchTerm}
+                onChange={(e) => setSarkariSearchTerm(e.target.value)}
+                placeholder="Filter by exam / board (e.g. BPSC, CSBC, SSC, Police)..."
+                className="w-full pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-900 focus:border-blue-900"
+              />
+            </div>
+            <div className="text-[11px] text-slate-400 font-medium hidden sm:block">
+              Updated daily with official notifications
+            </div>
+          </div>
+        </div>
+
+        {/* 3-Column Sarkari Updates Grid (The Sarkari Classic Triad) */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-start">
+          {/* 💼 COLUMN 1: LATEST GOVT JOBS */}
+          {(sarkariActiveFilter === 'all' || sarkariActiveFilter === 'jobs') && (
+            <div className="bg-white rounded-3xl border border-blue-200/80 shadow-xs p-4 sm:p-5 flex flex-col justify-between space-y-4 hover:border-blue-400 transition-all">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between border-b border-blue-50 pb-2.5">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-8 h-8 rounded-xl bg-blue-100 text-blue-900 flex items-center justify-center font-bold">
+                      <Briefcase className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h3 className="font-extrabold text-sm sm:text-base text-blue-950">Latest Govt Jobs</h3>
+                      <span className="text-[10px] text-slate-400 font-semibold block">सरकारी नौकरी भर्तियां</span>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setActiveTab('jobs')}
+                    className="text-xs font-bold text-blue-900 hover:text-blue-950 hover:underline flex items-center gap-0.5 cursor-pointer"
+                  >
+                    <span>View All</span>
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+
+                {/* Job Cards List */}
+                <div className="space-y-2.5">
+                  {filteredJobs.map((job: any) => (
+                    <div
+                      key={job.id}
+                      onClick={() => {
+                        if (onViewJob) onViewJob(job);
+                        else setActiveTab('jobs');
+                      }}
+                      className="p-3 bg-slate-50/80 hover:bg-blue-50/70 border border-slate-200/80 hover:border-blue-300 rounded-2xl transition cursor-pointer space-y-1.5 group"
+                    >
+                      <div className="flex items-start justify-between gap-1.5">
+                        <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-blue-100 text-blue-900 truncate max-w-[170px]">
+                          {job.organization || 'Govt Board'}
+                        </span>
+                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-900 shrink-0">
+                          {job.vacancy ? job.vacancy.split('(')[0].trim() : 'Active'}
+                        </span>
+                      </div>
+
+                      <h4 className="font-bold text-xs sm:text-sm text-slate-900 group-hover:text-blue-900 leading-snug line-clamp-2">
+                        {job.title}
+                      </h4>
+
+                      <div className="flex items-center justify-between text-[11px] text-slate-500 pt-1 border-t border-slate-100">
+                        <span className="truncate max-w-[140px] text-slate-600 font-medium">
+                          🎓 {job.qualification || 'Graduate / 12th'}
+                        </span>
+                        <span className="text-blue-900 font-bold flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+                          <span>Apply</span>
+                          <ArrowRight className="w-3 h-3" />
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <button
+                onClick={() => setActiveTab('jobs')}
+                className="w-full py-2.5 bg-blue-900 hover:bg-blue-950 text-white font-bold rounded-2xl text-xs flex items-center justify-center gap-1.5 transition cursor-pointer shadow-2xs"
+              >
+                <span>Browse All Govt Jobs</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          )}
+
+          {/* 🎫 COLUMN 2: ADMIT CARDS & HALL TICKETS */}
+          {(sarkariActiveFilter === 'all' || sarkariActiveFilter === 'admit-cards') && (
+            <div className="bg-white rounded-3xl border border-amber-200/80 shadow-xs p-4 sm:p-5 flex flex-col justify-between space-y-4 hover:border-amber-400 transition-all">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between border-b border-amber-50 pb-2.5">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-8 h-8 rounded-xl bg-amber-100 text-amber-900 flex items-center justify-center font-bold">
+                      <Ticket className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h3 className="font-extrabold text-sm sm:text-base text-amber-950">Admit Cards</h3>
+                      <span className="text-[10px] text-slate-400 font-semibold block">एडमिट कार्ड व हॉल टिकट</span>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setActiveTab('admit-cards')}
+                    className="text-xs font-bold text-amber-900 hover:text-amber-950 hover:underline flex items-center gap-0.5 cursor-pointer"
+                  >
+                    <span>View All</span>
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+
+                {/* Admit Card List */}
+                <div className="space-y-2.5">
+                  {filteredAdmitCards.map((ac: any) => (
+                    <div
+                      key={ac.id}
+                      onClick={() => setActiveTab('admit-cards')}
+                      className="p-3 bg-slate-50/80 hover:bg-amber-50/70 border border-slate-200/80 hover:border-amber-300 rounded-2xl transition cursor-pointer space-y-1.5 group"
+                    >
+                      <div className="flex items-start justify-between gap-1.5">
+                        <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 truncate max-w-[170px]">
+                          {ac.category || ac.organization || 'Exam Board'}
+                        </span>
+                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-900 shrink-0">
+                          {ac.status || 'Live Out'}
+                        </span>
+                      </div>
+
+                      <h4 className="font-bold text-xs sm:text-sm text-slate-900 group-hover:text-amber-900 leading-snug line-clamp-2">
+                        {ac.admitCardName || ac.examName}
+                      </h4>
+
+                      <div className="flex items-center justify-between text-[11px] text-slate-500 pt-1 border-t border-slate-100">
+                        <span className="truncate max-w-[140px] text-slate-600 font-medium">
+                          📅 {ac.examDate ? ac.examDate.split('(')[0].trim() : 'Exam Soon'}
+                        </span>
+                        <span className="text-amber-900 font-bold flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+                          <span>Download</span>
+                          <Download className="w-3 h-3" />
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <button
+                onClick={() => setActiveTab('admit-cards')}
+                className="w-full py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-2xl text-xs flex items-center justify-center gap-1.5 transition cursor-pointer shadow-2xs"
+              >
+                <span>Browse All Admit Cards</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          )}
+
+          {/* 🏆 COLUMN 3: RESULTS & MERIT LISTS */}
+          {(sarkariActiveFilter === 'all' || sarkariActiveFilter === 'results') && (
+            <div className="bg-white rounded-3xl border border-emerald-200/80 shadow-xs p-4 sm:p-5 flex flex-col justify-between space-y-4 hover:border-emerald-400 transition-all">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between border-b border-emerald-50 pb-2.5">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-900 flex items-center justify-center font-bold">
+                      <Trophy className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h3 className="font-extrabold text-sm sm:text-base text-emerald-950">Results & Merit</h3>
+                      <span className="text-[10px] text-slate-400 font-semibold block">सरकारी रिजल्ट व कटऑफ</span>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setActiveTab('exams')}
+                    className="text-xs font-bold text-emerald-900 hover:text-emerald-950 hover:underline flex items-center gap-0.5 cursor-pointer"
+                  >
+                    <span>View All</span>
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+
+                {/* Results List */}
+                <div className="space-y-2.5">
+                  {filteredResults.map((res: any) => (
+                    <div
+                      key={res.id}
+                      onClick={() => {
+                        if (res.officialPortalUrl) {
+                          window.open(res.officialPortalUrl, '_blank', 'noopener,noreferrer');
+                        } else {
+                          setActiveTab('exams');
+                        }
+                      }}
+                      className="p-3 bg-slate-50/80 hover:bg-emerald-50/70 border border-slate-200/80 hover:border-emerald-300 rounded-2xl transition cursor-pointer space-y-1.5 group"
+                    >
+                      <div className="flex items-start justify-between gap-1.5">
+                        <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-900 truncate max-w-[170px]">
+                          {res.category || res.conductingBody || 'Commission'}
+                        </span>
+                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-rose-100 text-rose-900 shrink-0">
+                          Declared
+                        </span>
+                      </div>
+
+                      <h4 className="font-bold text-xs sm:text-sm text-slate-900 group-hover:text-emerald-900 leading-snug line-clamp-2">
+                        {res.title || res.examName}
+                      </h4>
+
+                      <div className="flex items-center justify-between text-[11px] text-slate-500 pt-1 border-t border-slate-100">
+                        <span className="truncate max-w-[140px] text-slate-600 font-medium">
+                          📜 {res.releaseDate || 'August 2026'}
+                        </span>
+                        <span className="text-emerald-900 font-bold flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+                          <span>Check Cutoff</span>
+                          <ArrowRight className="w-3 h-3" />
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <button
+                onClick={() => setActiveTab('exams')}
+                className="w-full py-2.5 bg-emerald-800 hover:bg-emerald-900 text-white font-bold rounded-2xl text-xs flex items-center justify-center gap-1.5 transition cursor-pointer shadow-2xs"
+              >
+                <span>Browse All Exam Results</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* ──────────────────────────────────────────────────────────────────────────
+          3. 10 CATEGORY CARDS (Grid matching the visual reference)
       ────────────────────────────────────────────────────────────────────────── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4">
@@ -365,7 +748,7 @@ export const HomeTab: React.FC<HomeTabProps> = ({
       </section>
 
       {/* ──────────────────────────────────────────────────────────────────────────
-          3. TRENDING SCHEMES & BHARATSEVA PLUS (2-Column Layout)
+          4. TRENDING SCHEMES & BHARATSEVA PLUS (2-Column Layout)
       ────────────────────────────────────────────────────────────────────────── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
@@ -475,12 +858,11 @@ export const HomeTab: React.FC<HomeTabProps> = ({
       </section>
 
       {/* ──────────────────────────────────────────────────────────────────────────
-          4. SPONSORED / AFFILIATE CARD (SBI Personal Loan - Clean & Compliant)
+          5. SPONSORED / AFFILIATE CARD (SBI Personal Loan)
       ────────────────────────────────────────────────────────────────────────── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-gradient-to-r from-blue-900 via-indigo-900 to-blue-950 text-white rounded-3xl p-5 sm:p-6 shadow-md border border-blue-800/40 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 w-full md:w-auto">
-            {/* SBI Logo / Emblem */}
             <div className="flex items-center space-x-2 shrink-0">
               <div className="w-10 h-10 rounded-full bg-white text-blue-900 flex items-center justify-center font-black text-xs">
                 SBI
@@ -520,7 +902,7 @@ export const HomeTab: React.FC<HomeTabProps> = ({
       </section>
 
       {/* ──────────────────────────────────────────────────────────────────────────
-          5. EXAMS PREPARATION & FIND YOUR COLLEGE (2-Column Layout)
+          6. EXAMS PREPARATION & FIND YOUR COLLEGE (2-Column Layout)
       ────────────────────────────────────────────────────────────────────────── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -663,7 +1045,7 @@ export const HomeTab: React.FC<HomeTabProps> = ({
       </section>
 
       {/* ──────────────────────────────────────────────────────────────────────────
-          6. POPULAR TOOLS (Circular/Rounded Grid matching reference)
+          7. POPULAR TOOLS (Circular/Rounded Grid)
       ────────────────────────────────────────────────────────────────────────── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
         <div className="flex items-center justify-between border-b border-slate-200 pb-2">
@@ -699,7 +1081,7 @@ export const HomeTab: React.FC<HomeTabProps> = ({
       </section>
 
       {/* ──────────────────────────────────────────────────────────────────────────
-          7. AI UTILITIES SECTION (6 AI Cards matching reference)
+          8. AI UTILITIES SECTION
       ────────────────────────────────────────────────────────────────────────── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
         <div className="flex items-center justify-between border-b border-slate-200 pb-2">
@@ -747,7 +1129,7 @@ export const HomeTab: React.FC<HomeTabProps> = ({
       </section>
 
       {/* ──────────────────────────────────────────────────────────────────────────
-          8. LATEST UPDATES / ARTICLES
+          9. LATEST UPDATES / ARTICLES
       ────────────────────────────────────────────────────────────────────────── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
         <div className="flex items-center justify-between border-b border-slate-200 pb-2">
@@ -804,7 +1186,7 @@ export const HomeTab: React.FC<HomeTabProps> = ({
       </section>
 
       {/* ──────────────────────────────────────────────────────────────────────────
-          9. OUR PARTNERS & SUPPORTERS
+          10. OUR PARTNERS & SUPPORTERS
       ────────────────────────────────────────────────────────────────────────── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
         <h3 className="text-xs font-black uppercase tracking-widest text-slate-400">
@@ -831,7 +1213,7 @@ export const HomeTab: React.FC<HomeTabProps> = ({
       </section>
 
       {/* ──────────────────────────────────────────────────────────────────────────
-          10. STAY UPDATED NEWSLETTER BAR
+          11. STAY UPDATED NEWSLETTER BAR
       ────────────────────────────────────────────────────────────────────────── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-gradient-to-r from-slate-900 via-blue-950 to-indigo-950 text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-slate-800 flex flex-col md:flex-row items-center justify-between gap-6">
@@ -842,7 +1224,7 @@ export const HomeTab: React.FC<HomeTabProps> = ({
             <div>
               <h3 className="text-lg sm:text-xl font-black">Stay Updated with BharatSeva</h3>
               <p className="text-xs text-slate-300">
-                Get the latest updates on schemes, scholarships, exams & more directly to your inbox.
+                Get the latest updates on government jobs, results, admit cards, schemes & exams directly.
               </p>
             </div>
           </div>

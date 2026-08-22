@@ -192,6 +192,17 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
 
             {/* Bottom Utilities in Drawer */}
             <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold">
+              <button
+                onClick={() => {
+                  setExploreDrawerOpen(false);
+                  onOpenInstallModal();
+                }}
+                className="px-3 py-1.5 bg-amber-400 hover:bg-amber-300 text-slate-950 rounded-xl flex items-center gap-1.5 cursor-pointer shadow-2xs font-extrabold"
+              >
+                <Download className="w-3.5 h-3.5" />
+                <span>Install App</span>
+              </button>
+
               {onOpenDailyRewards && (
                 <button
                   onClick={() => {
@@ -212,7 +223,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                 }}
                 className="text-slate-500 hover:underline cursor-pointer"
               >
-                Legal & Disclaimer
+                Disclaimer
               </button>
             </div>
           </div>

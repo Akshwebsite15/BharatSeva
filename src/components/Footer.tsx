@@ -184,6 +184,12 @@ export const Footer: React.FC<FooterProps> = ({
               </button>
             </li>
             <li>
+              <button onClick={() => onOpenInstallModal()} className="hover:text-amber-400 font-bold text-amber-300 transition cursor-pointer flex items-center gap-1">
+                <Download className="w-3.5 h-3.5 text-amber-400" />
+                <span>Install Mobile / Desktop App</span>
+              </button>
+            </li>
+            <li>
               <button onClick={() => setActiveTab('dashboard')} className="hover:text-white transition cursor-pointer">
                 My Bookmarks & Applications
               </button>

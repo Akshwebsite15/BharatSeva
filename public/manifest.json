@@ -1,24 +1,76 @@
 {
+  "name": "BharatSeva — Sahi Jankari, Sahi Faisla",
   "short_name": "BharatSeva",
-  "name": "BharatSeva - Unified Citizen Portal & Jobs Hub",
-  "icons": [
-    {
-      "src": "https://images.unsplash.com/photo-1532375810709-75b1da00537c?w=192&auto=format&fit=crop&q=80",
-      "type": "image/jpeg",
-      "sizes": "192x192"
-    },
-    {
-      "src": "https://images.unsplash.com/photo-1532375810709-75b1da00537c?w=512&auto=format&fit=crop&q=80",
-      "type": "image/jpeg",
-      "sizes": "512x512"
-    }
-  ],
   "id": "/",
   "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui", "window-controls-overlay"],
+  "orientation": "portrait-primary",
   "background_color": "#0f172a",
   "theme_color": "#0f172a",
-  "display": "standalone",
-  "orientation": "portrait-primary",
-  "scope": "/",
-  "description": "BharatSeva Citizen Service, Government Jobs, Competitive Exams, Scholarships and Current Affairs Hub."
+  "description": "Unified Indian Citizen Information & Public Utility Platform: Government Schemes, Scholarships, Exam Prep, Career Tools, Colleges & Personal Finance.",
+  "categories": ["education", "government", "utilities", "productivity", "finance"],
+  "icons": [
+    {
+      "src": "/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Latest Govt Jobs",
+      "short_name": "Govt Jobs",
+      "description": "Check daily Sarkari jobs & recruitment notifications",
+      "url": "/?tab=jobs",
+      "icons": [{ "src": "/icon-192.svg", "sizes": "192x192" }]
+    },
+    {
+      "name": "Government Schemes",
+      "short_name": "Schemes",
+      "description": "Find central & state government welfare schemes",
+      "url": "/?tab=schemes",
+      "icons": [{ "src": "/icon-192.svg", "sizes": "192x192" }]
+    },
+    {
+      "name": "Citizen Tools & Calculators",
+      "short_name": "Tools",
+      "description": "Age calculator, photo resizer, SIP & EMI calculators",
+      "url": "/?tab=tools",
+      "icons": [{ "src": "/icon-192.svg", "sizes": "192x192" }]
+    },
+    {
+      "name": "Current Affairs & News",
+      "short_name": "Current Affairs",
+      "description": "Daily exam current affairs & speed quizzes",
+      "url": "/?tab=current-affairs",
+      "icons": [{ "src": "/icon-192.svg", "sizes": "192x192" }]
+    }
+  ]
 }

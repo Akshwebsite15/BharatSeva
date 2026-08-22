@@ -47,6 +47,7 @@ import {
   CMSAdmitCardItem,
 } from '../types';
 import {
+  FeaturedArticle,
   POPULAR_TOOLS_DATA,
   AI_UTILITIES_DATA,
   TRENDING_SCHEMES_DATA,
@@ -57,6 +58,7 @@ import {
 } from '../data/bharatSevaToolsData';
 import { initialCMSResults, initialCMSAdmitCards, initialCMSJobs } from '../data/cmsInitialData';
 import { BharatSevaPlusModal } from './BharatSevaPlusModal';
+import { ArticleReaderModal } from './ArticleReaderModal';
 
 interface HomeTabProps {
   setActiveTab: (tab: string) => void;
@@ -107,6 +109,9 @@ export const HomeTab: React.FC<HomeTabProps> = ({
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [newsletterSubscribed, setNewsletterSubscribed] = useState(false);
   const [isPlusModalOpen, setIsPlusModalOpen] = useState(false);
+  const [selectedArticle, setSelectedArticle] = useState<FeaturedArticle | null>(null);
+  const [isArticleModalOpen, setIsArticleModalOpen] = useState(false);
+  const [articleCategory, setArticleCategory] = useState<string>('All');
 
   // Sarkari Top Hub Tab Selection: 'all' | 'jobs' | 'results' | 'admit-cards'
   const [sarkariActiveFilter, setSarkariActiveFilter] = useState<'all' | 'jobs' | 'results' | 'admit-cards'>('all');
@@ -1129,56 +1134,106 @@ export const HomeTab: React.FC<HomeTabProps> = ({
       </section>
 
       {/* ──────────────────────────────────────────────────────────────────────────
-          9. LATEST UPDATES / ARTICLES
+          9. LATEST UPDATES / ARTICLES & FINANCE GUIDES
       ────────────────────────────────────────────────────────────────────────── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
-        <div className="flex items-center justify-between border-b border-slate-200 pb-2">
-          <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 flex items-center gap-2">
-            <span className="w-2.5 h-6 bg-amber-500 rounded-full"></span>
-            Latest Updates
-          </h2>
-          <button
-            onClick={() => setActiveTab('current-affairs')}
-            className="text-xs sm:text-sm font-bold text-blue-900 hover:text-blue-950 flex items-center gap-1 hover:underline cursor-pointer"
-          >
-            <span>View All</span>
-            <ChevronRight className="w-4 h-4" />
-          </button>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 pb-3">
+          <div>
+            <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 flex items-center gap-2">
+              <span className="w-2.5 h-6 bg-amber-500 rounded-full"></span>
+              Featured Guides & Knowledge Hub
+            </h2>
+            <p className="text-xs text-slate-500 font-medium">
+              In-depth articles on Finance Management, Government Schemes, Scholarships & Career
+            </p>
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={() => setActiveTab('current-affairs')}
+              className="text-xs sm:text-sm font-bold text-blue-900 hover:text-blue-950 flex items-center gap-1 hover:underline cursor-pointer"
+            >
+              <span>Current Affairs Hub</span>
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          {LATEST_ARTICLES_DATA.map((art) => (
+        {/* Category Filters for Articles */}
+        <div className="flex items-center space-x-2 overflow-x-auto pb-1 scrollbar-none">
+          {[
+            { key: 'All', label: `All Guides (${LATEST_ARTICLES_DATA.length})` },
+            { key: 'Finance', label: 'Finance & Wealth 💰 (6)' },
+            { key: 'Scheme', label: 'Govt Schemes 🏛️' },
+            { key: 'Scholarship', label: 'Scholarships 🎓' },
+          ].map((cat) => {
+            const isSelected = articleCategory === cat.key;
+            return (
+              <button
+                key={cat.key}
+                onClick={() => setArticleCategory(cat.key)}
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition cursor-pointer ${
+                  isSelected
+                    ? 'bg-slate-900 text-white shadow-xs'
+                    : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
+                }`}
+              >
+                {cat.label}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Articles Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
+          {LATEST_ARTICLES_DATA.filter(
+            (art) => articleCategory === 'All' || art.category === articleCategory
+          ).map((art) => (
             <div
               key={art.id}
-              className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs hover:border-slate-300 transition-all flex flex-col justify-between"
+              onClick={() => {
+                setSelectedArticle(art);
+                setIsArticleModalOpen(true);
+              }}
+              className="bg-white rounded-3xl border border-slate-200/90 overflow-hidden shadow-xs hover:shadow-lg hover:border-blue-900/30 transition-all duration-300 flex flex-col justify-between cursor-pointer group"
             >
               <div>
-                <div className="relative h-32 sm:h-36 overflow-hidden bg-slate-100">
+                <div className="relative h-40 overflow-hidden bg-slate-100">
                   <img
                     src={art.imageUrl}
                     alt={art.title}
                     referrerPolicy="no-referrer"
-                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   <span
-                    className={`absolute top-2 left-2 text-[10px] font-black px-2 py-0.5 rounded-md ${art.categoryColor}`}
+                    className={`absolute top-2.5 left-2.5 text-[10px] font-black px-2.5 py-0.5 rounded-md shadow-xs ${art.categoryColor}`}
                   >
                     {art.category}
                   </span>
-                  <span className="absolute bottom-2 right-2 text-[9px] font-bold px-1.5 py-0.5 rounded bg-black/60 text-white backdrop-blur-xs">
+                  <span className="absolute bottom-2.5 right-2.5 text-[9px] font-bold px-2 py-0.5 rounded bg-black/70 text-white backdrop-blur-xs">
                     {art.readTime}
                   </span>
                 </div>
 
-                <div className="p-3.5 space-y-1">
-                  <h3 className="font-extrabold text-xs sm:text-sm text-slate-900 line-clamp-2 leading-snug">
+                <div className="p-4 space-y-2">
+                  <h3 className="font-black text-sm sm:text-base text-slate-900 group-hover:text-blue-900 line-clamp-2 leading-snug transition-colors">
                     {art.title}
                   </h3>
+
+                  <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed font-normal">
+                    {art.summary}
+                  </p>
                 </div>
               </div>
 
-              <div className="px-3.5 pb-3 pt-1 text-[11px] text-slate-400 font-medium border-t border-slate-50">
-                {art.date}
+              <div className="px-4 pb-4 pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
+                <span className="text-[11px] text-slate-400 font-medium">
+                  {art.date}
+                </span>
+                <span className="text-blue-900 font-extrabold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                  <span>Read Guide</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </span>
               </div>
             </div>
           ))}
@@ -1255,6 +1310,35 @@ export const HomeTab: React.FC<HomeTabProps> = ({
           </form>
         </div>
       </section>
+
+      {/* ──────────────────────────────────────────────────────────────────────────
+          ARTICLE READER MODAL
+      ────────────────────────────────────────────────────────────────────────── */}
+      <ArticleReaderModal
+        article={selectedArticle}
+        allArticles={LATEST_ARTICLES_DATA}
+        isOpen={isArticleModalOpen}
+        onClose={() => setIsArticleModalOpen(false)}
+        onSelectArticle={(art) => setSelectedArticle(art)}
+        onOpenTool={(toolId) => {
+          if (onOpenPublicToolModal) {
+            onOpenPublicToolModal(toolId);
+          } else {
+            setActiveTab('tools');
+          }
+        }}
+      />
+
+      {/* ──────────────────────────────────────────────────────────────────────────
+          BHARATSEVA PLUS MODAL
+      ────────────────────────────────────────────────────────────────────────── */}
+      <BharatSevaPlusModal
+        isOpen={isPlusModalOpen}
+        onClose={() => setIsPlusModalOpen(false)}
+        onSelectPlan={(plan) => {
+          setIsPlusModalOpen(false);
+        }}
+      />
     </div>
   );
 };

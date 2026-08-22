@@ -17,6 +17,7 @@ import {
   ChevronRight,
   TrendingUp,
   Volume2,
+  ArrowRight,
 } from 'lucide-react';
 import {
   CurrentAffairsArticle,
@@ -24,7 +25,12 @@ import {
   CurrentAffairsQuiz,
 } from '../types';
 import { initialCurrentAffairsArticles, initialCurrentAffairsQuiz } from '../data/currentAffairsData';
+import {
+  FeaturedArticle,
+  LATEST_ARTICLES_DATA,
+} from '../data/bharatSevaToolsData';
 import { LiveSyncBanner } from './LiveSyncBanner';
+import { ArticleReaderModal } from './ArticleReaderModal';
 
 interface CurrentAffairsTabProps {
   onSaveItem: (title: string, type: 'Service' | 'Scholarship' | 'Scheme' | 'Job' | 'Exam') => void;
@@ -44,11 +50,13 @@ export const CurrentAffairsTab: React.FC<CurrentAffairsTabProps> = ({
   lastSyncedTime,
 }) => {
   const articlesList = articles || initialCurrentAffairsArticles;
-  const [activeSubView, setActiveSubView] = useState<'read' | 'quiz' | 'saved'>('read');
+  const [activeSubView, setActiveSubView] = useState<'read' | 'quiz' | 'saved' | 'finance'>('read');
   const [selectedCategory, setSelectedCategory] = useState<CurrentAffairsCategory | 'All'>('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [savedArticleIds, setSavedArticleIds] = useState<string[]>([]);
   const [shareToast, setShareToast] = useState<string | null>(null);
+  const [selectedFeaturedArticle, setSelectedFeaturedArticle] = useState<FeaturedArticle | null>(null);
+  const [isFeaturedModalOpen, setIsFeaturedModalOpen] = useState(false);
 
   // Quiz State
   const [quiz] = useState<CurrentAffairsQuiz>(initialCurrentAffairsQuiz);
@@ -211,6 +219,21 @@ export const CurrentAffairsTab: React.FC<CurrentAffairsTabProps> = ({
         >
           <Bookmark className="w-4 h-4" />
           <span>Saved Articles ({savedArticleIds.length})</span>
+        </button>
+
+        <button
+          onClick={() => setActiveSubView('finance')}
+          className={`px-5 py-2.5 rounded-2xl font-black text-xs transition flex items-center space-x-2 cursor-pointer ${
+            activeSubView === 'finance'
+              ? 'bg-emerald-800 text-white shadow-md'
+              : 'bg-white text-emerald-900 hover:bg-emerald-50 border border-emerald-200'
+          }`}
+        >
+          <span>💰</span>
+          <span>Personal Finance Guides (6)</span>
+          <span className="bg-emerald-400 text-slate-950 text-[10px] px-1.5 py-0.2 rounded-full font-black">
+            NEW
+          </span>
         </button>
       </div>
 
@@ -521,6 +544,98 @@ export const CurrentAffairsTab: React.FC<CurrentAffairsTabProps> = ({
           )}
         </div>
       )}
+
+      {/* SUBVIEW 4: PERSONAL FINANCE & WEALTH MANAGEMENT GUIDES */}
+      {activeSubView === 'finance' && (
+        <div className="space-y-6">
+          <div className="bg-gradient-to-r from-emerald-900 to-teal-900 text-white p-6 sm:p-8 rounded-3xl shadow-lg flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div className="space-y-2 max-w-2xl">
+              <span className="px-3 py-1 bg-emerald-400 text-slate-950 text-[10px] font-black rounded-full uppercase tracking-wider">
+                Financial Literacy & Wealth Planning
+              </span>
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-black">
+                Personal Finance & Wealth Management Hub
+              </h2>
+              <p className="text-xs sm:text-sm text-emerald-100 font-medium">
+                Comprehensive, practical guides on 50/30/20 budgeting, mutual fund SIP compounding, tax regime comparison, debt elimination, emergency funds, and term/health insurance.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {LATEST_ARTICLES_DATA.filter((a) => a.category === 'Finance').map((art) => (
+              <div
+                key={art.id}
+                onClick={() => {
+                  setSelectedFeaturedArticle(art);
+                  setIsFeaturedModalOpen(true);
+                }}
+                className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-xs hover:shadow-xl hover:border-emerald-500/50 transition-all duration-300 flex flex-col justify-between cursor-pointer group"
+              >
+                <div>
+                  <div className="relative h-44 overflow-hidden bg-slate-100">
+                    <img
+                      src={art.imageUrl}
+                      alt={art.title}
+                      referrerPolicy="no-referrer"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <span className="absolute top-3 left-3 text-[10px] font-black px-2.5 py-1 rounded-md bg-emerald-700 text-white shadow-xs">
+                      {art.category}
+                    </span>
+                    <span className="absolute bottom-3 right-3 text-[10px] font-bold px-2 py-0.5 rounded bg-black/70 text-white backdrop-blur-xs">
+                      {art.readTime}
+                    </span>
+                  </div>
+
+                  <div className="p-5 space-y-2.5">
+                    <div className="flex items-center space-x-2 text-[11px] text-slate-400 font-medium">
+                      <span>{art.date}</span>
+                      <span>•</span>
+                      <span>{art.author}</span>
+                    </div>
+
+                    <h3 className="font-black text-base text-slate-900 group-hover:text-emerald-800 line-clamp-2 leading-snug transition-colors">
+                      {art.title}
+                    </h3>
+
+                    <p className="text-xs text-slate-600 line-clamp-3 leading-relaxed font-normal">
+                      {art.summary}
+                    </p>
+
+                    {art.keyHighlights && art.keyHighlights.length > 0 && (
+                      <div className="bg-emerald-50/60 p-3 rounded-2xl border border-emerald-100/70 text-[11px] text-emerald-950 font-medium space-y-1 mt-2">
+                        <span className="font-bold text-emerald-800 block">💡 Key Takeaway:</span>
+                        <p className="line-clamp-2">{art.keyHighlights[0]}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="px-5 pb-5 pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
+                  <span className="text-[11px] text-slate-400 font-bold">
+                    {art.tags ? `#${art.tags[0]}` : '#Finance'}
+                  </span>
+                  <span className="text-emerald-700 font-black flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                    <span>Read Full Guide</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ARTICLE READER MODAL */}
+      <ArticleReaderModal
+        article={selectedFeaturedArticle}
+        allArticles={LATEST_ARTICLES_DATA}
+        isOpen={isFeaturedModalOpen}
+        onClose={() => setIsFeaturedModalOpen(false)}
+        onSelectArticle={(art) => setSelectedFeaturedArticle(art)}
+        onSaveArticle={(title) => onSaveItem(title, 'Scheme')}
+      />
     </div>
   );
 };

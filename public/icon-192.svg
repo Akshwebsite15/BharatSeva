@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+  <defs>
+    <linearGradient id="bgGrad192" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="50%" stop-color="#1e1b4b" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <linearGradient id="saffron192" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff9933" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </linearGradient>
+    <linearGradient id="gold192" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="100%" stop-color="#fbbf24" />
+    </linearGradient>
+  </defs>
+  <rect width="192" height="192" rx="44" fill="url(#bgGrad192)" />
+  
+  <!-- Flag Accent -->
+  <path d="M48 16 L144 16" stroke="url(#saffron192)" stroke-width="4" stroke-linecap="round" />
+  <path d="M60 23 L132 23" stroke="#ffffff" stroke-width="2" stroke-linecap="round" opacity="0.9" />
+  <path d="M72 29 L120 29" stroke="#10b981" stroke-width="2" stroke-linecap="round" />
+
+  <!-- Base Pedestal -->
+  <rect x="42" y="136" width="108" height="10" rx="3" fill="url(#gold192)" />
+  <rect x="52" y="128" width="88" height="6" rx="2" fill="#e2e8f0" />
+  
+  <!-- Pillars -->
+  <rect x="58" y="76" width="11" height="50" rx="2" fill="#ffffff" />
+  <rect x="78" y="76" width="11" height="50" rx="2" fill="url(#gold192)" />
+  <rect x="103" y="76" width="11" height="50" rx="2" fill="url(#gold192)" />
+  <rect x="123" y="76" width="11" height="50" rx="2" fill="#ffffff" />
+
+  <!-- Architrave -->
+  <rect x="50" y="68" width="92" height="8" rx="2" fill="#e2e8f0" />
+
+  <!-- Dome -->
+  <path d="M46 68 L96 34 L146 68 Z" fill="url(#saffron192)" />
+  
+  <!-- Chakra -->
+  <circle cx="96" cy="55" r="9" fill="#0f172a" stroke="url(#gold192)" stroke-width="2" />
+  <circle cx="96" cy="55" r="3" fill="url(#gold192)" />
+
+  <text x="96" y="162" text-anchor="middle" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-size="13" font-weight="900" letter-spacing="1.5">BHARATSEVA</text>
+  <text x="96" y="176" text-anchor="middle" fill="#94a3b8" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-size="7" font-weight="700" letter-spacing="1">SAHI JANKARI</text>
+</svg>

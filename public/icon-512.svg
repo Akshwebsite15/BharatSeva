@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad512" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="50%" stop-color="#1e1b4b" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <linearGradient id="saffron512" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff9933" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </linearGradient>
+    <linearGradient id="green512" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10b981" />
+      <stop offset="100%" stop-color="#059669" />
+    </linearGradient>
+    <linearGradient id="gold512" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="100%" stop-color="#fbbf24" />
+    </linearGradient>
+  </defs>
+
+  <!-- Maskable Safe-Zone Compatible Background -->
+  <rect width="512" height="512" fill="url(#bgGrad512)" />
+  
+  <!-- Tricolor Accent Stripes -->
+  <path d="M128 40 L384 40" stroke="url(#saffron512)" stroke-width="12" stroke-linecap="round" />
+  <path d="M160 60 L352 60" stroke="#ffffff" stroke-width="6" stroke-linecap="round" opacity="0.9" />
+  <path d="M192 76 L320 76" stroke="url(#green512)" stroke-width="6" stroke-linecap="round" />
+
+  <!-- Base Pedestal -->
+  <rect x="116" y="370" width="280" height="24" rx="8" fill="url(#gold512)" />
+  <rect x="140" y="348" width="232" height="16" rx="6" fill="#e2e8f0" />
+  
+  <!-- 4 Pillars -->
+  <rect x="160" y="210" width="28" height="130" rx="4" fill="#ffffff" />
+  <rect x="212" y="210" width="28" height="130" rx="4" fill="url(#gold512)" />
+  <rect x="272" y="210" width="28" height="130" rx="4" fill="url(#gold512)" />
+  <rect x="324" y="210" width="28" height="130" rx="4" fill="#ffffff" />
+
+  <!-- Architrave / Lintel -->
+  <rect x="140" y="190" width="232" height="20" rx="6" fill="#e2e8f0" />
+
+  <!-- Triangular Pediment / Dome -->
+  <path d="M128 190 L256 100 L384 190 Z" fill="url(#saffron512)" />
+  
+  <!-- Central Chakra Motif in Pediment -->
+  <circle cx="256" cy="155" r="22" fill="#0f172a" stroke="url(#gold512)" stroke-width="4" />
+  <circle cx="256" cy="155" r="7" fill="url(#gold512)" />
+  <!-- Chakra Rays -->
+  <line x1="256" y1="135" x2="256" y2="175" stroke="url(#gold512)" stroke-width="2" />
+  <line x1="236" y1="155" x2="276" y2="155" stroke="url(#gold512)" stroke-width="2" />
+  <line x1="242" y1="141" x2="270" y2="169" stroke="url(#gold512)" stroke-width="2" />
+  <line x1="242" y1="169" x2="270" y2="141" stroke="url(#gold512)" stroke-width="2" />
+
+  <!-- Subtitle Text "BHARATSEVA" -->
+  <text x="256" y="435" text-anchor="middle" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-size="34" font-weight="900" letter-spacing="4">BHARATSEVA</text>
+  <text x="256" y="465" text-anchor="middle" fill="#94a3b8" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-size="16" font-weight="700" letter-spacing="2">SAHI JANKARI • SAHI FAISLA</text>
+</svg>

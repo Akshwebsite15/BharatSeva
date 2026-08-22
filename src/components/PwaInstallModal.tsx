@@ -1,5 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { Download, X, Smartphone, Monitor, CheckCircle2, Share2, PlusSquare, Sparkles, ShieldCheck } from 'lucide-react';
+import {
+  Download,
+  X,
+  Smartphone,
+  Monitor,
+  CheckCircle2,
+  Share2,
+  PlusSquare,
+  Sparkles,
+  ExternalLink,
+  Copy,
+  Check,
+  Apple,
+  Chrome,
+  Laptop,
+} from 'lucide-react';
 
 interface PwaInstallModalProps {
   isOpen: boolean;
@@ -7,62 +22,93 @@ interface PwaInstallModalProps {
 }
 
 export const PwaInstallModal: React.FC<PwaInstallModalProps> = ({ isOpen, onClose }) => {
-  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [hasPrompt, setHasPrompt] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
-  const [isIos, setIsIos] = useState(false);
-
-  const [showManualSteps, setShowManualSteps] = useState(false);
+  const [activePlatformTab, setActivePlatformTab] = useState<'android' | 'ios' | 'desktop'>('android');
+  const [copiedLink, setCopiedLink] = useState(false);
+  const [isInIframe, setIsInIframe] = useState(false);
 
   useEffect(() => {
-    // Detect iOS
-    const userAgent = window.navigator.userAgent.toLowerCase();
-    setIsIos(/iphone|ipad|ipod/.test(userAgent));
-
-    // Listen for PWA prompt
-    const handleBeforeInstallPrompt = (e: Event) => {
-      e.preventDefault();
-      setDeferredPrompt(e);
-    };
-
-    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-
-    // Register Service Worker
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js').then((reg) => {
-        console.log('BharatSeva Service Worker registered:', reg.scope);
-      }).catch((err) => {
-        console.log('SW registration skipped:', err);
-      });
+    // Detect iframe
+    try {
+      setIsInIframe(window.self !== window.top);
+    } catch {
+      setIsInIframe(true);
     }
 
-    // Check standalone mode
-    if (window.matchMedia('(display-mode: standalone)').matches) {
+    // Detect platform
+    const userAgent = window.navigator.userAgent.toLowerCase();
+    if (/iphone|ipad|ipod/.test(userAgent)) {
+      setActivePlatformTab('ios');
+    } else if (/android/.test(userAgent)) {
+      setActivePlatformTab('android');
+    } else {
+      setActivePlatformTab('desktop');
+    }
+
+    // Check existing prompt
+    if (window.deferredPwaPrompt) {
+      setHasPrompt(true);
+    }
+
+    // Listen for prompt ready event
+    const handlePromptReady = () => {
+      setHasPrompt(true);
+    };
+
+    const handleInstalled = () => {
+      setIsInstalled(true);
+      setHasPrompt(false);
+    };
+
+    window.addEventListener('bharatseva:pwa-prompt-available', handlePromptReady);
+    window.addEventListener('bharatseva:pwa-installed', handleInstalled);
+
+    if (window.matchMedia('(display-mode: standalone)').matches || window.isPwaInstalled) {
       setIsInstalled(true);
     }
 
     return () => {
-      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      window.removeEventListener('bharatseva:pwa-prompt-available', handlePromptReady);
+      window.removeEventListener('bharatseva:pwa-installed', handleInstalled);
     };
   }, []);
 
-  const handleInstallClick = async () => {
-    if (deferredPrompt) {
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      if (outcome === 'accepted') {
-        setIsInstalled(true);
+  const handleNativeInstall = async () => {
+    if (window.deferredPwaPrompt) {
+      try {
+        const promptEvent = window.deferredPwaPrompt;
+        promptEvent.prompt();
+        const { outcome } = await promptEvent.userChoice;
+        if (outcome === 'accepted') {
+          setIsInstalled(true);
+          window.deferredPwaPrompt = null;
+          setHasPrompt(false);
+        }
+      } catch (err) {
+        console.warn('Install prompt error:', err);
       }
-      setDeferredPrompt(null);
-    } else {
-      setShowManualSteps(true);
+    } else if (isInIframe) {
+      // In iframe preview, open in new tab so browser allows PWA installation
+      window.open(window.location.href, '_blank');
     }
+  };
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(window.location.href);
+    setCopiedLink(true);
+    setTimeout(() => setCopiedLink(false), 2500);
+  };
+
+  const handleOpenInNewTab = () => {
+    window.open(window.location.href, '_blank');
   };
 
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-md p-4 animate-in fade-in duration-200">
-      <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-slate-200 relative overflow-hidden">
+      <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-slate-200 relative overflow-hidden max-h-[90vh] overflow-y-auto">
         {/* Close Button */}
         <button
           onClick={onClose}
@@ -73,95 +119,193 @@ export const PwaInstallModal: React.FC<PwaInstallModalProps> = ({ isOpen, onClos
 
         {/* Header Icon */}
         <div className="flex items-center space-x-3 mb-4">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-900 to-teal-600 text-white flex items-center justify-center font-black shadow-md">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-900 to-teal-600 text-white flex items-center justify-center font-black shadow-md shrink-0">
             <Download className="w-6 h-6" />
           </div>
           <div>
             <span className="px-2.5 py-0.5 rounded-md bg-emerald-100 text-emerald-900 font-extrabold text-[10px] uppercase tracking-wider">
-              OFFLINE-READY PWA APP
+              OFFICIAL PWA APP
             </span>
             <h2 className="text-xl font-extrabold text-slate-900">Install BharatSeva App</h2>
           </div>
         </div>
 
-        <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-6">
-          Install the official BharatSeva Web Application on your Android, iPhone, tablet, or desktop computer for 1-tap instant access, push notifications for exam results, offline reading, and fast loading.
-        </p>
+        {/* Iframe Notice if previewing inside container */}
+        {isInIframe && (
+          <div className="bg-amber-50 border border-amber-200 p-3.5 rounded-2xl text-xs text-amber-950 mb-4 space-y-2">
+            <div className="flex items-center gap-1.5 font-extrabold text-amber-900">
+              <Sparkles className="w-4 h-4 text-amber-600 shrink-0" />
+              <span>Preview Mode Notice:</span>
+            </div>
+            <p className="text-[11px] leading-relaxed text-amber-900">
+              Web browsers require opening the website directly in a browser tab (outside iframe) to trigger the native 1-click <strong>"Install / Add to Home Screen"</strong> popup.
+            </p>
+            <button
+              onClick={handleOpenInNewTab}
+              className="w-full py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-extrabold text-xs rounded-xl flex items-center justify-center gap-1.5 transition cursor-pointer shadow-xs"
+            >
+              <ExternalLink className="w-3.5 h-3.5" />
+              <span>Open in Full Browser Tab to Install</span>
+            </button>
+          </div>
+        )}
 
-        {/* Benefits Grid */}
-        <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2.5 mb-6 text-xs text-slate-800">
+        {/* Primary 1-Click Install Button if Prompt Ready */}
+        {hasPrompt && (
+          <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-2xl text-center space-y-3">
+            <p className="text-xs font-bold text-blue-900">
+              ⚡ Browser is ready! Click below to add BharatSeva to your device home screen instantly.
+            </p>
+            <button
+              onClick={handleNativeInstall}
+              className="w-full py-3.5 px-6 bg-gradient-to-r from-blue-900 to-teal-800 hover:from-blue-800 hover:to-teal-700 text-white font-extrabold text-sm rounded-2xl transition shadow-lg flex items-center justify-center space-x-2 cursor-pointer active:scale-95"
+            >
+              <Download className="w-5 h-5" />
+              <span>{isInstalled ? 'App Already Installed' : '1-Click Install BharatSeva'}</span>
+            </button>
+          </div>
+        )}
+
+        {/* Benefits List */}
+        <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2 mb-5 text-xs text-slate-800">
           <div className="flex items-center space-x-2 font-bold">
             <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-            <span>1-Tap Instant Access from your Phone’s Home Screen</span>
+            <span>1-Tap Instant Launch from Home Screen (No Browser URL bar)</span>
           </div>
           <div className="flex items-center space-x-2 font-bold">
             <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-            <span>Works Offline & Fast Data Saving Mode</span>
+            <span>Works Offline with Fast Cached Sarkari Database</span>
           </div>
           <div className="flex items-center space-x-2 font-bold">
             <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-            <span>Zero Storage Space Needed (&lt; 2 MB footprint)</span>
-          </div>
-          <div className="flex items-center space-x-2 font-bold">
-            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-            <span>Instant Daily Current Affairs & Job Deadline Alerts</span>
+            <span>Lightweight &lt; 2 MB (No Play Store download required)</span>
           </div>
         </div>
 
-        {/* OS Specific Instructions */}
-        {isIos ? (
-          <div className="bg-amber-50 border border-amber-200 p-4 rounded-2xl text-xs text-amber-950 space-y-2 mb-6">
-            <div className="font-extrabold flex items-center space-x-1">
-              <Share2 className="w-4 h-4 text-amber-800" />
-              <span>Instructions for iPhone / iPad (Safari):</span>
+        {/* Platform Selection Tabs */}
+        <div className="space-y-3 mb-6">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-extrabold text-slate-900">Installation Instructions:</span>
+            <div className="flex items-center space-x-1 bg-slate-100 p-1 rounded-xl">
+              <button
+                onClick={() => setActivePlatformTab('android')}
+                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1 cursor-pointer ${
+                  activePlatformTab === 'android' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500'
+                }`}
+              >
+                <Smartphone className="w-3.5 h-3.5" />
+                <span>Android</span>
+              </button>
+              <button
+                onClick={() => setActivePlatformTab('ios')}
+                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1 cursor-pointer ${
+                  activePlatformTab === 'ios' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500'
+                }`}
+              >
+                <Apple className="w-3.5 h-3.5" />
+                <span>iPhone / iOS</span>
+              </button>
+              <button
+                onClick={() => setActivePlatformTab('desktop')}
+                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1 cursor-pointer ${
+                  activePlatformTab === 'desktop' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500'
+                }`}
+              >
+                <Monitor className="w-3.5 h-3.5" />
+                <span>PC / Laptop</span>
+              </button>
             </div>
-            <ol className="list-decimal list-inside space-y-1 font-medium text-[11px] text-amber-900">
-              <li>Tap the <strong>Share button</strong> (square with arrow) in Safari bottom bar</li>
-              <li>Scroll down and tap <strong>"Add to Home Screen"</strong> <PlusSquare className="w-3.5 h-3.5 inline mx-0.5" /></li>
-              <li>Tap <strong>Add</strong> in the top right corner to complete installation</li>
-            </ol>
           </div>
-        ) : (
-          <div className="bg-blue-50 border border-blue-200 p-4 rounded-2xl text-xs text-blue-950 space-y-2 mb-6">
-            <div className="font-extrabold flex items-center space-x-1">
-              <Smartphone className="w-4 h-4 text-blue-800" />
-              <span>Instructions for Android & Chrome Desktop:</span>
-            </div>
-            <p className="font-medium text-[11px] text-blue-900 leading-relaxed">
-              Click the button below to launch the automatic installation prompt, or open Chrome options (⋮) and choose <strong>"Add to Home Screen"</strong> or <strong>"Install App"</strong>.
-            </p>
-          </div>
-        )}
 
-        {/* Action Button */}
-        {showManualSteps && (
-          <div className="bg-emerald-50 border border-emerald-300 p-4 rounded-2xl text-xs text-emerald-950 space-y-2 mb-4 animate-in fade-in">
-            <div className="font-extrabold flex items-center gap-1.5 text-emerald-900">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-              <span>How to Install Manually on Mobile / Desktop:</span>
+          {/* Android Steps */}
+          {activePlatformTab === 'android' && (
+            <div className="bg-emerald-50/80 border border-emerald-200 p-4 rounded-2xl text-xs text-emerald-950 space-y-2.5">
+              <div className="font-extrabold flex items-center gap-1.5 text-emerald-900">
+                <Chrome className="w-4 h-4 text-emerald-700" />
+                <span>Android Chrome / Samsung Internet:</span>
+              </div>
+              <ol className="list-decimal list-inside space-y-1.5 text-[11px] text-emerald-900 font-medium">
+                <li>Open BharatSeva website in Google Chrome on your phone.</li>
+                <li>Tap the <strong>three vertical dots (⋮)</strong> at the top-right corner.</li>
+                <li>Tap <strong>"Install app"</strong> or <strong>"Add to Home Screen"</strong>.</li>
+                <li>Tap <strong>Install</strong>. BharatSeva app icon will appear on your phone screen!</li>
+              </ol>
             </div>
-            <ol className="list-decimal list-inside space-y-1 text-[11px] text-emerald-900 font-medium">
-              <li>Open your browser menu (<strong>⋮</strong> in Chrome / <strong>Share ⎋</strong> in Safari)</li>
-              <li>Select <strong>"Add to Home Screen"</strong> or <strong>"Install App"</strong></li>
-              <li>Tap <strong>Add / Install</strong> to confirm. BharatSeva will launch fullscreen as an app!</li>
-            </ol>
-          </div>
-        )}
+          )}
 
+          {/* iOS Steps */}
+          {activePlatformTab === 'ios' && (
+            <div className="bg-amber-50/80 border border-amber-200 p-4 rounded-2xl text-xs text-amber-950 space-y-2.5">
+              <div className="font-extrabold flex items-center gap-1.5 text-amber-900">
+                <Share2 className="w-4 h-4 text-amber-700" />
+                <span>iPhone & iPad (Safari Browser):</span>
+              </div>
+              <ol className="list-decimal list-inside space-y-1.5 text-[11px] text-amber-900 font-medium">
+                <li>Open BharatSeva link in <strong>Safari</strong> browser.</li>
+                <li>Tap the <strong>Share button</strong> (square icon with upward arrow <Share2 className="w-3 h-3 inline mx-0.5" />) in the bottom bar.</li>
+                <li>Scroll down and tap <strong>"Add to Home Screen"</strong> <PlusSquare className="w-3.5 h-3.5 inline mx-0.5 text-amber-700" />.</li>
+                <li>Tap <strong>Add</strong> at top-right. The app will install instantly!</li>
+              </ol>
+            </div>
+          )}
+
+          {/* Desktop Steps */}
+          {activePlatformTab === 'desktop' && (
+            <div className="bg-blue-50/80 border border-blue-200 p-4 rounded-2xl text-xs text-blue-950 space-y-2.5">
+              <div className="font-extrabold flex items-center gap-1.5 text-blue-900">
+                <Laptop className="w-4 h-4 text-blue-700" />
+                <span>Windows PC / Mac (Chrome & Edge):</span>
+              </div>
+              <ol className="list-decimal list-inside space-y-1.5 text-[11px] text-blue-900 font-medium">
+                <li>Look at the top URL address bar in Chrome or Microsoft Edge.</li>
+                <li>Click the <strong>Install icon (⊕ or computer icon)</strong> on the right side of the address bar.</li>
+                <li>Click <strong>Install</strong> to add BharatSeva as a standalone Desktop App.</li>
+              </ol>
+            </div>
+          )}
+        </div>
+
+        {/* Copy App Link Helper */}
+        <div className="flex items-center gap-2 p-2.5 bg-slate-100 rounded-2xl mb-6">
+          <input
+            type="text"
+            readOnly
+            value={window.location.href}
+            className="flex-1 bg-transparent text-[11px] text-slate-600 font-mono px-2 outline-none truncate"
+          />
+          <button
+            onClick={handleCopyLink}
+            className="px-3 py-1.5 bg-white border border-slate-300 hover:bg-slate-50 text-slate-800 text-xs font-bold rounded-xl flex items-center gap-1 transition cursor-pointer shrink-0 shadow-2xs"
+          >
+            {copiedLink ? (
+              <>
+                <Check className="w-3.5 h-3.5 text-emerald-600" />
+                <span className="text-emerald-700">Copied!</span>
+              </>
+            ) : (
+              <>
+                <Copy className="w-3.5 h-3.5 text-slate-500" />
+                <span>Copy Link</span>
+              </>
+            )}
+          </button>
+        </div>
+
+        {/* Bottom Actions */}
         <div className="flex flex-col sm:flex-row gap-3">
           <button
-            onClick={handleInstallClick}
-            className="flex-1 py-3 px-5 bg-gradient-to-r from-blue-900 to-teal-800 hover:from-blue-800 hover:to-teal-700 text-white font-extrabold text-xs sm:text-sm rounded-2xl transition shadow-md flex items-center justify-center space-x-2 cursor-pointer active:scale-95"
+            onClick={handleNativeInstall}
+            className="flex-1 py-3 px-5 bg-gradient-to-r from-blue-900 to-indigo-900 hover:from-blue-800 hover:to-indigo-800 text-white font-extrabold text-xs sm:text-sm rounded-2xl transition shadow-md flex items-center justify-center space-x-2 cursor-pointer active:scale-95"
           >
             <Download className="w-4 h-4" />
-            <span>{isInstalled ? 'App Installed on Device' : 'Install BharatSeva App'}</span>
+            <span>{hasPrompt ? 'Trigger Direct Install' : isInIframe ? 'Open in Browser & Install' : 'Install BharatSeva App'}</span>
           </button>
 
           <button
             onClick={onClose}
             className="py-3 px-5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs sm:text-sm rounded-2xl transition cursor-pointer"
           >
-            Dismiss
+            Close
           </button>
         </div>
       </div>

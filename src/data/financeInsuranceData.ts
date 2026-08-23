@@ -2,7 +2,7 @@ export interface FinanceScheme {
   id: string;
   title: string;
   hindiTitle?: string;
-  category: 'Insurance' | 'Pension & Savings' | 'Loans & Subsidies' | 'Tax & Investment';
+  category: 'Insurance' | 'Pension & Savings' | 'Loans & Subsidies' | 'Tax & Investment' | 'Credit Cards & Banking' | 'Solar & Green Energy';
   subCategory: string;
   shortDesc: string;
   overview: string;
@@ -24,6 +24,79 @@ export interface FinanceScheme {
   faqList: { question: string; answer: string }[];
 }
 
+export interface CreditCardItem {
+  id: string;
+  cardName: string;
+  issuer: string;
+  joiningFee: string;
+  annualFee: string;
+  feeWaiverCondition: string;
+  cardType: 'Cashback & Rewards' | 'Lifetime Free (LTF)' | 'RuPay UPI' | 'Shopping & Travel' | 'Fuel & Utility';
+  rating: number;
+  bestFor: string;
+  keyPerks: string[];
+  welcomeBenefit: string;
+  rewardRate: string;
+  applyUrl: string;
+  popularBadge?: string;
+}
+
+export interface LoanComparisonItem {
+  id: string;
+  bankName: string;
+  loanType: 'Personal Loan' | 'Home Loan' | 'Education Loan' | 'Business & Mudra' | 'Gold Loan';
+  interestRateRange: string;
+  maxAmount: string;
+  tenureRange: string;
+  processingFee: string;
+  minIncome: string;
+  cibilRequirement: string;
+  features: string[];
+  applyUrl: string;
+  badge?: string;
+}
+
+export interface InsuranceComparisonItem {
+  id: string;
+  companyName: string;
+  planName: string;
+  insuranceType: 'Term Life Insurance' | 'Health & Medical Insurance' | 'Vehicle & Car Insurance';
+  sumInsuredRange: string;
+  startingPremiumMonthly: string;
+  claimSettlementRatio: string;
+  networkHospitalsOrGarages: string;
+  keyHighlights: string[];
+  taxExemption: string;
+  applyUrl: string;
+  recommendedTag?: string;
+}
+
+export interface BankFdRateItem {
+  bankName: string;
+  type: 'Public Bank' | 'Private Bank' | 'Small Finance Bank' | 'Post Office';
+  generalRateMax: string;
+  seniorCitizenRateMax: string;
+  specialTenure: string;
+  dicgcInsured: boolean;
+  applyUrl: string;
+}
+
+export interface HighRpmGuideArticle {
+  id: string;
+  title: string;
+  hindiTitle?: string;
+  readTime: string;
+  category: string;
+  highCpcKeywords: string[];
+  summary: string;
+  sections: {
+    heading: string;
+    body: string;
+    tableData?: { headers: string[]; rows: string[][] };
+    bulletPoints?: string[];
+  }[];
+}
+
 export const FINANCE_INSURANCE_SCHEMES: FinanceScheme[] = [
   // 1. Ayushman Bharat PM-JAY
   {
@@ -32,8 +105,8 @@ export const FINANCE_INSURANCE_SCHEMES: FinanceScheme[] = [
     hindiTitle: 'आयुष्मान भारत प्रधानमंत्री जन आरोग्य योजना',
     category: 'Insurance',
     subCategory: 'Health & Medical Insurance',
-    shortDesc: '₹5,00,000 free annual cashless health insurance cover per family for secondary & tertiary hospitalizations.',
-    overview: 'Ayushman Bharat PM-JAY is the world\'s largest government-funded healthcare assurance scheme. It covers over 12 crore poor and vulnerable families (approx. 55 crore beneficiaries), providing up to ₹5 Lakhs per family per year for secondary and tertiary care hospitalization in empaneled private and public hospitals across India.',
+    shortDesc: '₹5,00,000 free annual cashless health insurance cover per family (Dedicated ₹10 Lakh for families with seniors 70+).',
+    overview: 'Ayushman Bharat PM-JAY is the world\'s largest government-funded healthcare assurance scheme. It covers over 12 crore poor and vulnerable families (approx. 55 crore beneficiaries), providing up to ₹5 Lakhs per family per year for secondary and tertiary care hospitalization in empaneled private and public hospitals across India. With the new Vay Vandana expansion, all senior citizens aged 70+ get an exclusive additional ₹5 Lakh cover regardless of income.',
     keyBenefit: '₹5 Lakh Cashless In-patient Medical & Surgical Treatment per family/year across 27,000+ empaneled hospitals.',
     eligibility: 'Listed in SECC 2011 database, Ration Card holder (NFSA/State priority card), or Ayushman Vay Vandana Card (all seniors aged 70+ irrespective of income).',
     ageLimit: 'No age limit (Senior Citizens 70+ get dedicated additional ₹5 Lakh top-up cover).',
@@ -62,7 +135,44 @@ export const FINANCE_INSURANCE_SCHEMES: FinanceScheme[] = [
     ]
   },
 
-  // 2. PMJJBY
+  // 2. PM Surya Ghar Muft Bijli Yojana (High Commercial Solar Subsidy)
+  {
+    id: 'pm-surya-ghar-muft-bijli',
+    title: 'PM Surya Ghar: Muft Bijli Yojana (Rooftop Solar Subsidy)',
+    hindiTitle: 'पीएम सूर्य घर: मुफ्त बिजली योजना (सोलर सब्सिडी)',
+    category: 'Solar & Green Energy',
+    subCategory: 'Rooftop Solar Direct DBT Subsidy',
+    shortDesc: 'Get up to ₹78,000 direct bank subsidy to install rooftop solar panels and get 300 units of 100% free electricity monthly.',
+    overview: 'Launched with a budget of ₹75,000 Crores, PM Surya Ghar Muft Bijli Yojana provides households across India with up to ₹78,000 direct bank transfer (DBT) subsidy to install residential rooftop solar plants. It reduces electricity bills to zero, allows selling surplus power back to the grid (Net Metering), and offers collateral-free solar loans at an ultra-low 7% interest rate.',
+    keyBenefit: 'Direct Govt Subsidy: ₹30,000 for 1 kW, ₹60,000 for 2 kW, and ₹78,000 for 3 kW+ solar setups, saving up to ₹25,000+ yearly on electricity bills.',
+    eligibility: 'Any Indian residential homeowner with suitable unshaded roof space and an active domestic electricity connection.',
+    ageLimit: '18+ years (Homeowner).',
+    premiumOrDeposit: 'Subsidized Solar Loan available from SBI/Canara/PNB at just 7% repo-linked interest with zero collateral.',
+    maximumBenefit: '₹78,000 Cash Subsidy credited to Bank within 30 days of inspection + Lifetime 25-year free solar power.',
+    howToApply: [
+      'Register on pmsuryaghar.gov.in by selecting your State, Electricity Distribution Company (DISCOM), and Consumer Account Number.',
+      'Apply for Rooftop Solar installation and choose registered local solar vendor/installer.',
+      'Vendor installs solar panels, DISCOM installs Bi-directional Net Meter.',
+      'Commissioning certificate is issued; submit bank account details on the portal to receive ₹78,000 subsidy within 30 days.'
+    ],
+    requiredDocuments: ['Electricity Bill (Latest Copy)', 'Aadhaar Card', 'Cancelled Cheque / Bank Passbook for DBT', 'Rooftop Ownership Proof / Tax Receipt'],
+    officialPortalUrl: 'https://pmsuryaghar.gov.in',
+    helplineNumber: '15555 / 1800-180-3333',
+    searchKeywords: ['pm surya ghar muft bijli yojana apply online', 'solar rooftop subsidy 78000', 'pmsuryaghar gov in registration', 'solar panel subsidy bihar sbpdcl nbpdcl', 'free electricity solar loan 7 percent'],
+    popularTag: '₹78,000 Direct Subsidy',
+    faqList: [
+      {
+        question: 'How much roof area is required for a 3kW solar system?',
+        answer: 'A 3kW rooftop solar setup requires approximately 300 sq.ft. of shadow-free rooftop area and generates about 12 to 15 units of electricity every day (360-450 units/month).'
+      },
+      {
+        question: 'Can I get a loan to cover the remaining cost of rooftop solar?',
+        answer: 'Yes! Major public sector banks like SBI, PNB, Bank of Baroda, and Canara Bank provide special collateral-free PM Surya Ghar Solar Loans up to ₹2,00,000 at a low 7% interest rate with up to 10-year repayment tenure.'
+      }
+    ]
+  },
+
+  // 3. PMJJBY
   {
     id: 'pmjjby-life-insurance',
     title: 'Pradhan Mantri Jeevan Jyoti Bima Yojana (PMJJBY)',
@@ -100,7 +210,7 @@ export const FINANCE_INSURANCE_SCHEMES: FinanceScheme[] = [
     ]
   },
 
-  // 3. PMSBY
+  // 4. PMSBY
   {
     id: 'pmsby-accidental-insurance',
     title: 'Pradhan Mantri Suraksha Bima Yojana (PMSBY)',
@@ -133,105 +243,68 @@ export const FINANCE_INSURANCE_SCHEMES: FinanceScheme[] = [
     ]
   },
 
-  // 4. PM Fasal Bima Yojana (PMFBY)
+  // 5. Bihar Student Credit Card (MNSSBY)
   {
-    id: 'pmfby-crop-insurance',
-    title: 'Pradhan Mantri Fasal Bima Yojana (PMFBY)',
-    hindiTitle: 'प्रधानमंत्री फसल बीमा योजना',
-    category: 'Insurance',
-    subCategory: 'Agriculture & Crop Insurance',
-    shortDesc: 'Comprehensive crop loss insurance against drought, floods, hail, unseasonal rain & pest attacks.',
-    overview: 'PMFBY provides comprehensive risk insurance coverage to farmers from pre-sowing to post-harvest losses due to non-preventable natural risks like drought, dry spells, floods, inundation, pests, diseases, landslides, and hailstorms.',
-    keyBenefit: 'Up to 100% sum insured compensation credited directly to farmer\'s bank account upon crop damage.',
-    eligibility: 'All farmers growing notified Kharif, Rabi, and Commercial/Horticultural crops (Loanee & Non-Loanee).',
-    ageLimit: '18+ years (All landholding and tenant farmers).',
-    premiumOrDeposit: 'Only 2% for Kharif crops, 1.5% for Rabi crops, and 5% for Annual Commercial/Horticulture crops.',
-    maximumBenefit: 'Full crop valuation sum insured per acre/hectare as notified by State Agriculture Dept.',
+    id: 'bihar-student-credit-card',
+    title: 'Bihar Student Credit Card Scheme (MNSSBY)',
+    hindiTitle: 'बिहार स्टूडेंट क्रेडिट कार्ड योजना (MNSSBY)',
+    category: 'Loans & Subsidies',
+    subCategory: 'Higher Education Loan @ 1%',
+    shortDesc: '₹4,00,000 education loan for B.Tech, MBBS, BCA, BBA, Polytechnic, Nursing & 40+ degree courses at 1% for girls/divyang and 4% for boys.',
+    overview: 'Under the Bihar government\'s Seven Resolves (Saat Nischay), the Bihar Student Credit Card scheme provides up to ₹4 Lakhs education loan to 12th pass students for higher education tuition fees, hostel, laptop, and living expenses at an ultra-low simple interest rate (1% for girls/divyang/transgender, 4% for boys) with repayment starting only 1 year after course completion or getting a job.',
+    keyBenefit: '₹4,00,000 education loan guarantee with no collateral, zero mortgage, and morotorium period.',
+    eligibility: '12th pass students who are permanent residents of Bihar, enrolled in recognized colleges/universities.',
+    ageLimit: 'Up to 25 years (Up to 30 years for Post-Graduate degrees).',
+    interestRate: '1% for Girls, Divyang & Transgender; 4% for Male candidates (Simple Interest).',
+    maximumBenefit: '₹4,00,000 covering Tuition Fees, Hostel, Books, Laptop, and Stationery.',
     howToApply: [
-      'Visit the PMFBY official portal (pmfby.gov.in) or nearest CSC Centre / Bank branch.',
-      'Select Farmer Corner -> Apply for Crop Insurance as Farmer.',
-      'Upload Land LPC / RoR / Khasra Khatauni, Sowing Certificate, and Bank Passbook copy.',
-      'Pay the subsidized farmer share (1.5% to 2%) online and download Insurance Policy Receipt.'
+      'Register online at the official portal (7nishchay-yuvaupmission.bihar.gov.in) or mobile app.',
+      'Fill Common Application Form (CAF) with college admission allotment letter.',
+      'Book appointment and visit District Registration and Counseling Centre (DRCC) with original documents.',
+      'DRCC verifies documents and Bihar State Education Finance Corporation (BSEFC) disburses funds directly to college.'
     ],
-    requiredDocuments: ['Aadhaar Card', 'Land Record (LPC/Khata/Khesra)', 'Sowing Certificate / Patwari Report', 'Bank Account Passbook'],
-    officialPortalUrl: 'https://pmfby.gov.in',
-    helplineNumber: '14447 / 011-23382012',
-    searchKeywords: ['pm fasal bima yojana apply', 'pmfby claim status online', 'bihar fasal sahayata yojana', 'crop insurance claim bihar kisan', 'pmfby helpline number'],
-    popularTag: 'Farmer Crop Protection',
+    requiredDocuments: ['10th & 12th Marksheet & Certificate', 'College Admission Offer Letter & Fee Structure', 'Aadhaar Card of Student & Co-Applicant Parent', 'Residential Certificate (Niwas Praman Patra)', 'Bank Account Passbook with IFSC'],
+    officialPortalUrl: 'https://www.7nishchay-yuvaupmission.bihar.gov.in',
+    helplineNumber: '1800-3456-444 (Toll-Free)',
+    searchKeywords: ['bihar student credit card online apply 2026', 'drcc student credit card status', 'mnssby 4 lakh loan process', 'bihar education loan interest rate for girls', 'approved college list for bihar student credit card'],
+    popularTag: 'Saat Nischay 1% - 4% Loan',
     faqList: [
       {
-        question: 'How soon should crop damage be reported under PMFBY?',
-        answer: 'Localized calamities (like hailstorm, localized waterlogging, landslide) must be reported within 72 hours via Crop Insurance App or toll-free number 14447.'
+        question: 'When does the repayment of Bihar Student Credit Card loan start?',
+        answer: 'Repayment starts 1 year after completing the course OR 6 months after securing employment, whichever is earlier. No EMI is charged during study duration.'
       }
     ]
   },
 
-  // 5. Atal Pension Yojana (APY)
+  // 6. PM Mudra Yojana
   {
-    id: 'atal-pension-yojana-apy',
-    title: 'Atal Pension Yojana (APY)',
-    hindiTitle: 'अटल पेंशन योजना',
-    category: 'Pension & Savings',
-    subCategory: 'Guaranteed Govt Pension',
-    shortDesc: 'Guaranteed lifelong monthly pension of ₹1,000 to ₹5,000 after age 60 with spouse pension & return of corpus to nominee.',
-    overview: 'Administered by PFRDA under the Ministry of Finance, APY is India\'s premier guaranteed pension scheme for unorganized sector workers and citizens. Depending on your joining age (18 to 40 years) and chosen pension slab (₹1,000, ₹2,000, ₹3,000, ₹4,000, or ₹5,000/month), you contribute a small monthly amount until age 60, after which guaranteed pension is paid for life.',
-    keyBenefit: 'Guaranteed ₹1,000 to ₹5,000/month for lifetime to subscriber, then same pension to spouse, and entire corpus (up to ₹8.5 Lakhs) returned to nominee.',
-    eligibility: 'All Indian citizens with a savings bank/post office account who are NOT income-tax payers.',
-    ageLimit: '18 to 40 years.',
-    premiumOrDeposit: '₹42/month (for ₹1k pension at age 18) up to ₹1,454/month (for ₹5k pension at age 40).',
-    maximumBenefit: 'Lifelong monthly pension up to ₹5,000/month (₹60,000/year) + return of ₹8.5 Lakhs corpus to children.',
-    taxBenefit: 'Additional tax deduction under Section 80CCD(1B) up to ₹50,000.',
+    id: 'pm-mudra-loan-yojana',
+    title: 'Pradhan Mantri MUDRA Yojana (PMMY)',
+    hindiTitle: 'प्रधानमंत्री मुद्रा ऋण योजना',
+    category: 'Loans & Subsidies',
+    subCategory: 'Business & Entrepreneurship Loan',
+    shortDesc: 'Collateral-free business loans up to ₹20,00,000 under Shishu, Kishore, Tarun & Tarun Plus categories.',
+    overview: 'PMMY enables micro and small business owners, shopkeepers, service providers, artisans, and youth entrepreneurs to secure collateral-free loans from public sector banks, RRBs, NBFCs, and MFIs without mortgaging property. The budget 2024-2026 enhanced the maximum limit to ₹20 Lakhs under the Tarun Plus category.',
+    keyBenefit: 'Collateral-free business loan from ₹50,000 up to ₹20,00,000 with flexible repayment up to 5-7 years.',
+    eligibility: 'Any Indian citizen involved in non-farm income generating micro enterprises (Manufacturing, Trading, Shopkeeping, Food Services, Agriculture allied activities).',
+    ageLimit: '18 to 65 years.',
+    interestRate: '8.5% to 11.5% p.a. (Bank linked competitive rates, zero processing fee for Shishu loans).',
+    maximumBenefit: 'Shishu (Up to ₹50k), Kishore (₹50k - ₹5L), Tarun (₹5L - ₹10L), Tarun Plus (₹10L - ₹20L).',
     howToApply: [
-      'Visit your Bank branch or Post Office with Aadhaar & Savings Passbook.',
-      'Or open online via Internet Banking (SBI, HDFC, ICICI, PNB, Canara) under Pension/APY tab.',
-      'Choose monthly pension amount (₹1,000 to ₹5,000) and contribution frequency (Monthly/Quarterly).',
-      'Authorize auto-debit and receive PRAN (Permanent Retirement Account Number).'
+      'Visit the JanSamarth Portal (jansamarth.in) or nearest public/private bank branch.',
+      'Choose MUDRA Loan category based on requirement.',
+      'Submit Business Plan / Project Report, Quotation of Machinery / Inventory, and KYC docs.',
+      'Loan is sanctioned and credited into Mudra Debit Card / Current Account.'
     ],
-    requiredDocuments: ['Aadhaar Card', 'Savings Bank Account with active Auto-Debit', 'Nominee Aadhaar'],
-    officialPortalUrl: 'https://npscra.nsdl.co.in/nsdl-atal-pension-yojana.php',
-    helplineNumber: '1800-110-069',
-    searchKeywords: ['atal pension yojana chart 2026', 'apy chart age wise monthly contribution', 'atal pension yojana online apply', 'apy 5000 pension calculator', 'apy status check by pran'],
-    popularTag: 'Guaranteed 60+ Pension',
+    requiredDocuments: ['Aadhaar & PAN Card', 'Business Proof / Udyam Aadhaar Registration', 'Bank Statement of last 6 months', 'Machinery / Stock Quotation'],
+    officialPortalUrl: 'https://www.mudra.org.in',
+    helplineNumber: '1800-180-1111 / 1800-11-0001',
+    searchKeywords: ['pm mudra loan online apply 50000', 'mudra loan interest rate 2026', 'jansamarth mudra loan sbi', 'mudra loan eligibility without security', 'shishu mudra loan 50000 apply online'],
+    popularTag: 'Zero Collateral Loan',
     faqList: [
       {
-        question: 'What happens to APY after the death of the pensioner?',
-        answer: 'Upon the subscriber\'s demise, the exact same monthly pension is paid to the spouse for their entire lifetime. Upon spouse\'s demise, the entire accumulated corpus (up to ₹8.5 Lakhs) is transferred to the nominee.'
-      }
-    ]
-  },
-
-  // 6. Public Provident Fund (PPF)
-  {
-    id: 'public-provident-fund-ppf',
-    title: 'Public Provident Fund (PPF)',
-    hindiTitle: 'पब्लिक प्रॉविडेंट फंड (PPF)',
-    category: 'Pension & Savings',
-    subCategory: 'Long Term Safe Wealth & Tax Saver',
-    shortDesc: '7.1% guaranteed sovereign interest rate with 100% EEE tax-free status and ₹1.5 Lakh Section 80C exemption.',
-    overview: 'Public Provident Fund is one of India\'s most trusted 15-year government-backed savings instruments offering sovereign capital safety, compounding interest (currently 7.1% p.a.), loan facilities, and complete Exempt-Exempt-Exempt (EEE) tax benefits.',
-    keyBenefit: '7.1% tax-free annual compounded interest with complete sovereign capital protection.',
-    eligibility: 'All resident Indian individuals (can also be opened in the name of a minor by parent).',
-    ageLimit: 'No age limit.',
-    premiumOrDeposit: 'Min ₹500 to Max ₹1,50,000 per financial year.',
-    maximumBenefit: 'Maturity amount in Crores over long term compounding with 5-year block extensions.',
-    interestRate: '7.1% p.a. (Compounded Annually)',
-    lockInPeriod: '15 Years (Partial withdrawal allowed from 7th year; loan facility from 3rd year).',
-    taxBenefit: 'Triple EEE Tax Exemption: Investment is tax-exempt under 80C, interest earned is 100% tax-free, maturity amount is 100% tax-free.',
-    howToApply: [
-      'Open instantly via Net Banking (SBI, HDFC, ICICI, PNB, Axis, etc.) in under 2 minutes.',
-      'Or visit nearest Head Post Office / Bank branch with PAN and Aadhaar Card.',
-      'Deposit minimum ₹500 to activate the PPF account.',
-      'Set up standing instructions for monthly/annual auto-deposit before the 5th of each month to maximize interest.'
-    ],
-    requiredDocuments: ['Aadhaar Card', 'PAN Card', 'Passport size photo', 'Savings Bank Account'],
-    officialPortalUrl: 'https://www.indiapost.gov.in',
-    helplineNumber: '1800-266-6868',
-    searchKeywords: ['ppf calculator 15 years', 'ppf interest rate 2026', 'sbi ppf account opening online', 'post office ppf interest rate', 'ppf maturity calculator 1.5 lakh per year'],
-    popularTag: '100% Tax Free EEE',
-    faqList: [
-      {
-        question: 'Can PPF account be extended after 15 years?',
-        answer: 'Yes! You can extend your PPF account in blocks of 5 years indefinitely, with or without fresh contributions, while continuing to earn tax-free interest.'
+        question: 'Is any property guarantee or guarantor required for Mudra Loan?',
+        answer: 'No! Mudra loans are 100% collateral-free. You do not need to pledge land, gold, or property.'
       }
     ]
   },
@@ -272,106 +345,146 @@ export const FINANCE_INSURANCE_SCHEMES: FinanceScheme[] = [
     ]
   },
 
-  // 8. Bihar Student Credit Card (MNSSBY)
+  // 8. Public Provident Fund (PPF)
   {
-    id: 'bihar-student-credit-card',
-    title: 'Bihar Student Credit Card Scheme (MNSSBY)',
-    hindiTitle: 'बिहार स्टूडेंट क्रेडिट कार्ड योजना (MNSSBY)',
-    category: 'Loans & Subsidies',
-    subCategory: 'Higher Education Loan',
-    shortDesc: '₹4,00,000 subsidized education loan for B.Tech, MBBS, BCA, BBA, Polytechnic, Nursing & 40+ degree courses.',
-    overview: 'Under the Bihar government\'s Seven Resolves (Saat Nischay), the Bihar Student Credit Card scheme provides up to ₹4 Lakhs education loan to 12th pass students for higher education tuition fees, hostel, laptop, and living expenses at an ultra-low simple interest rate (1% for girls/divyang/transgender, 4% for boys) with repayment starting only 1 year after course completion or getting a job.',
-    keyBenefit: '₹4,00,000 education loan guarantee with no collateral, zero mortgage, and morotorium period.',
-    eligibility: '12th pass students who are permanent residents of Bihar, enrolled in recognized colleges/universities.',
-    ageLimit: 'Up to 25 years (Up to 30 years for Post-Graduate degrees).',
-    interestRate: '1% for Girls, Divyang & Transgender; 4% for Male candidates (Simple Interest).',
-    maximumBenefit: '₹4,00,000 covering Tuition Fees, Hostel, Books, Laptop, and Stationery.',
+    id: 'public-provident-fund-ppf',
+    title: 'Public Provident Fund (PPF)',
+    hindiTitle: 'पब्लिक प्रॉविडेंट फंड (PPF)',
+    category: 'Pension & Savings',
+    subCategory: 'Long Term Safe Wealth & Tax Saver',
+    shortDesc: '7.1% guaranteed sovereign interest rate with 100% EEE tax-free status and ₹1.5 Lakh Section 80C exemption.',
+    overview: 'Public Provident Fund is one of India\'s most trusted 15-year government-backed savings instruments offering sovereign capital safety, compounding interest (currently 7.1% p.a.), loan facilities, and complete Exempt-Exempt-Exempt (EEE) tax benefits.',
+    keyBenefit: '7.1% tax-free annual compounded interest with complete sovereign capital protection.',
+    eligibility: 'All resident Indian individuals (can also be opened in the name of a minor by parent).',
+    ageLimit: 'No age limit.',
+    premiumOrDeposit: 'Min ₹500 to Max ₹1,50,000 per financial year.',
+    maximumBenefit: 'Maturity amount in Crores over long term compounding with 5-year block extensions.',
+    interestRate: '7.1% p.a. (Compounded Annually)',
+    lockInPeriod: '15 Years (Partial withdrawal allowed from 7th year; loan facility from 3rd year).',
+    taxBenefit: 'Triple EEE Tax Exemption: Investment is tax-exempt under 80C, interest earned is 100% tax-free, maturity amount is 100% tax-free.',
     howToApply: [
-      'Register online at the official portal (7nishchay-yuvaupmission.bihar.gov.in) or mobile app.',
-      'Fill Common Application Form (CAF) with college admission allotment letter.',
-      'Book appointment and visit District Registration and Counseling Centre (DRCC) with original documents.',
-      'DRCC verifies documents and Bihar State Education Finance Corporation (BSEFC) disburses funds directly to college.'
+      'Open instantly via Net Banking (SBI, HDFC, ICICI, PNB, Axis, etc.) in under 2 minutes.',
+      'Or visit nearest Head Post Office / Bank branch with PAN and Aadhaar Card.',
+      'Deposit minimum ₹500 to activate the PPF account.',
+      'Set up standing instructions for monthly/annual auto-deposit before the 5th of each month to maximize interest.'
     ],
-    requiredDocuments: ['10th & 12th Marksheet & Certificate', 'College Admission Offer Letter & Fee Structure', 'Aadhaar Card of Student & Co-Applicant Parent', 'Residential Certificate (Niwas Praman Patra)', 'Bank Account Passbook with IFSC'],
-    officialPortalUrl: 'https://www.7nishchay-yuvaupmission.bihar.gov.in',
-    helplineNumber: '1800-3456-444 (Toll-Free)',
-    searchKeywords: ['bihar student credit card online apply 2026', 'drcc student credit card status', 'mnssby 4 lakh loan process', 'bihar education loan interest rate for girls', 'approved college list for bihar student credit card'],
-    popularTag: 'Saat Nischay 1% - 4% Loan',
+    requiredDocuments: ['Aadhaar Card', 'PAN Card', 'Passport size photo', 'Savings Bank Account'],
+    officialPortalUrl: 'https://www.indiapost.gov.in',
+    helplineNumber: '1800-266-6868',
+    searchKeywords: ['ppf calculator 15 years', 'ppf interest rate 2026', 'sbi ppf account opening online', 'post office ppf interest rate', 'ppf maturity calculator 1.5 lakh per year'],
+    popularTag: '100% Tax Free EEE',
     faqList: [
       {
-        question: 'When does the repayment of Bihar Student Credit Card loan start?',
-        answer: 'Repayment starts 1 year after completing the course OR 6 months after securing employment, whichever is earlier. No EMI is charged during study duration.'
+        question: 'Can PPF account be extended after 15 years?',
+        answer: 'Yes! You can extend your PPF account in blocks of 5 years indefinitely, with or without fresh contributions, while continuing to earn tax-free interest.'
       }
     ]
   },
 
-  // 9. PM Mudra Yojana
+  // 9. Senior Citizen Savings Scheme (SCSS)
   {
-    id: 'pm-mudra-loan-yojana',
-    title: 'Pradhan Mantri MUDRA Yojana (PMMY)',
-    hindiTitle: 'प्रधानमंत्री मुद्रा ऋण योजना',
-    category: 'Loans & Subsidies',
-    subCategory: 'Business & Entrepreneurship Loan',
-    shortDesc: 'Collateral-free business loans up to ₹20,00,000 under Shishu, Kishore, Tarun & Tarun Plus categories.',
-    overview: 'PMMY enables micro and small business owners, shopkeepers, service providers, artisans, and youth entrepreneurs to secure collateral-free loans from public sector banks, RRBs, NBFCs, and MFIs without mortgaging property.',
-    keyBenefit: 'Collateral-free business loan from ₹50,000 up to ₹20,00,000 with flexible repayment up to 5-7 years.',
-    eligibility: 'Any Indian citizen involved in non-farm income generating micro enterprises (Manufacturing, Trading, Shopkeeping, Food Services, Agriculture allied activities).',
-    ageLimit: '18 to 65 years.',
-    interestRate: '8.5% to 12% p.a. (Bank linked competitive rates, zero processing fee for Shishu loans).',
-    maximumBenefit: 'Shishu (Up to ₹50k), Kishore (₹50k - ₹5L), Tarun (₹5L - ₹10L), Tarun Plus (₹10L - ₹20L).',
+    id: 'senior-citizen-savings-scheme-scss',
+    title: 'Senior Citizen Savings Scheme (SCSS)',
+    hindiTitle: 'वरिष्ठ नागरिक बचत योजना (SCSS)',
+    category: 'Pension & Savings',
+    subCategory: 'High Yield Guaranteed Retirement Income',
+    shortDesc: '8.2% highest sovereign quarterly interest payout for seniors aged 60+ on deposits up to ₹30 Lakhs.',
+    overview: 'SCSS is a premier government-backed fixed income scheme for citizens aged 60 and above, offering an unbeatable 8.2% annual interest paid quarterly directly into the retiree\'s savings account. Account holders can deposit up to ₹30 Lakhs with 100% sovereign guarantee by the Government of India.',
+    keyBenefit: 'Guaranteed ₹61,500 quarterly income (₹2,46,000/year) on ₹30 Lakh maximum deposit at 8.2% p.a.',
+    eligibility: 'Individuals aged 60+ years (or 55+ for superannuated/VRS retirees).',
+    ageLimit: '60+ years.',
+    premiumOrDeposit: 'Min ₹1,000 to Max ₹30,00,000.',
+    maximumBenefit: '₹30,00,000 deposit yields ₹2.46 Lakhs guaranteed annual income for 5 years.',
+    interestRate: '8.2% p.a. (Paid Quarterly on 1st April, July, Oct, Jan)',
+    lockInPeriod: '5 Years (Extendable by 3 years).',
+    taxBenefit: 'Tax deduction under Section 80C up to ₹1.5 Lakhs.',
     howToApply: [
-      'Visit the JanSamarth Portal (jansamarth.in) or nearest public/private bank branch.',
-      'Choose MUDRA Loan category based on requirement.',
-      'Submit Business Plan / Project Report, Quotation of Machinery / Inventory, and KYC docs.',
-      'Loan is sanctioned and credited into Mudra Debit Card / Current Account.'
+      'Visit Post Office or any Public/Private Sector Bank branch (SBI, PNB, HDFC, ICICI, etc.).',
+      'Submit Form-A with Aadhaar, PAN, and Age/Retirement proof.',
+      'Deposit funds via Cheque / Demand Draft.',
+      'Link savings account for automatic quarterly interest credits.'
     ],
-    requiredDocuments: ['Aadhaar & PAN Card', 'Business Proof / Udyam Aadhaar Registration', 'Bank Statement of last 6 months', 'Machinery / Stock Quotation'],
-    officialPortalUrl: 'https://www.mudra.org.in',
-    helplineNumber: '1800-180-1111 / 1800-11-0001',
-    searchKeywords: ['pm mudra loan online apply 50000', 'mudra loan interest rate 2026', 'jansamarth mudra loan sbi', 'mudra loan eligibility without security', 'shishu mudra loan 50000 apply online'],
-    popularTag: 'Zero Collateral Loan',
+    requiredDocuments: ['Aadhaar Card', 'PAN Card', 'Retirement / Age Proof', 'Passport Photos'],
+    officialPortalUrl: 'https://www.indiapost.gov.in',
+    helplineNumber: '1800-266-6868',
+    searchKeywords: ['scss interest rate 2026', 'senior citizen savings scheme 30 lakh interest payout', 'post office scss calculator', 'sbi senior citizen scheme 8.2 percent'],
+    popularTag: '8.2% Quarterly Payout',
     faqList: [
       {
-        question: 'Is any property guarantee or guarantor required for Mudra Loan?',
-        answer: 'No! Mudra loans are 100% collateral-free. You do not need to pledge land, gold, or property.'
+        question: 'Can a husband and wife both open separate SCSS accounts up to ₹30 Lakhs?',
+        answer: 'Yes! Both spouses (if aged 60+) can open individual accounts or joint accounts, allowing a family to invest up to ₹60 Lakhs and earn ₹4.92 Lakhs guaranteed annual income.'
       }
     ]
   },
 
-  // 10. PM SVANidhi
+  // 10. Atal Pension Yojana (APY)
   {
-    id: 'pm-svanidhi-microcredit',
-    title: 'PM Street Vendor\'s AtmaNirbhar Nidhi (PM SVANidhi)',
-    hindiTitle: 'पीएम स्वनिधि योजना (स्ट्रीट वेंडर्स)',
-    category: 'Loans & Subsidies',
-    subCategory: 'Micro-Credit for Small Vendors',
-    shortDesc: 'Collateral-free working capital loan of ₹10,000 -> ₹20,000 -> ₹50,000 with 7% interest subsidy & cashback.',
-    overview: 'PM SVANidhi provides affordable working capital micro-loans to urban & peri-urban street vendors, fruit/vegetable sellers, tea stalls, and hawkers to rebuild livelihoods, with a 7% interest subsidy credited directly to bank accounts and up to ₹1,200/year cashback on digital payments.',
-    keyBenefit: 'Step-by-step credit limit enhancement: 1st Tranche: ₹10,000 -> 2nd Tranche: ₹20,000 -> 3rd Tranche: ₹50,000 with 7% interest subsidy.',
-    eligibility: 'Street vendors and hawkers with Certificate of Vending (CoV) / Identity Card issued by Urban Local Bodies (ULBs).',
-    ageLimit: '18+ years.',
-    premiumOrDeposit: 'Zero Security / Collateral Free.',
-    maximumBenefit: 'Up to ₹50,000 working capital loan.',
+    id: 'atal-pension-yojana-apy',
+    title: 'Atal Pension Yojana (APY)',
+    hindiTitle: 'अटल पेंशन योजना',
+    category: 'Pension & Savings',
+    subCategory: 'Guaranteed Govt Pension',
+    shortDesc: 'Guaranteed lifelong monthly pension of ₹1,000 to ₹5,000 after age 60 with spouse pension & return of corpus to nominee.',
+    overview: 'Administered by PFRDA under the Ministry of Finance, APY is India\'s premier guaranteed pension scheme for unorganized sector workers and citizens. Depending on your joining age (18 to 40 years) and chosen pension slab (₹1,000, ₹2,000, ₹3,000, ₹4,000, or ₹5,000/month), you contribute a small monthly amount until age 60, after which guaranteed pension is paid for life.',
+    keyBenefit: 'Guaranteed ₹1,000 to ₹5,000/month for lifetime to subscriber, then same pension to spouse, and entire corpus (up to ₹8.5 Lakhs) returned to nominee.',
+    eligibility: 'All Indian citizens with a savings bank/post office account who are NOT income-tax payers.',
+    ageLimit: '18 to 40 years.',
+    premiumOrDeposit: '₹42/month (for ₹1k pension at age 18) up to ₹1,454/month (for ₹5k pension at age 40).',
+    maximumBenefit: 'Lifelong monthly pension up to ₹5,000/month (₹60,000/year) + return of ₹8.5 Lakhs corpus to children.',
+    taxBenefit: 'Additional tax deduction under Section 80CCD(1B) up to ₹50,000.',
     howToApply: [
-      'Apply online on pmsvanidhi.mohua.gov.in or through nearest CSC / Nagar Nigam office.',
-      'Enter Aadhaar linked mobile number and verify OTP.',
-      'Select your Urban Local Body (ULB) and Vending Certificate details.',
-      'Choose preferred bank for disbursement.'
+      'Visit your Bank branch or Post Office with Aadhaar & Savings Passbook.',
+      'Or open online via Internet Banking (SBI, HDFC, ICICI, PNB, Canara) under Pension/APY tab.',
+      'Choose monthly pension amount (₹1,000 to ₹5,000) and contribution frequency (Monthly/Quarterly).',
+      'Authorize auto-debit and receive PRAN (Permanent Retirement Account Number).'
     ],
-    requiredDocuments: ['Aadhaar Card', 'Vending Certificate / Nagar Palika Survey Letter', 'Bank Passbook'],
-    officialPortalUrl: 'https://pmsvanidhi.mohua.gov.in',
-    helplineNumber: '1800-11-1979',
-    searchKeywords: ['pm svanidhi loan 10000 apply online', 'pm svanidhi second tranche 20000', 'pm svanidhi interest subsidy status', 'vendor loan sbi online'],
-    popularTag: '7% Interest Subsidy',
+    requiredDocuments: ['Aadhaar Card', 'Savings Bank Account with active Auto-Debit', 'Nominee Aadhaar'],
+    officialPortalUrl: 'https://npscra.nsdl.co.in/nsdl-atal-pension-yojana.php',
+    helplineNumber: '1800-110-069',
+    searchKeywords: ['atal pension yojana chart 2026', 'apy chart age wise monthly contribution', 'atal pension yojana online apply', 'apy 5000 pension calculator', 'apy status check by pran'],
+    popularTag: 'Guaranteed 60+ Pension',
     faqList: [
       {
-        question: 'How do vendors get 7% interest subsidy in PM SVANidhi?',
-        answer: 'Upon timely monthly EMI repayment, the 7% per annum interest subsidy is calculated quarterly and directly credited into the vendor\'s bank account via DBT.'
+        question: 'What happens to APY after the death of the pensioner?',
+        answer: 'Upon the subscriber\'s demise, the exact same monthly pension is paid to the spouse for their entire lifetime. Upon spouse\'s demise, the entire accumulated corpus (up to ₹8.5 Lakhs) is transferred to the nominee.'
       }
     ]
   },
 
-  // 11. National Pension System (NPS)
+  // 11. PM Awas Yojana 2.0 (PMAY Urban/Gramin ₹2.5L Subsidy)
+  {
+    id: 'pm-awas-yojana-credit-subsidy',
+    title: 'Pradhan Mantri Awas Yojana 2.0 (PMAY Urban & Gramin)',
+    hindiTitle: 'प्रधानमंत्री आवास योजना 2.0 (होम लोन सब्सिडी)',
+    category: 'Loans & Subsidies',
+    subCategory: 'Home Loan Interest Subsidy & Pucca House Grant',
+    shortDesc: 'Get up to ₹2,50,000 interest subsidy on Home Loans for first-time home buyers + ₹1.2 Lakh cash grant for rural pucca house.',
+    overview: 'PMAY 2.0 aims to build 3 Crore additional houses across urban and rural India. Under the Credit Linked Subsidy Scheme (CLSS) component, middle-class (MIG) and lower-income (EWS/LIG) families purchasing or constructing their first pucca house receive up to ₹2.5 Lakhs interest subsidy on home loans with a tenure up to 20 years.',
+    keyBenefit: 'Up to ₹2.5 Lakhs direct interest subsidy credited upfront to your home loan account, reducing monthly EMI.',
+    eligibility: 'Families not owning a pucca house anywhere in India. Annual household income up to ₹3 Lakhs (EWS), ₹6 Lakhs (LIG), or ₹18 Lakhs (MIG).',
+    ageLimit: '21 to 65 years.',
+    interestRate: 'Home Loan interest subsidized by up to 6.5% under CLSS.',
+    maximumBenefit: '₹2,50,000 Upfront Loan Subsidy + PMAY Gramin ₹1,20,000 direct assistance.',
+    howToApply: [
+      'Apply directly through your Home Loan lending bank (SBI, HDFC, PNB, ICICI, LIC Housing Finance).',
+      'Select PMAY CLSS Subsidy option in the home loan application.',
+      'Bank submits claim to Central Nodal Agencies (HUDCO / NHB).',
+      'Approved subsidy amount is directly credited to reduce the outstanding loan principal.'
+    ],
+    requiredDocuments: ['Aadhaar Card of all family members', 'PAN Card', 'Income Certificate / ITR', 'Property Title Deed / Builder Agreement', 'Affidavit of No Pucca House'],
+    officialPortalUrl: 'https://pmaymis.gov.in',
+    helplineNumber: '011-23060484 / 1800-11-3377',
+    searchKeywords: ['pm awas yojana 2.0 online apply', 'pmay home loan subsidy calculator 2026', 'pmay urban 2.5 lakh subsidy status', 'pmay list bihar check online', 'first home buyer subsidy sbi'],
+    popularTag: '₹2.5L Home Loan Subsidy',
+    faqList: [
+      {
+        question: 'How is the PMAY home loan subsidy credited?',
+        answer: 'The Central Government credits the discounted subsidy amount directly into your loan account upfront, reducing the principal loan balance and lowering your monthly EMI permanently.'
+      }
+    ]
+  },
+
+  // 12. National Pension System (NPS)
   {
     id: 'national-pension-system-nps',
     title: 'National Pension System (NPS)',
@@ -404,39 +517,423 @@ export const FINANCE_INSURANCE_SCHEMES: FinanceScheme[] = [
         answer: 'No! 60% of your accumulated corpus can be withdrawn as a 100% tax-free lump sum. The remaining 40% is converted into regular monthly annuity pension.'
       }
     ]
-  },
+  }
+];
 
-  // 12. Post Office Monthly Income Scheme (POMIS)
+// --- HIGH RPM COMPARISON DATASETS ---
+
+export const TOP_CREDIT_CARDS_DATA: CreditCardItem[] = [
   {
-    id: 'post-office-mis-scheme',
-    title: 'Post Office Monthly Income Scheme (POMIS)',
-    hindiTitle: 'डाकघर मासिक आय योजना (POMIS)',
-    category: 'Pension & Savings',
-    subCategory: 'Guaranteed Monthly Income',
-    shortDesc: '7.4% sovereign interest rate paid as guaranteed monthly cash income directly to your bank account.',
-    overview: 'POMIS is a 5-year fixed deposit scheme offered by India Post that provides fixed monthly interest income to investors, ideal for retirees, homemakers, and senior citizens seeking predictable regular cash flows with zero market risk.',
-    keyBenefit: 'Guaranteed 7.4% annual interest credited every single month directly into savings account.',
-    eligibility: 'All resident Indian adults (Single or Joint account up to 3 adults).',
-    ageLimit: '18+ years (Can also be opened for minors aged 10+).',
-    premiumOrDeposit: 'Single Account: Min ₹1,000 to Max ₹9,00,000. Joint Account: Max ₹15,00,000.',
-    maximumBenefit: '₹9,250 guaranteed monthly pension income on maximum ₹15 Lakh joint deposit for 5 years.',
-    interestRate: '7.4% p.a. (Paid Monthly)',
-    lockInPeriod: '5 Years (Premature withdrawal allowed after 1 year with nominal 1-2% deduction).',
-    howToApply: [
-      'Visit any Post Office branch with savings account.',
-      'Fill POMIS Application Form and attach Aadhaar and PAN.',
-      'Deposit funds via Cheque / Cash.',
-      'Receive POMIS Passbook with monthly payout schedule.'
+    id: 'sbi-cashback',
+    cardName: 'SBI Cashback Credit Card',
+    issuer: 'State Bank of India (SBI Card)',
+    joiningFee: '₹999 + GST',
+    annualFee: '₹999 + GST (Waived on ₹2 Lakh annual spends)',
+    feeWaiverCondition: '₹2,00,000 yearly spends',
+    cardType: 'Cashback & Rewards',
+    rating: 4.9,
+    bestFor: 'Universal 5% Online Shopping (Amazon, Flipkart, Swiggy, Zomato, Myntra, etc.)',
+    keyPerks: [
+      '5% Unlimited Cashback on ALL online purchases without merchant restrictions',
+      '1% Cashback on offline retail spends',
+      'Auto-credited directly to monthly credit card statement',
+      '1% Fuel surcharge waiver across all petrol pumps'
     ],
-    requiredDocuments: ['Aadhaar Card', 'PAN Card', 'Post Office Savings Passbook', '2 Passport Photos'],
-    officialPortalUrl: 'https://www.indiapost.gov.in',
-    helplineNumber: '1800-266-6868',
-    searchKeywords: ['post office monthly income scheme calculator 2026', 'pomis 9 lakh monthly interest', 'pomis interest rate 7.4', 'post office mis joint account 15 lakh payout'],
-    popularTag: 'Monthly Cash Payout',
-    faqList: [
+    welcomeBenefit: '₹500 Gift Voucher on first transaction within 30 days',
+    rewardRate: '5% Flat Online Cashback',
+    applyUrl: 'https://www.sbicard.com',
+    popularBadge: 'Highest 5% Online Cashback'
+  },
+  {
+    id: 'amazon-pay-icici',
+    cardName: 'Amazon Pay ICICI Credit Card',
+    issuer: 'ICICI Bank',
+    joiningFee: '₹0 (Lifetime Free - LTF)',
+    annualFee: '₹0 (Lifetime Free - LTF)',
+    feeWaiverCondition: '100% Free for Lifetime with Zero Conditions',
+    cardType: 'Lifetime Free (LTF)',
+    rating: 4.8,
+    bestFor: 'Lifetime Free Card with 5% Cashback on Amazon & 2% on Utility Bills',
+    keyPerks: [
+      '5% Unlimited Cashback on Amazon India for Prime members (3% for non-prime)',
+      '2% Cashback on 100+ Amazon Pay partner merchants (Flight, Recharges, Bill payments)',
+      '1% Unlimited Cashback on all other dining and offline spends',
+      'Zero joining fee & zero annual renewal fee forever'
+    ],
+    welcomeBenefit: 'Up to ₹2,500 Amazon Pay rewards upon approval',
+    rewardRate: '5% Amazon + 2% Bill Pay',
+    applyUrl: 'https://www.icicibank.com',
+    popularBadge: 'Top Lifetime Free Card'
+  },
+  {
+    id: 'hdfc-millennia',
+    cardName: 'HDFC Millennia Credit Card',
+    issuer: 'HDFC Bank',
+    joiningFee: '₹1,000 + GST',
+    annualFee: '₹1,000 + GST (Waived on ₹1 Lakh spends)',
+    feeWaiverCondition: '₹1,00,000 annual spends',
+    cardType: 'Shopping & Travel',
+    rating: 4.7,
+    bestFor: '5% Cashback on Amazon, Flipkart, Swiggy, Zomato, Uber, BookMyShow + Airport Lounge',
+    keyPerks: [
+      '5% Cashback on 10+ popular partner apps (Swiggy, Zomato, Uber, Flipkart, Tata Neu)',
+      '1% Cashback on all other retail transactions and EMI spends',
+      '4 Free Domestic Airport Lounge Access per calendar year (1 per quarter)',
+      '₹1,000 Gift Voucher every quarter on ₹1 Lakh spends'
+    ],
+    welcomeBenefit: '1,000 CashPoints on fee payment',
+    rewardRate: '5% Partner Apps + Lounge',
+    applyUrl: 'https://www.hdfcbank.com',
+    popularBadge: 'Best All-Rounder'
+  },
+  {
+    id: 'axis-airtel',
+    cardName: 'Airtel Axis Bank Credit Card',
+    issuer: 'Axis Bank',
+    joiningFee: '₹500 + GST',
+    annualFee: '₹500 + GST (Waived on ₹2 Lakh spends)',
+    feeWaiverCondition: '₹2,00,000 annual spends',
+    cardType: 'Fuel & Utility',
+    rating: 4.8,
+    bestFor: '25% Cashback on Airtel Recharges & 10% on Electricity/Water/Gas Bills via Airtel Thanks',
+    keyPerks: [
+      '25% Cashback on Airtel Mobile, DTH, and Fiber broadband recharges',
+      '10% Cashback on Electricity, Gas, and Water utility bill payments',
+      '10% Cashback on Swiggy, Zomato, and BigBasket food/grocery delivery',
+      'Complimentary Domestic Airport Lounge Access'
+    ],
+    welcomeBenefit: '₹500 Amazon Voucher on first 30 days active card swipe',
+    rewardRate: '25% Airtel + 10% Utility',
+    applyUrl: 'https://www.axisbank.com',
+    popularBadge: '25% Utility Bills King'
+  },
+  {
+    id: 'rupay-upi-card',
+    cardName: 'PNB / HDFC RuPay Select UPI Credit Card',
+    issuer: 'NPCI / RuPay Commercial Banks',
+    joiningFee: '₹0 to ₹500',
+    annualFee: '₹0 to ₹500 (Waived on minimal spend threshold)',
+    feeWaiverCondition: '₹50,000 annual spends',
+    cardType: 'RuPay UPI',
+    rating: 4.7,
+    bestFor: 'Linking with Google Pay, PhonePe, Paytm for direct UPI merchant QR payments',
+    keyPerks: [
+      'Scan and pay any merchant QR code using Credit Line via PhonePe/GPay',
+      'Up to 3% Reward Points on every small and large UPI purchase',
+      'Enjoy up to 50 days interest-free credit period on daily chai, groceries & shopping',
+      'Comprehensive ₹10 Lakh Accidental Death & Permanent Disability cover'
+    ],
+    welcomeBenefit: '500 Bonus Reward Points on first 3 UPI QR transactions',
+    rewardRate: 'UPI QR Credit + 3% Rewards',
+    applyUrl: 'https://www.npci.org.in/what-we-do/rupay/rupay-credit-cards',
+    popularBadge: 'Scan Any UPI QR'
+  }
+];
+
+export const TOP_LOANS_DATA: LoanComparisonItem[] = [
+  {
+    id: 'sbi-personal-loan',
+    bankName: 'State Bank of India (SBI)',
+    loanType: 'Personal Loan',
+    interestRateRange: '10.30% - 14.50% p.a.',
+    maxAmount: 'Up to ₹20,00,000',
+    tenureRange: '6 Months to 7 Years',
+    processingFee: '0.50% - 1.00% (Special Zero Fee campaigns)',
+    minIncome: '₹15,000/month',
+    cibilRequirement: '700+ Score',
+    features: [
+      'Instant digital sanction on YONO SBI in 4 clicks for pre-approved salary holders',
+      'Zero prepayment / foreclosure penalty after 6 months',
+      'Lowest interest rates for Govt and PSU employees'
+    ],
+    applyUrl: 'https://sbi.co.in/web/personal-banking/loans/personal-loans',
+    badge: 'Lowest Govt Rates'
+  },
+  {
+    id: 'hdfc-quick-loan',
+    bankName: 'HDFC Bank',
+    loanType: 'Personal Loan',
+    interestRateRange: '10.50% - 16.00% p.a.',
+    maxAmount: 'Up to ₹40,00,000',
+    tenureRange: '12 Months to 5 Years',
+    processingFee: 'Up to ₹4,999 + GST',
+    minIncome: '₹25,000/month',
+    cibilRequirement: '720+ Score',
+    features: [
+      'Disbursal in 10 seconds for existing HDFC Bank customers',
+      'Pocket-friendly EMI starting at ₹2,149 per Lakh',
+      'Top-up loan facility available with simplified documentation'
+    ],
+    applyUrl: 'https://www.hdfcbank.com/personal/borrow/popular-loans/personal-loan',
+    badge: '10-Second Disbursal'
+  },
+  {
+    id: 'sbi-home-loan',
+    bankName: 'SBI Regular Home Loan',
+    loanType: 'Home Loan',
+    interestRateRange: '8.40% - 9.15% p.a.',
+    maxAmount: 'Up to ₹10 Crores',
+    tenureRange: 'Up to 30 Years',
+    processingFee: '0.35% (Max ₹10,000 + GST)',
+    minIncome: '₹25,000/month',
+    cibilRequirement: '750+ for lowest rate',
+    features: [
+      'Cheapest Home Loan interest rate linked to RBI Repo Rate',
+      '0.05% special interest concession for women borrowers',
+      'PMAY 2.0 Interest Subsidy integration up to ₹2.5 Lakhs'
+    ],
+    applyUrl: 'https://homeloans.sbi',
+    badge: 'Best Home Loan'
+  },
+  {
+    id: 'drcc-mnssby-education',
+    bankName: 'Bihar Student Credit Card (BSEFC)',
+    loanType: 'Education Loan',
+    interestRateRange: '1.00% (Girls/Divyang) | 4.00% (Boys)',
+    maxAmount: 'Up to ₹4,00,000',
+    tenureRange: 'Up to 84 Monthly EMIs',
+    processingFee: '₹0 (100% Free Government Guarantee)',
+    minIncome: 'Zero Income Proof Required',
+    cibilRequirement: 'No CIBIL Check Needed',
+    features: [
+      'No collateral or third-party guarantee required',
+      'Moratorium period: Repayment starts 1 year after course completion',
+      'Covers 40+ technical, professional, and general degree courses'
+    ],
+    applyUrl: 'https://www.7nishchay-yuvaupmission.bihar.gov.in',
+    badge: '1% Interest Rate'
+  },
+  {
+    id: 'sbi-gold-loan',
+    bankName: 'SBI Personal Gold Loan',
+    loanType: 'Gold Loan',
+    interestRateRange: '8.75% - 9.60% p.a.',
+    maxAmount: '₹20,000 to ₹50,00,000',
+    tenureRange: 'Up to 36 Months',
+    processingFee: '0.25% - 0.50%',
+    minIncome: 'Any Adult Owning Gold Ornaments',
+    cibilRequirement: 'No minimum CIBIL score constraint',
+    features: [
+      'Instant disbursement against 18K to 24K gold jewelry within 30 minutes',
+      'High per-gram loan valuation with bullet repayment option (Pay interest monthly, principal at end)',
+      'Lowest gold loan interest rate in India compared to NBFCs'
+    ],
+    applyUrl: 'https://sbi.co.in/web/personal-banking/loans/gold-loans',
+    badge: 'Instant 30-Min Cash'
+  }
+];
+
+export const TOP_INSURANCE_DATA: InsuranceComparisonItem[] = [
+  {
+    id: 'max-life-term',
+    companyName: 'Max Life Insurance',
+    planName: 'Smart Secure Plus Plan (₹1 Crore Cover)',
+    insuranceType: 'Term Life Insurance',
+    sumInsuredRange: '₹50 Lakhs to ₹10 Crores',
+    startingPremiumMonthly: '₹580 / Month (Age 25, Non-Smoker)',
+    claimSettlementRatio: '99.65% (Fast Track 1-Day Claim)',
+    networkHospitalsOrGarages: 'Pan-India Cashless Claim Settlement',
+    keyHighlights: [
+      'Special 100% Return of Premium (ROP) option upon surviving policy tenure',
+      'Early Zero-Cost Exit option at age 60 to withdraw all paid premiums',
+      'Comprehensive 64 Critical Illness rider and Terminal Illness benefit'
+    ],
+    taxExemption: 'Tax saving up to ₹1.5 Lakh under 80C + 100% Tax-Free death payout under 10(10D)',
+    applyUrl: 'https://www.maxlifeinsurance.com',
+    recommendedTag: '99.65% CSR (Highest)'
+  },
+  {
+    id: 'hdfc-life-term',
+    companyName: 'HDFC Life',
+    planName: 'Click 2 Protect Super (₹1 Crore Cover)',
+    insuranceType: 'Term Life Insurance',
+    sumInsuredRange: '₹50 Lakhs to ₹20 Crores',
+    startingPremiumMonthly: '₹620 / Month (Age 25, Non-Smoker)',
+    claimSettlementRatio: '99.50%',
+    networkHospitalsOrGarages: 'Express Claim Settlement within 24 Hours',
+    keyHighlights: [
+      'Smart Exit benefit allowing policy surrender with complete premium refund',
+      'Life Stage Protection to increase cover automatically on Marriage & Childbirth',
+      'Additional Accidental Death cover multiplier'
+    ],
+    taxExemption: 'Section 80C & Section 10(10D)',
+    applyUrl: 'https://www.hdfclife.com',
+    recommendedTag: 'Most Trusted Brand'
+  },
+  {
+    id: 'hdfc-ergo-health',
+    companyName: 'HDFC ERGO General Insurance',
+    planName: 'Optima Secure (₹10 Lakh - ₹2 Crore Base + 4X Cover)',
+    insuranceType: 'Health & Medical Insurance',
+    sumInsuredRange: '₹5 Lakhs to ₹2 Crores',
+    startingPremiumMonthly: '₹850 / Month',
+    claimSettlementRatio: '98.80%',
+    networkHospitalsOrGarages: '13,000+ Cashless Empaneled Hospitals',
+    keyHighlights: [
+      '2X Instant Coverage: ₹10 Lakh sum insured becomes ₹20 Lakhs automatically from Day 1',
+      '4X Cover within 2 years with Zero-Claim Bonus multiplier (No Co-payment)',
+      '100% Unlimited Restores for unrelated illness hospitalization in the same year'
+    ],
+    taxExemption: 'Up to ₹75,000 tax deduction under Section 80D (Self, Family & Parents)',
+    applyUrl: 'https://www.hdfcergo.com',
+    recommendedTag: 'Best 4X Health Plan'
+  },
+  {
+    id: 'star-health-care',
+    companyName: 'Star Health & Allied Insurance',
+    planName: 'Star Comprehensive Insurance Policy',
+    insuranceType: 'Health & Medical Insurance',
+    sumInsuredRange: '₹5 Lakhs to ₹1 Crore',
+    startingPremiumMonthly: '₹790 / Month',
+    claimSettlementRatio: '99.10%',
+    networkHospitalsOrGarages: '14,000+ Network Hospitals',
+    keyHighlights: [
+      'Zero Room Rent Capping - Choose any private single AC room without deduction',
+      'Free Annual Health Check-ups for all insured family members',
+      'Comprehensive Maternity and Newborn Baby hospitalization cover'
+    ],
+    taxExemption: 'Section 80D Exemption',
+    applyUrl: 'https://www.starhealth.in',
+    recommendedTag: 'Zero Room Rent Limit'
+  }
+];
+
+export const TOP_FD_RATES_DATA: BankFdRateItem[] = [
+  {
+    bankName: 'Unity Small Finance Bank',
+    type: 'Small Finance Bank',
+    generalRateMax: '9.00% p.a.',
+    seniorCitizenRateMax: '9.50% p.a.',
+    specialTenure: '1001 Days Special Deposit',
+    dicgcInsured: true,
+    applyUrl: 'https://theunitybank.com'
+  },
+  {
+    bankName: 'Suryoday Small Finance Bank',
+    type: 'Small Finance Bank',
+    generalRateMax: '8.65% p.a.',
+    seniorCitizenRateMax: '9.15% p.a.',
+    specialTenure: '2 Years 2 Months (26 Months)',
+    dicgcInsured: true,
+    applyUrl: 'https://www.suryodaybank.com'
+  },
+  {
+    bankName: 'Senior Citizen Savings Scheme (SCSS - Post Office)',
+    type: 'Post Office',
+    generalRateMax: '8.20% p.a.',
+    seniorCitizenRateMax: '8.20% p.a.',
+    specialTenure: '5 Years (Sovereign 100% Govt Guarantee)',
+    dicgcInsured: true,
+    applyUrl: 'https://www.indiapost.gov.in'
+  },
+  {
+    bankName: 'State Bank of India (SBI - Amrit Vrishti)',
+    type: 'Public Bank',
+    generalRateMax: '7.25% p.a.',
+    seniorCitizenRateMax: '7.75% p.a.',
+    specialTenure: '444 Days Special Scheme',
+    dicgcInsured: true,
+    applyUrl: 'https://sbi.co.in'
+  },
+  {
+    bankName: 'HDFC Bank',
+    type: 'Private Bank',
+    generalRateMax: '7.25% p.a.',
+    seniorCitizenRateMax: '7.75% p.a.',
+    specialTenure: '18 Months to 21 Months',
+    dicgcInsured: true,
+    applyUrl: 'https://www.hdfcbank.com'
+  },
+  {
+    bankName: 'Post Office Time Deposit (POTD)',
+    type: 'Post Office',
+    generalRateMax: '7.50% p.a.',
+    seniorCitizenRateMax: '7.50% p.a.',
+    specialTenure: '5 Year Term (Section 80C Tax Saver)',
+    dicgcInsured: true,
+    applyUrl: 'https://www.indiapost.gov.in'
+  }
+];
+
+export const HIGH_RPM_ARTICLES_GUIDES: HighRpmGuideArticle[] = [
+  {
+    id: 'cibil-score-boost-guide',
+    title: 'How to Boost CIBIL Score from 600 to 750+ in 60 Days: Complete Step-by-Step Guide',
+    hindiTitle: 'सिबिल स्कोर 600 से 750+ कैसे करें (60 दिनों में फास्ट इम्प्रूवमेंट)',
+    readTime: '6 min read',
+    category: 'Credit Score & Loans',
+    highCpcKeywords: ['how to improve cibil score fast', 'check free cibil score online', 'best personal loan for 650 cibil score', 'remove cibil default remark', 'credit card utilization ratio 30 percent'],
+    summary: 'A high CIBIL score (750+) unlocks lowest home loan interest rates (8.4%), instant personal loan sanctions, and high-limit credit cards. Learn the exact 5 strategies used by credit experts to fix past delays and elevate your score.',
+    sections: [
       {
-        question: 'How much monthly income do I get on ₹9 Lakh deposit in POMIS?',
-        answer: 'At 7.4% annual interest rate, a ₹9,00,000 single account deposit earns exactly ₹5,550 every month for 5 years (Total ₹3,33,000 interest payout).'
+        heading: '1. Maintain Credit Utilization Ratio (CUR) Below 30%',
+        body: 'Your Credit Utilization Ratio accounts for 30% of your total CIBIL score calculation. If your combined credit card limit is ₹1,00,000, keep your total monthly billing statement balance below ₹30,000. If you need to spend more, make interim mid-month payments before the bill generation date so that a low balance is reported to the credit bureaus.'
+      },
+      {
+        heading: '2. CIBIL Score Slab vs Loan Interest Rate Impact',
+        body: 'Banks like SBI, HDFC, and ICICI price home loans and personal loans dynamically based on your credit tier:',
+        tableData: {
+          headers: ['CIBIL Score Range', 'Approval Chance', 'Typical Home Loan Rate', 'Loan Terms'],
+          rows: [
+            ['750 - 900', 'Guaranteed & Instant', '8.40% - 8.65%', 'Lowest Processing Fee, Max Amount'],
+            ['700 - 749', 'High', '8.75% - 9.15%', 'Standard Terms, Fast Processing'],
+            ['650 - 699', 'Moderate / Conditional', '9.50% - 11.50%', 'Higher Interest, Co-applicant needed'],
+            ['Below 650', 'High Rejection Risk', '14.00%+ (NBFCs only)', 'Collateral or Gold Loan required']
+          ]
+        }
+      },
+      {
+        heading: '3. Build Healthy Credit Mix & Dispute Errors on CIBIL Portal',
+        body: 'Having only personal loans hurts your profile. Maintain a healthy blend of secured loans (like gold loan, FD-backed credit card, or two-wheeler loan) and unsecured credit lines. Regularly download your free CIBIL report once every 3 months on cibil.com to verify that closed loans are marked "Closed / NOC Issued" and not mistakenly tagged as "Settled" or "Written Off".'
+      }
+    ]
+  },
+  {
+    id: 'pm-surya-ghar-complete-guide',
+    title: 'PM Surya Ghar Muft Bijli Yojana 2026: Get ₹78,000 Direct Subsidy on Rooftop Solar',
+    hindiTitle: 'पीएम सूर्य घर मुफ्त बिजली योजना: छत पर सोलर लगाएं और ₹78,000 सब्सिडी पाएं',
+    readTime: '7 min read',
+    category: 'Solar Subsidy & Green Energy',
+    highCpcKeywords: ['pm surya ghar subsidy calculator', 'rooftop solar panel subsidy 78000', 'pmsuryaghar gov in registration login', 'solar panel installation cost in bihar', 'best solar panel for home in india'],
+    summary: 'Everything you need to know about the Prime Minister\'s flagship Rooftop Solar Scheme: detailed capacity sizing, state subsidy breakdowns, collateral-free bank loans @ 7%, and step-by-step registration on pmsuryaghar.gov.in.',
+    sections: [
+      {
+        heading: '1. Capacity Wise Subsidy & Monthly Savings Breakdown',
+        body: 'Under PM Surya Ghar, the Government of India provides a direct Bank Transfer (DBT) subsidy based on connected load capacity:',
+        tableData: {
+          headers: ['System Capacity', 'Rooftop Space Required', 'Total Installation Cost (Approx)', 'Direct Govt Subsidy', 'Net Effective Cost to Citizen', 'Monthly Electricity Units'],
+          rows: [
+            ['1 kW Solar', '100 Sq. Ft.', '₹60,000 - ₹65,000', '₹30,000', '₹30,000 - ₹35,000', '120 - 150 Units'],
+            ['2 kW Solar', '200 Sq. Ft.', '₹1,20,000 - ₹1,30,000', '₹60,000', '₹60,000 - ₹70,000', '240 - 300 Units'],
+            ['3 kW Solar', '300 Sq. Ft.', '₹1,80,000 - ₹1,95,000', '₹78,000', '₹1,02,000 - ₹1,17,000', '360 - 450 Units (100% Free Power)'],
+            ['5 kW Solar', '500 Sq. Ft.', '₹2,90,000 - ₹3,20,000', '₹78,000', '₹2,12,000 - ₹2,42,000', '600 - 750 Units']
+          ]
+        }
+      },
+      {
+        heading: '2. Collateral-Free Solar Loan @ 7% Interest',
+        body: 'Do not have upfront capital? Public sector banks (SBI, PNB, Canara Bank, Union Bank) offer special PM Surya Ghar Rooftop Solar Loans with only a 10% margin down payment. For a 3kW plant, you only need to pay approx. ₹10,000 from pocket, while the bank finances the remaining amount at 7% repo-linked interest for up to 120 months. The monthly electricity bill savings easily cover the loan EMI!'
+      }
+    ]
+  },
+  {
+    id: 'term-insurance-1-crore-guide',
+    title: 'How to Choose the Best 1 Crore Term Life Insurance Plan (2026 Buying Checklist)',
+    hindiTitle: '1 करोड़ का टर्म इंश्योरेंस कैसे चुनें (प्रीमियम, क्लेम रेशियो व राइडर्स)',
+    readTime: '5 min read',
+    category: 'Life & Health Insurance',
+    highCpcKeywords: ['1 crore term insurance premium per month', 'best term insurance plan in india 2026', 'max life vs hdfc life term insurance', 'claim settlement ratio irda report', 'zero cost term insurance exit at 60'],
+    summary: 'A ₹1 Crore term life insurance plan is essential for every earning family member. Learn how to verify IRDAI Claim Settlement Ratio (CSR), Amount Settlement Ratio (ASR), Zero-Cost Term Plans, and avoid costly insurance mistakes.',
+    sections: [
+      {
+        heading: '1. What to Look For Before Buying Term Life Cover',
+        body: 'Always check these 4 metrics on the official IRDAI Annual Report:',
+        bulletPoints: [
+          'Claim Settlement Ratio (CSR): Look for insurance providers with consistently 98.5%+ CSR over the last 5 consecutive years (e.g. Max Life 99.65%, HDFC Life 99.50%, Tata AIA 99.10%).',
+          'Amount Settlement Ratio (ASR): Ensures the insurer does not settle only small claims while rejecting big ₹1 Cr+ claims.',
+          'Zero-Cost Exit Feature: Allows you to surrender the policy at age 60 or retirement and receive a 100% refund of all premiums paid.',
+          'Critical Illness Rider: Provides immediate lump-sum payout upon diagnosis of Cancer, Heart Attack, Stroke, or Kidney failure.'
+        ]
       }
     ]
   }
@@ -453,30 +950,51 @@ export interface FinancialCalculatorInfo {
 export const FINANCIAL_CALCULATORS_LIST: FinancialCalculatorInfo[] = [
   {
     id: 'loan-emi',
-    name: 'Loan EMI Calculator',
+    name: 'Loan EMI & Balance Transfer Calculator',
     category: 'Loans',
-    shortDesc: 'Calculate monthly EMI, total interest, and full repayment schedule for Home, Education, Car & Personal loans.',
+    shortDesc: 'Calculate monthly EMI, total interest, and prepayment interest savings for Home, Personal, Education & Car loans.',
     iconName: 'Landmark'
   },
   {
     id: 'sip-wealth',
-    name: 'SIP Wealth Calculator',
+    name: 'SIP Wealth & Compounding Multiplier',
     category: 'Investments',
-    shortDesc: 'Project wealth creation, compounding returns, and maturity corpus of Systematic Investment Plans.',
+    shortDesc: 'Project mutual fund returns, inflation-adjusted maturity corpus, and wealth creation over 5 to 30 years.',
     iconName: 'TrendingUp'
   },
   {
-    id: 'ppf-ssy',
-    name: 'PPF & Sukanya Calculator',
-    category: 'Govt Savings',
-    shortDesc: 'Calculate 15-21 year maturity value for Public Provident Fund (7.1%) and Sukanya Samriddhi (8.2%).',
+    id: 'solar-calc',
+    name: 'PM Surya Ghar Solar Subsidy & Bill Calculator',
+    category: 'Solar Energy',
+    shortDesc: 'Calculate your roof capacity (1kW-5kW), ₹30k-₹78k central subsidy, net installation cost & monthly electricity savings.',
     iconName: 'Sparkles'
+  },
+  {
+    id: 'term-insurance-calc',
+    name: '₹1 Crore Term Insurance Premium Estimator',
+    category: 'Insurance',
+    shortDesc: 'Estimate monthly and annual premiums based on your current age, smoking status, and sum assured.',
+    iconName: 'ShieldCheck'
+  },
+  {
+    id: 'cibil-estimator',
+    name: 'Free CIBIL Eligibility & Loan Affordability Checker',
+    category: 'Credit Score',
+    shortDesc: 'Check your debt-to-income ratio, maximum loan borrowing eligibility, and interest rate tier.',
+    iconName: 'Coins'
+  },
+  {
+    id: 'ppf-ssy',
+    name: 'PPF & Sukanya Samriddhi Calculator',
+    category: 'Govt Savings',
+    shortDesc: 'Calculate 15-21 year guaranteed tax-free maturity returns for Sukanya (8.2%) and PPF (7.1%).',
+    iconName: 'PiggyBank'
   },
   {
     id: 'income-tax',
     name: 'Income Tax Calculator (FY 2024-26)',
     category: 'Tax Planning',
-    shortDesc: 'Compare New Tax Regime vs Old Tax Regime, Section 87A rebate & 80C/80D tax deductions.',
+    shortDesc: 'Compare New Tax Regime vs Old Tax Regime, Section 87A rebate & 80C/80D deductions.',
     iconName: 'Calculator'
   },
   {
@@ -485,35 +1003,32 @@ export const FINANCIAL_CALCULATORS_LIST: FinancialCalculatorInfo[] = [
     category: 'Pension',
     shortDesc: 'Find exact monthly contribution based on your current age for ₹1,000 to ₹5,000 guaranteed pension.',
     iconName: 'ShieldCheck'
-  },
-  {
-    id: 'fd-rd',
-    name: 'FD & RD Interest Calculator',
-    category: 'Banking',
-    shortDesc: 'Compute maturity returns on Fixed and Recurring Deposits across Post Office & Public Banks.',
-    iconName: 'Coins'
   }
 ];
 
 export const GOOGLE_FINANCE_INSURANCE_FAQS = [
   {
     question: 'Which government health insurance provides ₹5 Lakhs free hospitalization in India?',
-    answer: 'Ayushman Bharat Pradhan Mantri Jan Arogya Yojana (PM-JAY) provides up to ₹5,00,000 per family per year for secondary and tertiary care hospitalization in 27,000+ empaneled private and public hospitals completely cashless.'
+    answer: 'Ayushman Bharat Pradhan Mantri Jan Arogya Yojana (PM-JAY) provides up to ₹5,00,000 per family per year for secondary and tertiary care hospitalization in 27,000+ empaneled private and public hospitals completely cashless. For senior citizens aged 70+, a dedicated additional ₹5 Lakh cover is provided under Ayushman Vay Vandana.'
+  },
+  {
+    question: 'How can I get ₹78,000 subsidy under PM Surya Ghar Muft Bijli Yojana?',
+    answer: 'Register on pmsuryaghar.gov.in with your consumer electricity account number, select an empaneled solar installer to install a 3kW+ rooftop solar plant, have DISCOM install the Net Meter, and receive ₹78,000 direct bank transfer (DBT) subsidy into your account within 30 days.'
   },
   {
     question: 'How can Bihar students get up to ₹4 Lakhs education loan at 1% interest?',
-    answer: 'Under the Bihar Student Credit Card Scheme (MNSSBY / Saat Nischay), students can apply online on the MNSSBY portal to get up to ₹4,00,000 education loan for technical and professional courses at 1% interest for girls/divyang and 4% for boys with morotorium period.'
+    answer: 'Under the Bihar Student Credit Card Scheme (MNSSBY / Saat Nischay), students can apply online on the MNSSBY portal to get up to ₹4,00,000 education loan for technical, medical, and professional courses at 1% simple interest for girls/divyang and 4% for boys with zero collateral and repayment starting only 1 year after graduation.'
   },
   {
-    question: 'What is the difference between PMJJBY and PMSBY?',
-    answer: 'PMJJBY (Pradhan Mantri Jeevan Jyoti Bima Yojana) is a ₹2 Lakh life insurance policy covering death due to any reason at ₹436/year. PMSBY (Pradhan Mantri Suraksha Bima Yojana) is an accidental death & disability insurance policy covering accidents at ₹20/year.'
+    question: 'Which is the best credit card for 5% online shopping cashback in India?',
+    answer: 'The SBI Cashback Credit Card offers flat 5% cashback on virtually all online shopping portals (Amazon, Flipkart, Swiggy, Zomato, Myntra) auto-credited to the card statement. For a 100% Lifetime Free card, the Amazon Pay ICICI Card offers unlimited 5% cashback for Amazon Prime members.'
+  },
+  {
+    question: 'What is the minimum CIBIL score required for lowest home loan interest rates?',
+    answer: 'A CIBIL score of 750 and above qualifies you for the lowest home loan interest rates (starting at 8.40% p.a. with SBI, HDFC, and ICICI) and fastest instant processing with minimal documentation.'
   },
   {
     question: 'Which government savings scheme offers the highest interest rate in 2026?',
-    answer: 'Sukanya Samriddhi Yojana (SSY) offers the highest guaranteed interest rate of 8.2% per annum for a girl child with 100% tax-free EEE status, followed by Senior Citizen Savings Scheme (SCSS) at 8.2% and PPF at 7.1%.'
-  },
-  {
-    question: 'How do small business owners and shopkeepers get collateral-free Mudra Loans?',
-    answer: 'Entrepreneurs can apply under Pradhan Mantri MUDRA Yojana (PMMY) on the JanSamarth portal or nearest bank branch to get collateral-free business loans up to ₹50,000 (Shishu), up to ₹5 Lakh (Kishore), and up to ₹20 Lakh (Tarun).'
+    answer: 'Sukanya Samriddhi Yojana (SSY) and Senior Citizen Savings Scheme (SCSS) offer the highest guaranteed sovereign interest rate of 8.2% per annum, followed by Post Office Monthly Income Scheme (POMIS) at 7.4% and PPF at 7.1%.'
   }
 ];

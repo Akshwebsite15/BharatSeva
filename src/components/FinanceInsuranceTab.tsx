@@ -28,12 +28,33 @@ import {
   Share2,
   Layers,
   X,
+  CreditCard,
+  Sun,
+  Zap,
+  Award,
+  Clock,
+  BookOpen,
+  Sliders,
+  DollarSign,
+  TrendingDown,
+  Star,
+  Check,
 } from 'lucide-react';
 import {
   FINANCE_INSURANCE_SCHEMES,
   FinanceScheme,
+  TOP_CREDIT_CARDS_DATA,
+  TOP_LOANS_DATA,
+  TOP_INSURANCE_DATA,
+  TOP_FD_RATES_DATA,
+  HIGH_RPM_ARTICLES_GUIDES,
   FINANCIAL_CALCULATORS_LIST,
   GOOGLE_FINANCE_INSURANCE_FAQS,
+  CreditCardItem,
+  LoanComparisonItem,
+  InsuranceComparisonItem,
+  BankFdRateItem,
+  HighRpmGuideArticle,
 } from '../data/financeInsuranceData';
 
 interface FinanceInsuranceTabProps {
@@ -45,39 +66,69 @@ export const FinanceInsuranceTab: React.FC<FinanceInsuranceTabProps> = ({
   onSaveItem,
   onOpenPublicToolModal,
 }) => {
-  // State variables
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('All');
-  const [activeCalculator, setActiveCalculator] = useState<string>('loan-emi');
-  const [selectedSchemeDetail, setSelectedSchemeDetail] = useState<FinanceScheme | null>(null);
-  const [expandedFaqIndex, setExpandedFaqIndex] = useState<number | null>(0);
+  // Main Navigation / View Subtabs
+  const [activeMainTab, setActiveMainTab] = useState<
+    'schemes' | 'credit-cards' | 'loans' | 'insurance' | 'fd-rates' | 'solar' | 'calculators' | 'guides'
+  >('schemes');
 
-  // EMI Calculator States
-  const [loanAmount, setLoanAmount] = useState<number>(400000);
-  const [loanInterestRate, setLoanInterestRate] = useState<number>(4.0);
+  // Search & Filter States
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedSchemeCategory, setSelectedSchemeCategory] = useState<string>('All');
+  const [selectedCreditCardFilter, setSelectedCreditCardFilter] = useState<string>('All');
+  const [selectedLoanTypeFilter, setSelectedLoanTypeFilter] = useState<string>('All');
+  const [selectedInsuranceFilter, setSelectedInsuranceFilter] = useState<string>('All');
+
+  // Modal / Detail States
+  const [selectedSchemeDetail, setSelectedSchemeDetail] = useState<FinanceScheme | null>(null);
+  const [selectedGuideDetail, setSelectedGuideDetail] = useState<HighRpmGuideArticle | null>(null);
+  const [expandedFaqIndex, setExpandedFaqIndex] = useState<number | null>(0);
+  const [copiedToast, setCopiedToast] = useState<string | null>(null);
+
+  // Active Calculator
+  const [activeCalculator, setActiveCalculator] = useState<string>('loan-emi');
+
+  // --- CALCULATOR STATES ---
+  // 1. EMI Calculator
+  const [loanAmount, setLoanAmount] = useState<number>(500000);
+  const [loanInterestRate, setLoanInterestRate] = useState<number>(8.5);
   const [loanTenureYears, setLoanTenureYears] = useState<number>(5);
 
-  // SIP Calculator States
+  // 2. SIP Calculator
   const [sipMonthly, setSipMonthly] = useState<number>(5000);
   const [sipReturnRate, setSipReturnRate] = useState<number>(12);
   const [sipTenureYears, setSipTenureYears] = useState<number>(15);
 
-  // PPF / SSY Calculator States
+  // 3. Solar Rooftop Calculator
+  const [solarCapacityKw, setSolarCapacityKw] = useState<number>(3);
+
+  // 4. Term Insurance Estimator
+  const [termAge, setTermAge] = useState<number>(28);
+  const [termGender, setTermGender] = useState<'Male' | 'Female'>('Male');
+  const [termIsSmoker, setTermIsSmoker] = useState<boolean>(false);
+  const [termSumInsured, setTermSumInsured] = useState<number>(10000000); // 1 Crore
+
+  // 5. CIBIL & Loan Affordability
+  const [monthlySalary, setMonthlySalary] = useState<number>(45000);
+  const [existingMonthlyEmi, setExistingMonthlyEmi] = useState<number>(5000);
+  const [desiredLoanTenure, setDesiredLoanTenure] = useState<number>(5);
+  const [expectedRate, setExpectedRate] = useState<number>(10.5);
+
+  // 6. PPF / SSY
   const [ppfSsyAnnualDeposit, setPpfSsyAnnualDeposit] = useState<number>(100000);
   const [ppfSsySchemeType, setPpfSsySchemeType] = useState<'SSY' | 'PPF'>('SSY');
 
-  // APY Calculator States
+  // 7. APY Pension
   const [apyAge, setApyAge] = useState<number>(25);
   const [apyDesiredPension, setApyDesiredPension] = useState<number>(5000);
 
-  // Income Tax Calculator States
+  // 8. Income Tax
   const [taxIncome, setTaxIncome] = useState<number>(900000);
   const [tax80CDeduction, setTax80CDeduction] = useState<number>(150000);
   const [tax80DDeduction, setTax80DDeduction] = useState<number>(25000);
 
-  // --- CALCULATION LOGIC ---
+  // --- CALCULATION HOOKS ---
 
-  // 1. EMI Calculation
+  // 1. EMI
   const emiCalculation = useMemo(() => {
     const p = loanAmount;
     const r = loanInterestRate / 12 / 100;
@@ -103,7 +154,7 @@ export const FinanceInsuranceTab: React.FC<FinanceInsuranceTabProps> = ({
     };
   }, [loanAmount, loanInterestRate, loanTenureYears]);
 
-  // 2. SIP Calculation
+  // 2. SIP
   const sipCalculation = useMemo(() => {
     const p = sipMonthly;
     const i = sipReturnRate / 12 / 100;
@@ -120,7 +171,89 @@ export const FinanceInsuranceTab: React.FC<FinanceInsuranceTabProps> = ({
     };
   }, [sipMonthly, sipReturnRate, sipTenureYears]);
 
-  // 3. PPF & SSY Calculation
+  // 3. Solar Rooftop
+  const solarCalculation = useMemo(() => {
+    let subsidy = 0;
+    if (solarCapacityKw === 1) subsidy = 30000;
+    else if (solarCapacityKw === 2) subsidy = 60000;
+    else subsidy = 78000;
+
+    const estimatedTotalCost = solarCapacityKw * 62000;
+    const netCostToUser = Math.max(0, estimatedTotalCost - subsidy);
+    const roofAreaSqFt = solarCapacityKw * 100;
+    const monthlyUnitsGenerated = solarCapacityKw * 125;
+    const monthlySavingsRupees = monthlyUnitsGenerated * 7.5; // average ₹7.5/unit in domestic tiers
+    const annualSavings = monthlySavingsRupees * 12;
+    const paybackPeriodYears = (netCostToUser / annualSavings).toFixed(1);
+
+    return {
+      subsidy,
+      estimatedTotalCost,
+      netCostToUser,
+      roofAreaSqFt,
+      monthlyUnitsGenerated,
+      monthlySavingsRupees: Math.round(monthlySavingsRupees),
+      annualSavings: Math.round(annualSavings),
+      paybackPeriodYears,
+    };
+  }, [solarCapacityKw]);
+
+  // 4. Term Insurance Estimator
+  const termInsuranceCalculation = useMemo(() => {
+    // Base rate for 1 Cr at age 25 non-smoker is approx ₹550/mo
+    let baseMonthly = 550;
+    const ageDiff = Math.max(0, termAge - 25);
+    baseMonthly += ageDiff * 35;
+    if (termGender === 'Female') baseMonthly *= 0.88; // 12% discount for women
+    if (termIsSmoker) baseMonthly *= 1.65; // smoker surcharge
+    const multiplier = termSumInsured / 10000000; // factor for sum insured
+    const finalMonthly = Math.round(baseMonthly * multiplier);
+    const finalYearly = Math.round(finalMonthly * 11.2); // slight discount on yearly
+
+    return {
+      monthlyPremium: finalMonthly,
+      yearlyPremium: finalYearly,
+      sumInsuredFormatted: termSumInsured >= 10000000 ? `₹${termSumInsured / 10000000} Crore` : `₹${termSumInsured / 100000} Lakh`,
+      taxSaving80C: Math.min(finalYearly, 150000),
+    };
+  }, [termAge, termGender, termIsSmoker, termSumInsured]);
+
+  // 5. CIBIL & Loan Affordability
+  const loanAffordabilityCalc = useMemo(() => {
+    // Banks allow max 50% FOIR (Fixed Obligation to Income Ratio)
+    const maxAllowedEmiTotal = monthlySalary * 0.50;
+    const availableEmiForNewLoan = Math.max(0, maxAllowedEmiTotal - existingMonthlyEmi);
+    const dtiRatio = Math.round(((existingMonthlyEmi) / monthlySalary) * 100);
+
+    // Reverse EMI formula: P = EMI * ((1+r)^n - 1) / (r * (1+r)^n)
+    const r = expectedRate / 12 / 100;
+    const n = desiredLoanTenure * 12;
+    let maxLoanAmount = 0;
+    if (r > 0 && availableEmiForNewLoan > 0) {
+      maxLoanAmount = (availableEmiForNewLoan * (Math.pow(1 + r, n) - 1)) / (r * Math.pow(1 + r, n));
+    }
+
+    let cibilHealthStatus = 'Excellent (750+)';
+    let cibilBadgeColor = 'text-emerald-700 bg-emerald-50 border-emerald-200';
+    if (dtiRatio > 40) {
+      cibilHealthStatus = 'High Debt Burden (Need 700+ Score)';
+      cibilBadgeColor = 'text-amber-700 bg-amber-50 border-amber-200';
+    } else if (dtiRatio > 50) {
+      cibilHealthStatus = 'Overleveraged (Risk of Rejection)';
+      cibilBadgeColor = 'text-rose-700 bg-rose-50 border-rose-200';
+    }
+
+    return {
+      maxAllowedEmiTotal: Math.round(maxAllowedEmiTotal),
+      availableEmiForNewLoan: Math.round(availableEmiForNewLoan),
+      dtiRatio,
+      maxLoanAmount: Math.round(maxLoanAmount),
+      cibilHealthStatus,
+      cibilBadgeColor,
+    };
+  }, [monthlySalary, existingMonthlyEmi, desiredLoanTenure, expectedRate]);
+
+  // 6. PPF & SSY
   const ppfSsyCalculation = useMemo(() => {
     const annual = ppfSsyAnnualDeposit;
     const rate = ppfSsySchemeType === 'SSY' ? 0.082 : 0.071;
@@ -150,34 +283,13 @@ export const FinanceInsuranceTab: React.FC<FinanceInsuranceTabProps> = ({
     };
   }, [ppfSsyAnnualDeposit, ppfSsySchemeType]);
 
-  // 4. APY Contribution Table calculation
+  // 7. APY
   const apyCalculation = useMemo(() => {
-    // Standard APY Contribution formula approximations per PFRDA table for age 18-40
-    // Factor based on age: age 18: ~42/k, age 25: ~76/k, age 30: ~116/k, age 40: ~291/k
     const factorMap: Record<number, number> = {
-      18: 42,
-      19: 46,
-      20: 50,
-      21: 54,
-      22: 59,
-      23: 64,
-      24: 70,
-      25: 76,
-      26: 82,
-      27: 90,
-      28: 99,
-      29: 109,
-      30: 116,
-      31: 128,
-      32: 144,
-      33: 160,
-      34: 177,
-      35: 196,
-      36: 218,
-      37: 242,
-      38: 268,
-      39: 297,
-      40: 291 * 5 / 5, // ~1454 for 5k
+      18: 42, 19: 46, 20: 50, 21: 54, 22: 59, 23: 64, 24: 70,
+      25: 76, 26: 82, 27: 90, 28: 99, 29: 109, 30: 116, 31: 128,
+      32: 144, 33: 160, 34: 177, 35: 196, 36: 218, 37: 242,
+      38: 268, 39: 297, 40: 291,
     };
 
     const multiplier = apyDesiredPension / 1000;
@@ -195,13 +307,13 @@ export const FinanceInsuranceTab: React.FC<FinanceInsuranceTabProps> = ({
     };
   }, [apyAge, apyDesiredPension]);
 
-  // 5. Income Tax Comparison (New vs Old Regime)
+  // 8. Income Tax
   const taxCalculation = useMemo(() => {
     const gross = taxIncome;
     const stdDeductionNew = 75000;
     const stdDeductionOld = 50000;
 
-    // New Regime FY 2024-25 / 2025-26
+    // New Regime
     const taxableNew = Math.max(0, gross - stdDeductionNew);
     let taxNew = 0;
     if (taxableNew <= 300000) {
@@ -218,7 +330,6 @@ export const FinanceInsuranceTab: React.FC<FinanceInsuranceTabProps> = ({
       taxNew = 400000 * 0.05 + 300000 * 0.10 + 200000 * 0.15 + 300000 * 0.20 + (taxableNew - 1500000) * 0.30;
     }
 
-    // 87A rebate for New Regime (Zero tax up to 7.75L taxable)
     if (taxableNew <= 700000) {
       taxNew = 0;
     }
@@ -239,7 +350,6 @@ export const FinanceInsuranceTab: React.FC<FinanceInsuranceTabProps> = ({
       taxOld = 250000 * 0.05 + 500000 * 0.20 + (taxableOld - 1000000) * 0.30;
     }
 
-    // 87A rebate for Old Regime up to 5L taxable
     if (taxableOld <= 500000) {
       taxOld = 0;
     }
@@ -263,7 +373,7 @@ export const FinanceInsuranceTab: React.FC<FinanceInsuranceTabProps> = ({
   const filteredSchemes = useMemo(() => {
     return FINANCE_INSURANCE_SCHEMES.filter((scheme) => {
       const matchCat =
-        selectedCategory === 'All' || scheme.category === selectedCategory;
+        selectedSchemeCategory === 'All' || scheme.category === selectedSchemeCategory;
       const q = searchQuery.toLowerCase().trim();
       if (!q) return matchCat;
 
@@ -276,1090 +386,1715 @@ export const FinanceInsuranceTab: React.FC<FinanceInsuranceTabProps> = ({
 
       return matchCat && matchSearch;
     });
-  }, [selectedCategory, searchQuery]);
+  }, [selectedSchemeCategory, searchQuery]);
+
+  // Filtered Credit Cards
+  const filteredCreditCards = useMemo(() => {
+    return TOP_CREDIT_CARDS_DATA.filter((card) => {
+      if (selectedCreditCardFilter === 'All') return true;
+      return card.cardType === selectedCreditCardFilter;
+    });
+  }, [selectedCreditCardFilter]);
+
+  // Filtered Loans
+  const filteredLoans = useMemo(() => {
+    return TOP_LOANS_DATA.filter((loan) => {
+      if (selectedLoanTypeFilter === 'All') return true;
+      return loan.loanType === selectedLoanTypeFilter;
+    });
+  }, [selectedLoanTypeFilter]);
+
+  // Filtered Insurance
+  const filteredInsurance = useMemo(() => {
+    return TOP_INSURANCE_DATA.filter((item) => {
+      if (selectedInsuranceFilter === 'All') return true;
+      return item.insuranceType === selectedInsuranceFilter;
+    });
+  }, [selectedInsuranceFilter]);
+
+  const handleCopyLink = (title: string, url: string) => {
+    navigator.clipboard.writeText(url || window.location.href);
+    setCopiedToast(`Copied link for "${title}"`);
+    setTimeout(() => setCopiedToast(null), 3000);
+  };
 
   return (
-    <div className="space-y-12 sm:space-y-16 pb-16">
-      {/* 1. HERO SECTION */}
-      <section className="relative rounded-3xl bg-gradient-to-br from-slate-950 via-emerald-950 to-slate-900 text-white p-6 sm:p-10 lg:p-12 border border-emerald-500/30 shadow-2xl overflow-hidden">
-        <div className="absolute inset-0 opacity-15 bg-[radial-gradient(#10b981_1px,transparent_1px)] [background-size:20px_20px]"></div>
+    <div className="min-h-screen pb-16 space-y-8 animate-fadeIn">
+      {/* Toast Notification */}
+      {copiedToast && (
+        <div className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-4 py-2.5 rounded-xl shadow-2xl text-xs font-semibold flex items-center space-x-2 border border-slate-700 animate-bounce">
+          <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+          <span>{copiedToast}</span>
+        </div>
+      )}
 
-        <div className="relative z-10 max-w-4xl mx-auto text-center space-y-6">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-xs font-black uppercase tracking-wider shadow-sm">
-            <ShieldCheck className="w-4 h-4 text-emerald-400" />
-            <span>Official Government Financial & Insurance Portal 2026</span>
-          </div>
+      {/* 🚀 High RPM Live Ticker Header */}
+      <div className="bg-gradient-to-r from-blue-950 via-slate-900 to-indigo-950 text-white rounded-3xl p-6 sm:p-8 shadow-xl relative overflow-hidden border border-blue-900/50">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl -ml-20 -mb-20 pointer-events-none" />
 
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight">
-            Government Insurance, Subsidized Loans & Financial Calculators
-          </h1>
-
-          <p className="text-sm sm:text-base text-slate-300 max-w-2xl mx-auto leading-relaxed">
-            Find verified information for <strong>Ayushman Bharat ₹5 Lakh Free Health Cover</strong>,{' '}
-            <strong>Bihar Student Credit Card ₹4 Lakh @ 1%</strong>, <strong>PMJJBY Life Insurance</strong>,{' '}
-            <strong>Mudra Loans</strong>, <strong>Atal Pension</strong>, and 100% free interactive loan & tax calculators.
-          </p>
-
-          {/* Quick Stats Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 pt-4 text-left">
-            <div className="bg-slate-900/80 backdrop-blur-md p-4 rounded-2xl border border-slate-700/80">
-              <span className="text-xl sm:text-2xl font-black text-emerald-400">₹5,00,000</span>
-              <p className="text-[11px] text-slate-300 font-bold mt-0.5">Ayushman Free Health Cover</p>
+        <div className="relative z-10 space-y-5">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="inline-flex items-center space-x-2 bg-blue-500/20 text-blue-300 border border-blue-400/30 px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider backdrop-blur-md">
+              <Sparkles className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
+              <span>High Value Citizen Finance & Insurance Hub 2026</span>
             </div>
-            <div className="bg-slate-900/80 backdrop-blur-md p-4 rounded-2xl border border-slate-700/80">
-              <span className="text-xl sm:text-2xl font-black text-amber-400">₹4,00,000</span>
-              <p className="text-[11px] text-slate-300 font-bold mt-0.5">Bihar Student Loan @ 1%</p>
-            </div>
-            <div className="bg-slate-900/80 backdrop-blur-md p-4 rounded-2xl border border-slate-700/80">
-              <span className="text-xl sm:text-2xl font-black text-cyan-400">8.2% p.a.</span>
-              <p className="text-[11px] text-slate-300 font-bold mt-0.5">Sukanya & Govt SSY Returns</p>
-            </div>
-            <div className="bg-slate-900/80 backdrop-blur-md p-4 rounded-2xl border border-slate-700/80">
-              <span className="text-xl sm:text-2xl font-black text-purple-400">₹20 / Year</span>
-              <p className="text-[11px] text-slate-300 font-bold mt-0.5">PMSBY ₹2 Lakh Accident Cover</p>
+            <div className="flex items-center space-x-2 text-xs text-slate-300 font-medium bg-white/10 px-3 py-1 rounded-full backdrop-blur-sm">
+              <ShieldCheck className="w-4 h-4 text-emerald-400" />
+              <span>Verified Govt Rates, Bank FDs & Credit Cards</span>
             </div>
           </div>
 
-          {/* Search Box */}
-          <div className="pt-2">
-            <div className="relative max-w-xl mx-auto">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+          <div className="max-w-3xl space-y-2">
+            <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight">
+              Finance, Insurance, Subsidized Loans & High-Yield Wealth Hub
+            </h1>
+            <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
+              Explore verified guides for <strong>₹5 Lakh Free Ayushman Card</strong>, <strong>₹78,000 PM Surya Ghar Solar Subsidy</strong>, <strong>₹4 Lakh Bihar Student Loan @ 1%</strong>, <strong>Top 5% Cashback Credit Cards</strong>, and interactive financial calculators.
+            </p>
+          </div>
+
+          {/* Quick Rate Badges Bar */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 pt-2">
+            <div className="bg-white/10 hover:bg-white/15 transition p-2.5 rounded-2xl border border-white/10 text-center">
+              <p className="text-[10px] text-slate-400 font-semibold uppercase">Home Loan Rate</p>
+              <p className="text-sm font-bold text-amber-300">SBI @ 8.40%</p>
+            </div>
+            <div className="bg-white/10 hover:bg-white/15 transition p-2.5 rounded-2xl border border-white/10 text-center">
+              <p className="text-[10px] text-slate-400 font-semibold uppercase">Free Health Cover</p>
+              <p className="text-sm font-bold text-emerald-300">₹5 - ₹10 Lakhs</p>
+            </div>
+            <div className="bg-white/10 hover:bg-white/15 transition p-2.5 rounded-2xl border border-white/10 text-center">
+              <p className="text-[10px] text-slate-400 font-semibold uppercase">Solar Subsidy</p>
+              <p className="text-sm font-bold text-yellow-300">₹78,000 Direct</p>
+            </div>
+            <div className="bg-white/10 hover:bg-white/15 transition p-2.5 rounded-2xl border border-white/10 text-center">
+              <p className="text-[10px] text-slate-400 font-semibold uppercase">Post Office FD / SCSS</p>
+              <p className="text-sm font-bold text-blue-300">8.2% Guaranteed</p>
+            </div>
+            <div className="bg-white/10 hover:bg-white/15 transition p-2.5 rounded-2xl border border-white/10 text-center">
+              <p className="text-[10px] text-slate-400 font-semibold uppercase">Online Cashback</p>
+              <p className="text-sm font-bold text-purple-300">5% Unlimited</p>
+            </div>
+            <div className="bg-white/10 hover:bg-white/15 transition p-2.5 rounded-2xl border border-white/10 text-center">
+              <p className="text-[10px] text-slate-400 font-semibold uppercase">Bihar Student Loan</p>
+              <p className="text-sm font-bold text-rose-300">1% Simple Int.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 🧭 Master Navigation Subtabs */}
+      <div className="bg-white p-2 sm:p-2.5 rounded-2xl border border-slate-200 shadow-xs">
+        <div className="flex items-center overflow-x-auto scrollbar-none gap-1.5 sm:gap-2">
+          <button
+            onClick={() => setActiveMainTab('schemes')}
+            className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition cursor-pointer flex items-center space-x-2 ${
+              activeMainTab === 'schemes'
+                ? 'bg-blue-950 text-white shadow-md'
+                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+            }`}
+          >
+            <Landmark className="w-4 h-4" />
+            <span>Govt Schemes & Subsidies</span>
+          </button>
+
+          <button
+            onClick={() => setActiveMainTab('credit-cards')}
+            className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition cursor-pointer flex items-center space-x-2 ${
+              activeMainTab === 'credit-cards'
+                ? 'bg-blue-950 text-white shadow-md'
+                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+            }`}
+          >
+            <CreditCard className="w-4 h-4 text-amber-500" />
+            <span>Best Credit Cards (5% Cashback)</span>
+          </button>
+
+          <button
+            onClick={() => setActiveMainTab('loans')}
+            className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition cursor-pointer flex items-center space-x-2 ${
+              activeMainTab === 'loans'
+                ? 'bg-blue-950 text-white shadow-md'
+                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+            }`}
+          >
+            <Wallet className="w-4 h-4 text-emerald-500" />
+            <span>Personal & Home Loans</span>
+          </button>
+
+          <button
+            onClick={() => setActiveMainTab('insurance')}
+            className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition cursor-pointer flex items-center space-x-2 ${
+              activeMainTab === 'insurance'
+                ? 'bg-blue-950 text-white shadow-md'
+                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+            }`}
+          >
+            <ShieldCheck className="w-4 h-4 text-blue-500" />
+            <span>1 Cr Term & Health Insurance</span>
+          </button>
+
+          <button
+            onClick={() => setActiveMainTab('solar')}
+            className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition cursor-pointer flex items-center space-x-2 ${
+              activeMainTab === 'solar'
+                ? 'bg-blue-950 text-white shadow-md'
+                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+            }`}
+          >
+            <Sun className="w-4 h-4 text-amber-500" />
+            <span>PM Surya Ghar Solar (₹78k)</span>
+          </button>
+
+          <button
+            onClick={() => setActiveMainTab('fd-rates')}
+            className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition cursor-pointer flex items-center space-x-2 ${
+              activeMainTab === 'fd-rates'
+                ? 'bg-blue-950 text-white shadow-md'
+                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+            }`}
+          >
+            <PiggyBank className="w-4 h-4 text-purple-500" />
+            <span>Top Bank FD Rates (9.0%)</span>
+          </button>
+
+          <button
+            onClick={() => setActiveMainTab('calculators')}
+            className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition cursor-pointer flex items-center space-x-2 ${
+              activeMainTab === 'calculators'
+                ? 'bg-blue-950 text-white shadow-md'
+                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+            }`}
+          >
+            <Calculator className="w-4 h-4 text-rose-500" />
+            <span>Financial Calculators Suite</span>
+          </button>
+
+          <button
+            onClick={() => setActiveMainTab('guides')}
+            className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition cursor-pointer flex items-center space-x-2 ${
+              activeMainTab === 'guides'
+                ? 'bg-blue-950 text-white shadow-md'
+                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+            }`}
+          >
+            <BookOpen className="w-4 h-4 text-indigo-500" />
+            <span>CIBIL & Wealth Guides</span>
+          </button>
+        </div>
+      </div>
+
+      {/* ========================================================================= */}
+      {/* 1. GOVERNMENT & COMMERCIAL SCHEMES TAB */}
+      {/* ========================================================================= */}
+      {activeMainTab === 'schemes' && (
+        <div className="space-y-6">
+          {/* Search and Filters */}
+          <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div className="relative w-full sm:w-80">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <input
                 type="text"
+                placeholder="Search Ayushman, Mudra, Solar, PPF, SSY..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search insurance, loan schemes, PPF, Mudra, Ayushman card..."
-                className="w-full pl-12 pr-10 py-3.5 bg-slate-900/90 text-white placeholder-slate-400 rounded-2xl border border-emerald-500/50 focus:outline-none focus:ring-2 focus:ring-emerald-400 text-sm shadow-inner"
+                className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-900 focus:bg-white transition"
               />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-slate-600"
                 >
-                  <X className="w-4 h-4" />
+                  <X className="w-3.5 h-3.5" />
                 </button>
               )}
             </div>
-          </div>
-        </div>
-      </section>
 
-      {/* 2. INTERACTIVE FINANCIAL CALCULATORS SUITE */}
-      <section id="calculators-suite" className="max-w-7xl mx-auto px-2 sm:px-4 space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-3 border-b border-slate-200">
-          <div>
-            <div className="flex items-center space-x-2 text-emerald-700 font-black text-xs uppercase tracking-wider">
-              <Calculator className="w-4 h-4" />
-              <span>100% Free Verified Calculators</span>
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 mt-1">
-              Interactive Financial & Loan Calculators
-            </h2>
-          </div>
-          <span className="text-xs text-slate-500 font-bold">
-            Real-time Compound Interest & Tax Simulation
-          </span>
-        </div>
-
-        {/* Calculator Selector Tabs */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
-          {FINANCIAL_CALCULATORS_LIST.map((calc) => (
-            <button
-              key={calc.id}
-              onClick={() => setActiveCalculator(calc.id)}
-              className={`px-4 py-2.5 rounded-2xl font-bold text-xs sm:text-sm whitespace-nowrap transition-all flex items-center gap-2 cursor-pointer shadow-2xs ${
-                activeCalculator === calc.id
-                  ? 'bg-emerald-900 text-white border-2 border-emerald-600 shadow-md'
-                  : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
-              }`}
-            >
-              <span>{calc.name}</span>
-            </button>
-          ))}
-        </div>
-
-        {/* ACTIVE CALCULATOR PANEL */}
-        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm">
-          {/* CALCULATOR 1: LOAN EMI */}
-          {activeCalculator === 'loan-emi' && (
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-              <div className="lg:col-span-7 space-y-6">
-                <div className="space-y-1">
-                  <h3 className="text-xl font-black text-slate-900 flex items-center gap-2">
-                    <Landmark className="w-5 h-5 text-emerald-600" />
-                    <span>Loan EMI & Interest Calculator</span>
-                  </h3>
-                  <p className="text-xs text-slate-500">
-                    Supports Bihar Student Credit Card (1%-4%), PM Mudra, Education & Home Loans.
-                  </p>
-                </div>
-
-                {/* Presets */}
-                <div className="flex flex-wrap items-center gap-2 pt-1">
-                  <span className="text-xs font-bold text-slate-400">Quick Presets:</span>
-                  <button
-                    onClick={() => {
-                      setLoanAmount(400000);
-                      setLoanInterestRate(1.0);
-                      setLoanTenureYears(5);
-                    }}
-                    className="px-2.5 py-1 bg-purple-50 hover:bg-purple-100 text-purple-900 rounded-lg text-xs font-black border border-purple-200"
-                  >
-                    Bihar Student (Girl/Divyang: 1%)
-                  </button>
-                  <button
-                    onClick={() => {
-                      setLoanAmount(400000);
-                      setLoanInterestRate(4.0);
-                      setLoanTenureYears(5);
-                    }}
-                    className="px-2.5 py-1 bg-blue-50 hover:bg-blue-100 text-blue-900 rounded-lg text-xs font-black border border-blue-200"
-                  >
-                    Bihar Student (Boy: 4%)
-                  </button>
-                  <button
-                    onClick={() => {
-                      setLoanAmount(500000);
-                      setLoanInterestRate(9.5);
-                      setLoanTenureYears(5);
-                    }}
-                    className="px-2.5 py-1 bg-amber-50 hover:bg-amber-100 text-amber-900 rounded-lg text-xs font-black border border-amber-200"
-                  >
-                    PM Mudra (9.5%)
-                  </button>
-                  <button
-                    onClick={() => {
-                      setLoanAmount(3000000);
-                      setLoanInterestRate(8.5);
-                      setLoanTenureYears(20);
-                    }}
-                    className="px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-900 rounded-lg text-xs font-black border border-emerald-200"
-                  >
-                    Home Loan (8.5%)
-                  </button>
-                </div>
-
-                {/* Slider 1: Loan Amount */}
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center text-sm font-bold">
-                    <span className="text-slate-600">Loan Amount</span>
-                    <span className="text-emerald-800 text-base font-black">
-                      ₹{loanAmount.toLocaleString('en-IN')}
-                    </span>
-                  </div>
-                  <input
-                    type="range"
-                    min="10000"
-                    max="10000000"
-                    step="10000"
-                    value={loanAmount}
-                    onChange={(e) => setLoanAmount(Number(e.target.value))}
-                    className="w-full accent-emerald-600 cursor-pointer"
-                  />
-                  <div className="flex justify-between text-[10px] font-bold text-slate-400">
-                    <span>₹10,000</span>
-                    <span>₹50 Lakhs</span>
-                    <span>₹1 Crore</span>
-                  </div>
-                </div>
-
-                {/* Slider 2: Interest Rate */}
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center text-sm font-bold">
-                    <span className="text-slate-600">Annual Interest Rate (% p.a.)</span>
-                    <span className="text-emerald-800 text-base font-black">
-                      {loanInterestRate}%
-                    </span>
-                  </div>
-                  <input
-                    type="range"
-                    min="0.5"
-                    max="24"
-                    step="0.1"
-                    value={loanInterestRate}
-                    onChange={(e) => setLoanInterestRate(Number(e.target.value))}
-                    className="w-full accent-emerald-600 cursor-pointer"
-                  />
-                  <div className="flex justify-between text-[10px] font-bold text-slate-400">
-                    <span>0.5%</span>
-                    <span>12%</span>
-                    <span>24%</span>
-                  </div>
-                </div>
-
-                {/* Slider 3: Loan Tenure */}
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center text-sm font-bold">
-                    <span className="text-slate-600">Loan Tenure</span>
-                    <span className="text-emerald-800 text-base font-black">
-                      {loanTenureYears} Years ({loanTenureYears * 12} Months)
-                    </span>
-                  </div>
-                  <input
-                    type="range"
-                    min="1"
-                    max="30"
-                    step="1"
-                    value={loanTenureYears}
-                    onChange={(e) => setLoanTenureYears(Number(e.target.value))}
-                    className="w-full accent-emerald-600 cursor-pointer"
-                  />
-                  <div className="flex justify-between text-[10px] font-bold text-slate-400">
-                    <span>1 Year</span>
-                    <span>15 Years</span>
-                    <span>30 Years</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Calculation Summary Card */}
-              <div className="lg:col-span-5 bg-gradient-to-br from-slate-900 to-emerald-950 text-white rounded-3xl p-6 sm:p-7 flex flex-col justify-between space-y-6 shadow-xl border border-emerald-500/30">
-                <div className="space-y-4">
-                  <span className="text-xs font-black uppercase text-emerald-400 tracking-wider">
-                    Monthly Repayment Summary
-                  </span>
-                  <div>
-                    <span className="text-xs text-slate-300 font-bold block">Monthly EMI</span>
-                    <span className="text-3xl sm:text-4xl font-black text-white">
-                      ₹{emiCalculation.monthlyEmi.toLocaleString('en-IN')}
-                    </span>
-                  </div>
-
-                  <div className="space-y-3 pt-3 border-t border-slate-800 text-xs">
-                    <div className="flex justify-between items-center">
-                      <span className="text-slate-400 font-medium">Principal Amount:</span>
-                      <span className="font-extrabold text-white">
-                        ₹{loanAmount.toLocaleString('en-IN')}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-slate-400 font-medium">Total Interest:</span>
-                      <span className="font-extrabold text-amber-300">
-                        ₹{emiCalculation.totalInterest.toLocaleString('en-IN')}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center text-sm font-black pt-2 border-t border-slate-800">
-                      <span className="text-emerald-300">Total Amount Payable:</span>
-                      <span className="text-white">
-                        ₹{emiCalculation.totalAmount.toLocaleString('en-IN')}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-slate-800/80 p-3.5 rounded-2xl border border-slate-700 text-[11px] text-slate-300 space-y-1">
-                  <p className="font-bold text-emerald-300">💡 Pro-Tip for Bihar Students:</p>
-                  <p>
-                    Under MNSSBY, no EMI is payable during your 3-4 years college study duration.
-                    Repayment begins only after graduation.
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* CALCULATOR 2: SIP WEALTH */}
-          {activeCalculator === 'sip-wealth' && (
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-              <div className="lg:col-span-7 space-y-6">
-                <div className="space-y-1">
-                  <h3 className="text-xl font-black text-slate-900 flex items-center gap-2">
-                    <TrendingUp className="w-5 h-5 text-emerald-600" />
-                    <span>SIP & Mutual Fund Compounding Calculator</span>
-                  </h3>
-                  <p className="text-xs text-slate-500">
-                    See how small monthly discipline compounds into wealth over time.
-                  </p>
-                </div>
-
-                {/* Sliders */}
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center text-sm font-bold">
-                    <span className="text-slate-600">Monthly Investment</span>
-                    <span className="text-emerald-800 text-base font-black">
-                      ₹{sipMonthly.toLocaleString('en-IN')}
-                    </span>
-                  </div>
-                  <input
-                    type="range"
-                    min="500"
-                    max="100000"
-                    step="500"
-                    value={sipMonthly}
-                    onChange={(e) => setSipMonthly(Number(e.target.value))}
-                    className="w-full accent-emerald-600 cursor-pointer"
-                  />
-                  <div className="flex justify-between text-[10px] font-bold text-slate-400">
-                    <span>₹500</span>
-                    <span>₹50,000</span>
-                    <span>₹1,00,000</span>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center text-sm font-bold">
-                    <span className="text-slate-600">Expected Annual Return (% p.a.)</span>
-                    <span className="text-emerald-800 text-base font-black">
-                      {sipReturnRate}%
-                    </span>
-                  </div>
-                  <input
-                    type="range"
-                    min="5"
-                    max="30"
-                    step="0.5"
-                    value={sipReturnRate}
-                    onChange={(e) => setSipReturnRate(Number(e.target.value))}
-                    className="w-full accent-emerald-600 cursor-pointer"
-                  />
-                  <div className="flex justify-between text-[10px] font-bold text-slate-400">
-                    <span>5% (Conservative)</span>
-                    <span>12% (Nifty Index)</span>
-                    <span>30%</span>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center text-sm font-bold">
-                    <span className="text-slate-600">Time Horizon</span>
-                    <span className="text-emerald-800 text-base font-black">
-                      {sipTenureYears} Years
-                    </span>
-                  </div>
-                  <input
-                    type="range"
-                    min="1"
-                    max="35"
-                    step="1"
-                    value={sipTenureYears}
-                    onChange={(e) => setSipTenureYears(Number(e.target.value))}
-                    className="w-full accent-emerald-600 cursor-pointer"
-                  />
-                  <div className="flex justify-between text-[10px] font-bold text-slate-400">
-                    <span>1 Year</span>
-                    <span>15 Years</span>
-                    <span>35 Years</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* SIP Summary */}
-              <div className="lg:col-span-5 bg-gradient-to-br from-slate-900 to-blue-950 text-white rounded-3xl p-6 sm:p-7 flex flex-col justify-between space-y-6 shadow-xl border border-blue-500/30">
-                <div className="space-y-4">
-                  <span className="text-xs font-black uppercase text-cyan-400 tracking-wider">
-                    Maturity Wealth Projection
-                  </span>
-                  <div>
-                    <span className="text-xs text-slate-300 font-bold block">Total Maturity Value</span>
-                    <span className="text-3xl sm:text-4xl font-black text-emerald-400">
-                      ₹{sipCalculation.maturityValue.toLocaleString('en-IN')}
-                    </span>
-                  </div>
-
-                  <div className="space-y-3 pt-3 border-t border-slate-800 text-xs">
-                    <div className="flex justify-between items-center">
-                      <span className="text-slate-400 font-medium">Total Amount Invested:</span>
-                      <span className="font-extrabold text-white">
-                        ₹{sipCalculation.totalInvested.toLocaleString('en-IN')}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-slate-400 font-medium">Estimated Wealth Gained:</span>
-                      <span className="font-extrabold text-cyan-300">
-                        ₹{sipCalculation.wealthGained.toLocaleString('en-IN')}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-slate-800/80 p-3.5 rounded-2xl border border-slate-700 text-[11px] text-slate-300 space-y-1">
-                  <p className="font-bold text-cyan-300">📈 Power of Compounding:</p>
-                  <p>
-                    Your money makes ₹{sipCalculation.wealthGained.toLocaleString('en-IN')} solely through interest on interest over {sipTenureYears} years.
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* CALCULATOR 3: PPF & SUKANYA */}
-          {activeCalculator === 'ppf-ssy' && (
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-              <div className="lg:col-span-7 space-y-6">
-                <div className="space-y-1">
-                  <h3 className="text-xl font-black text-slate-900 flex items-center gap-2">
-                    <Sparkles className="w-5 h-5 text-amber-500" />
-                    <span>Public Provident Fund (PPF) & Sukanya (SSY) Calculator</span>
-                  </h3>
-                  <p className="text-xs text-slate-500">
-                    Guaranteed 100% Tax-Free Sovereign EEE Schemes backed by Government of India.
-                  </p>
-                </div>
-
-                {/* Scheme Toggle */}
-                <div className="flex items-center gap-3">
-                  <button
-                    onClick={() => setPpfSsySchemeType('SSY')}
-                    className={`flex-1 py-3 px-4 rounded-2xl text-xs font-black border transition cursor-pointer ${
-                      ppfSsySchemeType === 'SSY'
-                        ? 'bg-rose-900 text-white border-rose-600 shadow-sm'
-                        : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border-slate-200'
-                    }`}
-                  >
-                    👧 Sukanya Samriddhi (SSY - 8.2%)
-                  </button>
-                  <button
-                    onClick={() => setPpfSsySchemeType('PPF')}
-                    className={`flex-1 py-3 px-4 rounded-2xl text-xs font-black border transition cursor-pointer ${
-                      ppfSsySchemeType === 'PPF'
-                        ? 'bg-emerald-900 text-white border-emerald-600 shadow-sm'
-                        : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border-slate-200'
-                    }`}
-                  >
-                    🛡️ Public Provident Fund (PPF - 7.1%)
-                  </button>
-                </div>
-
-                {/* Slider: Annual Deposit */}
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center text-sm font-bold">
-                    <span className="text-slate-600">Yearly Deposit Amount</span>
-                    <span className="text-emerald-800 text-base font-black">
-                      ₹{ppfSsyAnnualDeposit.toLocaleString('en-IN')} / Year
-                    </span>
-                  </div>
-                  <input
-                    type="range"
-                    min="500"
-                    max="150000"
-                    step="500"
-                    value={ppfSsyAnnualDeposit}
-                    onChange={(e) => setPpfSsyAnnualDeposit(Number(e.target.value))}
-                    className="w-full accent-emerald-600 cursor-pointer"
-                  />
-                  <div className="flex justify-between text-[10px] font-bold text-slate-400">
-                    <span>₹500 (Min)</span>
-                    <span>₹75,000</span>
-                    <span>₹1,50,000 (Max 80C Cap)</span>
-                  </div>
-                </div>
-
-                <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-200 space-y-2 text-xs text-emerald-900">
-                  <p className="font-extrabold flex items-center gap-1.5">
-                    <ShieldCheck className="w-4 h-4 text-emerald-700" />
-                    Triple EEE Tax Exemption Status:
-                  </p>
-                  <p className="text-[11px] text-emerald-800">
-                    1. Deposit is tax-exempt under Section 80C.<br />
-                    2. Interest accrued every year is 100% tax-free.<br />
-                    3. Final maturity payout is 100% tax-free in India.
-                  </p>
-                </div>
-              </div>
-
-              {/* SSY/PPF Summary */}
-              <div className="lg:col-span-5 bg-gradient-to-br from-slate-900 to-rose-950 text-white rounded-3xl p-6 sm:p-7 flex flex-col justify-between space-y-6 shadow-xl border border-rose-500/30">
-                <div className="space-y-4">
-                  <span className="text-xs font-black uppercase text-amber-300 tracking-wider">
-                    {ppfSsySchemeType === 'SSY' ? 'Sukanya Samriddhi 21-Yr Corpus' : 'PPF 15-Yr Corpus'}
-                  </span>
-                  <div>
-                    <span className="text-xs text-slate-300 font-bold block">100% Tax-Free Maturity Value</span>
-                    <span className="text-3xl sm:text-4xl font-black text-amber-400">
-                      ₹{ppfSsyCalculation.maturityValue.toLocaleString('en-IN')}
-                    </span>
-                  </div>
-
-                  <div className="space-y-3 pt-3 border-t border-slate-800 text-xs">
-                    <div className="flex justify-between items-center">
-                      <span className="text-slate-400 font-medium">Interest Rate:</span>
-                      <span className="font-extrabold text-emerald-400">
-                        {ppfSsyCalculation.ratePercent} p.a.
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-slate-400 font-medium">Total Deposit ({ppfSsyCalculation.depositYears} yrs):</span>
-                      <span className="font-extrabold text-white">
-                        ₹{ppfSsyCalculation.totalInvested.toLocaleString('en-IN')}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-slate-400 font-medium">Total Guaranteed Interest:</span>
-                      <span className="font-extrabold text-amber-300">
-                        ₹{ppfSsyCalculation.totalInterest.toLocaleString('en-IN')}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-slate-800/80 p-3.5 rounded-2xl border border-slate-700 text-[11px] text-slate-300 space-y-1">
-                  <p className="font-bold text-amber-300">🎯 Zero Market Risk:</p>
-                  <p>
-                    Full sovereign guarantee backed directly by the Ministry of Finance, Government of India.
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* CALCULATOR 4: ATAL PENSION YOJANA (APY) */}
-          {activeCalculator === 'apy-pension' && (
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-              <div className="lg:col-span-7 space-y-6">
-                <div className="space-y-1">
-                  <h3 className="text-xl font-black text-slate-900 flex items-center gap-2">
-                    <ShieldCheck className="w-5 h-5 text-indigo-600" />
-                    <span>Atal Pension Yojana (APY) Contribution Calculator</span>
-                  </h3>
-                  <p className="text-xs text-slate-500">
-                    Find the exact monthly contribution for guaranteed lifetime pension after age 60.
-                  </p>
-                </div>
-
-                {/* Age Slider */}
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center text-sm font-bold">
-                    <span className="text-slate-600">Your Current Age (Entry Age)</span>
-                    <span className="text-indigo-800 text-base font-black">
-                      {apyAge} Years
-                    </span>
-                  </div>
-                  <input
-                    type="range"
-                    min="18"
-                    max="40"
-                    step="1"
-                    value={apyAge}
-                    onChange={(e) => setApyAge(Number(e.target.value))}
-                    className="w-full accent-indigo-600 cursor-pointer"
-                  />
-                  <div className="flex justify-between text-[10px] font-bold text-slate-400">
-                    <span>18 Years (Lowest Monthly Cost)</span>
-                    <span>30 Years</span>
-                    <span>40 Years (Max Entry)</span>
-                  </div>
-                </div>
-
-                {/* Desired Pension Slabs */}
-                <div className="space-y-2">
-                  <span className="text-xs font-bold text-slate-600">Select Desired Monthly Pension Slab:</span>
-                  <div className="grid grid-cols-5 gap-2">
-                    {[1000, 2000, 3000, 4000, 5000].map((p) => (
-                      <button
-                        key={p}
-                        onClick={() => setApyDesiredPension(p)}
-                        className={`py-2.5 px-2 rounded-xl text-xs font-black border transition cursor-pointer text-center ${
-                          apyDesiredPension === p
-                            ? 'bg-indigo-900 text-white border-indigo-600 shadow-sm'
-                            : 'bg-slate-50 text-slate-700 hover:bg-slate-100 border-slate-200'
-                        }`}
-                      >
-                        ₹{p.toLocaleString('en-IN')}/mo
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* APY Summary */}
-              <div className="lg:col-span-5 bg-gradient-to-br from-slate-900 to-indigo-950 text-white rounded-3xl p-6 sm:p-7 flex flex-col justify-between space-y-6 shadow-xl border border-indigo-500/30">
-                <div className="space-y-4">
-                  <span className="text-xs font-black uppercase text-indigo-400 tracking-wider">
-                    Guaranteed Lifetime Pension
-                  </span>
-                  <div>
-                    <span className="text-xs text-slate-300 font-bold block">Monthly Auto-Debit Required</span>
-                    <span className="text-3xl sm:text-4xl font-black text-amber-400">
-                      ₹{apyCalculation.monthlyContribution} / month
-                    </span>
-                  </div>
-
-                  <div className="space-y-3 pt-3 border-t border-slate-800 text-xs">
-                    <div className="flex justify-between items-center">
-                      <span className="text-slate-400 font-medium">Guaranteed Monthly Pension:</span>
-                      <span className="font-extrabold text-emerald-400">
-                        ₹{apyDesiredPension.toLocaleString('en-IN')} / mo for life
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-slate-400 font-medium">Contribution Duration:</span>
-                      <span className="font-extrabold text-white">
-                        {apyCalculation.yearsRemaining} Years (till age 60)
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-slate-400 font-medium">Total Contribution Paid:</span>
-                      <span className="font-extrabold text-slate-300">
-                        ₹{apyCalculation.totalContribution.toLocaleString('en-IN')}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center text-xs font-bold pt-1 border-t border-slate-800">
-                      <span className="text-indigo-300">Corpus Returned to Nominee:</span>
-                      <span className="text-white">
-                        ₹{apyCalculation.corpusToNominee.toLocaleString('en-IN')}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-slate-800/80 p-3.5 rounded-2xl border border-slate-700 text-[11px] text-slate-300 space-y-1">
-                  <p className="font-bold text-indigo-300">👨‍👩‍👧 Family Security:</p>
-                  <p>
-                    Subscriber gets pension for life. Afterward, spouse receives the same pension.
-                    Upon demise of both, nominee receives the entire ₹8.5 Lakhs corpus.
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* CALCULATOR 5: INCOME TAX (NEW VS OLD) */}
-          {activeCalculator === 'income-tax' && (
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-              <div className="lg:col-span-7 space-y-6">
-                <div className="space-y-1">
-                  <h3 className="text-xl font-black text-slate-900 flex items-center gap-2">
-                    <BadgePercent className="w-5 h-5 text-emerald-600" />
-                    <span>Income Tax Calculator & Regime Comparison (FY 2024-26)</span>
-                  </h3>
-                  <p className="text-xs text-slate-500">
-                    Find which regime saves you more money (Standard deduction ₹75,000 for New Regime).
-                  </p>
-                </div>
-
-                {/* Gross Income Slider */}
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center text-sm font-bold">
-                    <span className="text-slate-600">Annual Gross Salary / Income</span>
-                    <span className="text-emerald-800 text-base font-black">
-                      ₹{taxIncome.toLocaleString('en-IN')}
-                    </span>
-                  </div>
-                  <input
-                    type="range"
-                    min="300000"
-                    max="5000000"
-                    step="25000"
-                    value={taxIncome}
-                    onChange={(e) => setTaxIncome(Number(e.target.value))}
-                    className="w-full accent-emerald-600 cursor-pointer"
-                  />
-                  <div className="flex justify-between text-[10px] font-bold text-slate-400">
-                    <span>₹3 Lakhs</span>
-                    <span>₹20 Lakhs</span>
-                    <span>₹50 Lakhs</span>
-                  </div>
-                </div>
-
-                {/* Section 80C Slider */}
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center text-sm font-bold">
-                    <span className="text-slate-600">Section 80C Deductions (PPF, EPF, ELSS, LIC, Tuition)</span>
-                    <span className="text-slate-800 text-sm font-black">
-                      ₹{tax80CDeduction.toLocaleString('en-IN')}
-                    </span>
-                  </div>
-                  <input
-                    type="range"
-                    min="0"
-                    max="150000"
-                    step="5000"
-                    value={tax80CDeduction}
-                    onChange={(e) => setTax80CDeduction(Number(e.target.value))}
-                    className="w-full accent-slate-600 cursor-pointer"
-                  />
-                </div>
-
-                {/* Section 80D Slider */}
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center text-sm font-bold">
-                    <span className="text-slate-600">Section 80D (Health Insurance Premium)</span>
-                    <span className="text-slate-800 text-sm font-black">
-                      ₹{tax80DDeduction.toLocaleString('en-IN')}
-                    </span>
-                  </div>
-                  <input
-                    type="range"
-                    min="0"
-                    max="50000"
-                    step="5000"
-                    value={tax80DDeduction}
-                    onChange={(e) => setTax80DDeduction(Number(e.target.value))}
-                    className="w-full accent-slate-600 cursor-pointer"
-                  />
-                </div>
-              </div>
-
-              {/* Tax Comparison Card */}
-              <div className="lg:col-span-5 bg-gradient-to-br from-slate-900 to-slate-950 text-white rounded-3xl p-6 sm:p-7 flex flex-col justify-between space-y-6 shadow-xl border border-slate-700">
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-black uppercase text-amber-400 tracking-wider">
-                      Tax Comparison
-                    </span>
-                    <span className="px-2.5 py-1 bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 rounded-full text-[10px] font-black uppercase">
-                      Recommended: {taxCalculation.recommended}
-                    </span>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3 pt-2">
-                    <div className="bg-slate-800/80 p-4 rounded-2xl border border-slate-700 space-y-1">
-                      <span className="text-[11px] text-slate-400 font-bold block">New Tax Regime</span>
-                      <span className="text-xl font-black text-emerald-400">
-                        ₹{taxCalculation.totalTaxNew.toLocaleString('en-IN')}
-                      </span>
-                      <span className="text-[10px] text-slate-400 block">Std Ded: ₹75,000</span>
-                    </div>
-
-                    <div className="bg-slate-800/80 p-4 rounded-2xl border border-slate-700 space-y-1">
-                      <span className="text-[11px] text-slate-400 font-bold block">Old Tax Regime</span>
-                      <span className="text-xl font-black text-amber-400">
-                        ₹{taxCalculation.totalTaxOld.toLocaleString('en-IN')}
-                      </span>
-                      <span className="text-[10px] text-slate-400 block">80C + 80D + Std Ded</span>
-                    </div>
-                  </div>
-
-                  <div className="p-3.5 bg-emerald-950/60 rounded-2xl border border-emerald-500/40 text-xs text-emerald-200">
-                    <p className="font-bold">
-                      🎉 You save ₹{taxCalculation.savings.toLocaleString('en-IN')} by opting for the{' '}
-                      <strong>{taxCalculation.recommended}</strong>!
-                    </p>
-                  </div>
-                </div>
-
-                <div className="text-[11px] text-slate-400 space-y-0.5">
-                  <p>* Includes 4% Health and Education Cess.</p>
-                  <p>* Under New Regime, income up to ₹7.75 Lakhs is 100% tax-free with Section 87A rebate & ₹75k std deduction.</p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* CALCULATOR 6: FD & RD */}
-          {activeCalculator === 'fd-rd' && (
-            <div className="space-y-6">
-              <div className="space-y-1">
-                <h3 className="text-xl font-black text-slate-900 flex items-center gap-2">
-                  <Coins className="w-5 h-5 text-amber-500" />
-                  <span>Fixed Deposit (FD) & Post Office Term Deposit Rates 2026</span>
-                </h3>
-                <p className="text-xs text-slate-500">
-                  Compare prevailing guaranteed interest rates across Public Sector Banks & India Post.
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                <div className="p-5 rounded-2xl bg-amber-50/60 border border-amber-200 space-y-2">
-                  <span className="text-xs font-black text-amber-900 uppercase">Post Office Term Deposit (5 Yr)</span>
-                  <p className="text-3xl font-black text-amber-900">7.5% p.a.</p>
-                  <p className="text-xs text-slate-600">Eligible for Section 80C tax deduction up to ₹1.5 Lakh.</p>
-                </div>
-
-                <div className="p-5 rounded-2xl bg-emerald-50/60 border border-emerald-200 space-y-2">
-                  <span className="text-xs font-black text-emerald-900 uppercase">Senior Citizen Savings (SCSS)</span>
-                  <p className="text-3xl font-black text-emerald-900">8.2% p.a.</p>
-                  <p className="text-xs text-slate-600">Quarterly interest payout directly to savings account.</p>
-                </div>
-
-                <div className="p-5 rounded-2xl bg-blue-50/60 border border-blue-200 space-y-2">
-                  <span className="text-xs font-black text-blue-900 uppercase">National Savings Cert. (NSC)</span>
-                  <p className="text-3xl font-black text-blue-900">7.7% p.a.</p>
-                  <p className="text-xs text-slate-600">5-year compounding with sovereign safety guarantee.</p>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* 3. SCHEME DIRECTORY WITH CATEGORY FILTER */}
-      <section id="schemes-directory" className="max-w-7xl mx-auto px-2 sm:px-4 space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-3 border-b border-slate-200">
-          <div>
-            <div className="flex items-center space-x-2 text-emerald-700 font-black text-xs uppercase tracking-wider">
-              <ShieldCheck className="w-4 h-4" />
-              <span>Verified Government Benefits Catalog</span>
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 mt-1">
-              Government Insurance, Savings & Loan Schemes
-            </h2>
-          </div>
-          <span className="text-xs text-slate-500 font-bold">
-            Showing {filteredSchemes.length} Schemes
-          </span>
-        </div>
-
-        {/* Category Filters */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
-          {['All', 'Insurance', 'Pension & Savings', 'Loans & Subsidies'].map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setSelectedCategory(cat)}
-              className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition cursor-pointer ${
-                selectedCategory === cat
-                  ? 'bg-slate-900 text-white shadow-sm'
-                  : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
-              }`}
-            >
-              {cat === 'All' ? '🌟 All Schemes' : cat}
-            </button>
-          ))}
-        </div>
-
-        {/* SCHEMES GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredSchemes.map((scheme) => (
-            <div
-              key={scheme.id}
-              onClick={() => setSelectedSchemeDetail(scheme)}
-              className="bg-white rounded-3xl p-6 border border-slate-200 hover:border-emerald-500 hover:shadow-md transition-all cursor-pointer flex flex-col justify-between space-y-5 group"
-            >
-              <div className="space-y-3">
-                <div className="flex items-center justify-between gap-2">
-                  <span
-                    className={`px-3 py-1 text-[10px] font-black rounded-lg uppercase tracking-wide ${
-                      scheme.category === 'Insurance'
-                        ? 'bg-emerald-100 text-emerald-900'
-                        : scheme.category === 'Loans & Subsidies'
-                        ? 'bg-blue-100 text-blue-900'
-                        : 'bg-amber-100 text-amber-900'
-                    }`}
-                  >
-                    {scheme.subCategory}
-                  </span>
-                  {scheme.popularTag && (
-                    <span className="text-[10px] font-black text-rose-600 bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200">
-                      {scheme.popularTag}
-                    </span>
-                  )}
-                </div>
-
-                <div>
-                  <h3 className="font-extrabold text-slate-900 text-base sm:text-lg group-hover:text-emerald-700 transition leading-snug">
-                    {scheme.title}
-                  </h3>
-                  {scheme.hindiTitle && (
-                    <p className="text-xs text-slate-500 font-semibold mt-0.5">
-                      {scheme.hindiTitle}
-                    </p>
-                  )}
-                </div>
-
-                <p className="text-xs text-slate-600 line-clamp-3 leading-relaxed">
-                  {scheme.shortDesc}
-                </p>
-
-                {/* Key Stat Box */}
-                <div className="p-3 bg-slate-50 rounded-2xl border border-slate-100 space-y-1 text-xs">
-                  <div className="flex justify-between">
-                    <span className="text-slate-500">Max Benefit:</span>
-                    <span className="font-black text-emerald-800">{scheme.maximumBenefit}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-slate-500">Premium / Cost:</span>
-                    <span className="font-bold text-slate-800">{scheme.premiumOrDeposit || scheme.interestRate}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-slate-500">Eligibility:</span>
-                    <span className="font-bold text-slate-700">{scheme.ageLimit}</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-emerald-800">
-                <span>View Full Details & Application Steps</span>
-                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition" />
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* 4. CLAIM ASSISTANCE & GRIEVANCE HELPLINE DIRECTORY */}
-      <section className="max-w-7xl mx-auto px-2 sm:px-4">
-        <div className="bg-gradient-to-r from-slate-900 via-emerald-950 to-slate-900 rounded-3xl p-6 sm:p-8 text-white border border-emerald-500/30 shadow-xl space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
-            <div>
-              <span className="text-xs font-black uppercase text-emerald-400 tracking-wider flex items-center gap-1.5">
-                <PhoneCall className="w-4 h-4" /> Official Consumer Support
-              </span>
-              <h3 className="text-xl sm:text-2xl font-black text-white mt-1">
-                Insurance Claim Assistance & Banking Grievance Redressal
-              </h3>
-            </div>
-            <span className="text-xs text-slate-400">Toll-Free National Helplines</span>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="p-4 bg-slate-800/80 rounded-2xl border border-slate-700 space-y-2">
-              <span className="text-xs font-black text-emerald-300">Ayushman Bharat PM-JAY</span>
-              <p className="text-lg font-black text-white">14555</p>
-              <p className="text-[11px] text-slate-300">24x7 Hospital verification & Golden Card status.</p>
-            </div>
-
-            <div className="p-4 bg-slate-800/80 rounded-2xl border border-slate-700 space-y-2">
-              <span className="text-xs font-black text-cyan-300">IRDAI Bima Bharosa (Insurance)</span>
-              <p className="text-lg font-black text-white">155255 / 1800-4254-732</p>
-              <p className="text-[11px] text-slate-300">File complaints for delayed or rejected insurance claims.</p>
-            </div>
-
-            <div className="p-4 bg-slate-800/80 rounded-2xl border border-slate-700 space-y-2">
-              <span className="text-xs font-black text-amber-300">RBI Banking Ombudsman</span>
-              <p className="text-lg font-black text-white">14448</p>
-              <p className="text-[11px] text-slate-300">Bank fraud, loan disputes, unauthorized auto-debit.</p>
-            </div>
-
-            <div className="p-4 bg-slate-800/80 rounded-2xl border border-slate-700 space-y-2">
-              <span className="text-xs font-black text-rose-300">Bihar MNSSBY Student Card</span>
-              <p className="text-lg font-black text-white">1800-3456-444</p>
-              <p className="text-[11px] text-slate-300">DRCC verification & student loan disbursement status.</p>
+            <div className="flex items-center overflow-x-auto scrollbar-none gap-1.5 w-full sm:w-auto">
+              {['All', 'Insurance', 'Loans & Subsidies', 'Pension & Savings', 'Solar & Green Energy'].map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setSelectedSchemeCategory(cat)}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition cursor-pointer ${
+                    selectedSchemeCategory === cat
+                      ? 'bg-blue-950 text-white'
+                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
             </div>
           </div>
-        </div>
-      </section>
 
-      {/* 5. GOOGLE HIGH-INTENT FAQS SECTION (FOR RICH SNIPPET SEO RANKING) */}
-      <section className="max-w-7xl mx-auto px-2 sm:px-4 space-y-6">
-        <div className="flex items-center space-x-2 text-emerald-700 font-black text-xs uppercase tracking-wider">
-          <HelpCircle className="w-4 h-4" />
-          <span>Frequently Asked Questions & Search Answers</span>
-        </div>
-        <h2 className="text-2xl sm:text-3xl font-black text-slate-900">
-          Common Questions on Government Insurance, Loans & Pensions
-        </h2>
-
-        <div className="space-y-3">
-          {GOOGLE_FINANCE_INSURANCE_FAQS.map((faq, idx) => (
-            <div
-              key={idx}
-              className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-2xs transition"
-            >
-              <button
-                onClick={() => setExpandedFaqIndex(expandedFaqIndex === idx ? null : idx)}
-                className="w-full p-4 sm:p-5 text-left flex items-center justify-between gap-4 font-extrabold text-slate-900 text-sm sm:text-base cursor-pointer hover:text-emerald-700 transition"
+          {/* Schemes Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {filteredSchemes.map((scheme) => (
+              <div
+                key={scheme.id}
+                className="bg-white rounded-2xl border border-slate-200 hover:border-blue-900/40 hover:shadow-lg transition-all duration-200 flex flex-col justify-between overflow-hidden group"
               >
-                <span>{faq.question}</span>
-                {expandedFaqIndex === idx ? (
-                  <ChevronUp className="w-5 h-5 text-emerald-600 shrink-0" />
-                ) : (
-                  <ChevronDown className="w-5 h-5 text-slate-400 shrink-0" />
-                )}
-              </button>
-              {expandedFaqIndex === idx && (
-                <div className="px-4 sm:px-5 pb-5 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-3">
-                  {faq.answer}
+                <div className="p-5 space-y-3.5">
+                  <div className="flex items-start justify-between gap-2">
+                    <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg text-[11px] font-bold bg-blue-50 text-blue-950 border border-blue-200">
+                      <span>{scheme.subCategory}</span>
+                    </span>
+                    {scheme.popularTag && (
+                      <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-100 text-amber-900 border border-amber-300">
+                        <Sparkles className="w-3 h-3 text-amber-600" />
+                        <span>{scheme.popularTag}</span>
+                      </span>
+                    )}
+                  </div>
+
+                  <div>
+                    <h3 className="font-bold text-slate-900 text-base leading-snug group-hover:text-blue-950 transition line-clamp-2">
+                      {scheme.title}
+                    </h3>
+                    {scheme.hindiTitle && (
+                      <p className="text-xs text-slate-500 font-medium mt-0.5">{scheme.hindiTitle}</p>
+                    )}
+                  </div>
+
+                  <p className="text-xs text-slate-600 line-clamp-3 leading-relaxed">
+                    {scheme.shortDesc}
+                  </p>
+
+                  <div className="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-1.5 text-xs">
+                    <div className="flex items-center justify-between text-slate-700">
+                      <span className="text-slate-500 font-medium">Max Benefit:</span>
+                      <span className="font-bold text-emerald-700">{scheme.maximumBenefit}</span>
+                    </div>
+                    {scheme.interestRate && (
+                      <div className="flex items-center justify-between text-slate-700">
+                        <span className="text-slate-500 font-medium">Interest / Rate:</span>
+                        <span className="font-bold text-blue-950">{scheme.interestRate}</span>
+                      </div>
+                    )}
+                    {scheme.ageLimit && (
+                      <div className="flex items-center justify-between text-slate-700">
+                        <span className="text-slate-500 font-medium">Age Limit:</span>
+                        <span className="font-semibold text-slate-800">{scheme.ageLimit}</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              )}
-            </div>
-          ))}
+
+                <div className="px-5 py-3.5 bg-slate-50/70 border-t border-slate-100 flex items-center justify-between gap-2">
+                  <button
+                    onClick={() => setSelectedSchemeDetail(scheme)}
+                    className="flex-1 py-2 px-3 bg-blue-950 hover:bg-blue-900 text-white rounded-xl text-xs font-bold transition flex items-center justify-center space-x-1.5 cursor-pointer shadow-xs"
+                  >
+                    <span>Full Details & How to Apply</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                  <a
+                    href={scheme.officialPortalUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2 text-slate-600 hover:text-blue-950 hover:bg-slate-200/70 rounded-xl transition"
+                    title="Open Official Govt Portal"
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
-      </section>
+      )}
 
-      {/* 6. DETAIL MODAL FOR SCHEMES */}
-      {selectedSchemeDetail && (
-        <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 overflow-y-auto animate-in fade-in">
-          <div className="bg-white rounded-3xl max-w-3xl w-full max-h-[90vh] overflow-y-auto border border-slate-200 shadow-2xl space-y-6 p-6 sm:p-8 relative">
-            <button
-              onClick={() => setSelectedSchemeDetail(null)}
-              className="absolute right-5 top-5 w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition cursor-pointer"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            {/* Header */}
-            <div className="space-y-2 pr-10">
-              <span className="px-3 py-1 bg-emerald-100 text-emerald-900 text-xs font-black rounded-lg uppercase">
-                {selectedSchemeDetail.subCategory}
-              </span>
-              <h2 className="text-2xl sm:text-3xl font-black text-slate-900">
-                {selectedSchemeDetail.title}
+      {/* ========================================================================= */}
+      {/* 2. TOP CREDIT CARDS (5% CASHBACK & LIFETIME FREE) TAB */}
+      {/* ========================================================================= */}
+      {activeMainTab === 'credit-cards' && (
+        <div className="space-y-6">
+          <div className="bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-amber-500/10 p-5 rounded-2xl border border-amber-200/80 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div className="space-y-1 max-w-2xl">
+              <h2 className="text-lg font-extrabold text-slate-900 flex items-center space-x-2">
+                <CreditCard className="w-5 h-5 text-amber-600" />
+                <span>Top 5 Best Credit Cards in India (2026 Highest Rewards & Cashback)</span>
               </h2>
-              {selectedSchemeDetail.hindiTitle && (
-                <p className="text-sm font-bold text-slate-600">
-                  {selectedSchemeDetail.hindiTitle}
-                </p>
-              )}
-            </div>
-
-            {/* Overview */}
-            <div className="space-y-2">
-              <h4 className="text-xs font-black uppercase text-slate-400 tracking-wider">Overview</h4>
-              <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
-                {selectedSchemeDetail.overview}
+              <p className="text-xs text-slate-600 leading-relaxed">
+                Save ₹25,000 to ₹50,000+ annually on shopping, grocery, fuel, and utility bills. Compare flat 5% cashback, Lifetime Free (LTF), and RuPay UPI scan-and-pay credit cards.
               </p>
             </div>
-
-            {/* Key Stats Breakdown Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="p-4 bg-emerald-50/70 rounded-2xl border border-emerald-200 space-y-1">
-                <span className="text-[11px] font-black uppercase text-emerald-800">Key Benefit</span>
-                <p className="text-xs sm:text-sm font-bold text-emerald-950">
-                  {selectedSchemeDetail.keyBenefit}
-                </p>
-              </div>
-
-              <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-1">
-                <span className="text-[11px] font-black uppercase text-slate-500">Eligibility & Age Limit</span>
-                <p className="text-xs sm:text-sm font-bold text-slate-800">
-                  {selectedSchemeDetail.eligibility} (Age: {selectedSchemeDetail.ageLimit})
-                </p>
-              </div>
+            <div className="flex items-center overflow-x-auto scrollbar-none gap-1.5 w-full md:w-auto">
+              {['All', 'Cashback & Rewards', 'Lifetime Free (LTF)', 'RuPay UPI', 'Shopping & Travel', 'Fuel & Utility'].map((type) => (
+                <button
+                  key={type}
+                  onClick={() => setSelectedCreditCardFilter(type)}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition cursor-pointer ${
+                    selectedCreditCardFilter === type
+                      ? 'bg-amber-900 text-white'
+                      : 'bg-white text-slate-700 border border-slate-200 hover:bg-amber-50'
+                  }`}
+                >
+                  {type}
+                </button>
+              ))}
             </div>
+          </div>
 
-            {/* Step-by-Step How to Apply */}
-            <div className="space-y-3">
-              <h4 className="text-xs font-black uppercase text-slate-400 tracking-wider">
-                Step-by-Step Application Process
-              </h4>
-              <div className="space-y-2">
-                {selectedSchemeDetail.howToApply.map((step, idx) => (
-                  <div key={idx} className="flex items-start gap-3 text-xs sm:text-sm text-slate-700">
-                    <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-900 font-black text-xs flex items-center justify-center shrink-0 mt-0.5">
-                      {idx + 1}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {filteredCreditCards.map((card) => (
+              <div
+                key={card.id}
+                className="bg-white rounded-2xl border border-slate-200 hover:border-amber-400 hover:shadow-lg transition-all duration-200 flex flex-col justify-between overflow-hidden"
+              >
+                <div className="p-5 space-y-3.5">
+                  <div className="flex items-start justify-between gap-2">
+                    <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg text-[11px] font-bold bg-amber-50 text-amber-950 border border-amber-200">
+                      <span>{card.cardType}</span>
                     </span>
-                    <span>{step}</span>
+                    {card.popularBadge && (
+                      <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-900 border border-emerald-300">
+                        <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
+                        <span>{card.popularBadge}</span>
+                      </span>
+                    )}
                   </div>
-                ))}
-              </div>
-            </div>
 
-            {/* Required Documents */}
-            <div className="space-y-3">
-              <h4 className="text-xs font-black uppercase text-slate-400 tracking-wider">
-                Required Documents
-              </h4>
-              <div className="flex flex-wrap gap-2">
-                {selectedSchemeDetail.requiredDocuments.map((doc, idx) => (
-                  <span
-                    key={idx}
-                    className="px-3 py-1.5 bg-slate-100 text-slate-800 rounded-xl text-xs font-bold border border-slate-200 flex items-center gap-1.5"
+                  <div>
+                    <h3 className="font-bold text-slate-900 text-base leading-snug">{card.cardName}</h3>
+                    <p className="text-xs text-slate-500 font-semibold mt-0.5">{card.issuer}</p>
+                  </div>
+
+                  <div className="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-1.5 text-xs">
+                    <div className="flex items-center justify-between text-slate-700">
+                      <span className="text-slate-500 font-medium">Annual Fee:</span>
+                      <span className="font-bold text-slate-900">{card.annualFee}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-slate-700">
+                      <span className="text-slate-500 font-medium">Reward Rate:</span>
+                      <span className="font-bold text-emerald-700">{card.rewardRate}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-slate-700">
+                      <span className="text-slate-500 font-medium">Best For:</span>
+                      <span className="font-semibold text-slate-800 line-clamp-1">{card.bestFor}</span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Key Perks & Benefits:</p>
+                    <ul className="space-y-1">
+                      {card.keyPerks.map((perk, i) => (
+                        <li key={i} className="text-xs text-slate-600 flex items-start space-x-1.5">
+                          <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                          <span>{perk}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+
+                <div className="px-5 py-3.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between gap-2">
+                  <a
+                    href={card.applyUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 py-2 px-3 bg-amber-950 hover:bg-amber-900 text-white rounded-xl text-xs font-bold transition flex items-center justify-center space-x-1.5 cursor-pointer shadow-xs"
                   >
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>{doc}</span>
-                  </span>
-                ))}
+                    <span>Check Eligibility on Bank Portal</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* 3. PERSONAL, HOME & EDUCATION LOANS TAB */}
+      {/* ========================================================================= */}
+      {activeMainTab === 'loans' && (
+        <div className="space-y-6">
+          <div className="bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-emerald-500/10 p-5 rounded-2xl border border-emerald-200/80 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div className="space-y-1 max-w-2xl">
+              <h2 className="text-lg font-extrabold text-slate-900 flex items-center space-x-2">
+                <Landmark className="w-5 h-5 text-emerald-600" />
+                <span>Lowest Interest Personal, Home & Education Loans 2026</span>
+              </h2>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                Compare official bank interest rates, processing fee waivers, and special low-interest government loan guarantees (including Bihar Student Credit Card at 1%).
+              </p>
+            </div>
+            <div className="flex items-center overflow-x-auto scrollbar-none gap-1.5 w-full md:w-auto">
+              {['All', 'Personal Loan', 'Home Loan', 'Education Loan', 'Gold Loan'].map((type) => (
+                <button
+                  key={type}
+                  onClick={() => setSelectedLoanTypeFilter(type)}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition cursor-pointer ${
+                    selectedLoanTypeFilter === type
+                      ? 'bg-emerald-950 text-white'
+                      : 'bg-white text-slate-700 border border-slate-200 hover:bg-emerald-50'
+                  }`}
+                >
+                  {type}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {filteredLoans.map((loan) => (
+              <div
+                key={loan.id}
+                className="bg-white rounded-2xl border border-slate-200 hover:border-emerald-500 hover:shadow-lg transition-all duration-200 flex flex-col justify-between overflow-hidden"
+              >
+                <div className="p-5 space-y-3.5">
+                  <div className="flex items-start justify-between gap-2">
+                    <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg text-[11px] font-bold bg-emerald-50 text-emerald-950 border border-emerald-200">
+                      <span>{loan.loanType}</span>
+                    </span>
+                    {loan.badge && (
+                      <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-blue-100 text-blue-900 border border-blue-300">
+                        <span>{loan.badge}</span>
+                      </span>
+                    )}
+                  </div>
+
+                  <div>
+                    <h3 className="font-bold text-slate-900 text-base leading-snug">{loan.bankName}</h3>
+                    <p className="text-sm font-extrabold text-emerald-700 mt-1">Interest: {loan.interestRateRange}</p>
+                  </div>
+
+                  <div className="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-1.5 text-xs">
+                    <div className="flex items-center justify-between text-slate-700">
+                      <span className="text-slate-500 font-medium">Max Loan:</span>
+                      <span className="font-bold text-slate-900">{loan.maxAmount}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-slate-700">
+                      <span className="text-slate-500 font-medium">Tenure:</span>
+                      <span className="font-semibold text-slate-800">{loan.tenureRange}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-slate-700">
+                      <span className="text-slate-500 font-medium">CIBIL Needed:</span>
+                      <span className="font-bold text-blue-950">{loan.cibilRequirement}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-slate-700">
+                      <span className="text-slate-500 font-medium">Processing Fee:</span>
+                      <span className="font-medium text-slate-600">{loan.processingFee}</span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Key Features:</p>
+                    <ul className="space-y-1">
+                      {loan.features.map((feat, i) => (
+                        <li key={i} className="text-xs text-slate-600 flex items-start space-x-1.5">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                          <span>{feat}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+
+                <div className="px-5 py-3.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between gap-2">
+                  <a
+                    href={loan.applyUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 py-2 px-3 bg-emerald-950 hover:bg-emerald-900 text-white rounded-xl text-xs font-bold transition flex items-center justify-center space-x-1.5 cursor-pointer shadow-xs"
+                  >
+                    <span>Apply on Official Portal</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* 4. TERM LIFE & HEALTH INSURANCE TAB */}
+      {/* ========================================================================= */}
+      {activeMainTab === 'insurance' && (
+        <div className="space-y-6">
+          <div className="bg-gradient-to-r from-blue-500/10 via-indigo-500/10 to-blue-500/10 p-5 rounded-2xl border border-blue-200/80 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div className="space-y-1 max-w-2xl">
+              <h2 className="text-lg font-extrabold text-slate-900 flex items-center space-x-2">
+                <ShieldCheck className="w-5 h-5 text-blue-600" />
+                <span>₹1 Crore Term Life & Comprehensive Health Insurance Plans (2026)</span>
+              </h2>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                Compare verified IRDAI Claim Settlement Ratios (CSR 99%+), zero room-rent capping, cashless hospital networks, and 100% tax benefits under Section 80C & 80D.
+              </p>
+            </div>
+            <div className="flex items-center overflow-x-auto scrollbar-none gap-1.5 w-full md:w-auto">
+              {['All', 'Term Life Insurance', 'Health & Medical Insurance'].map((type) => (
+                <button
+                  key={type}
+                  onClick={() => setSelectedInsuranceFilter(type)}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition cursor-pointer ${
+                    selectedInsuranceFilter === type
+                      ? 'bg-blue-950 text-white'
+                      : 'bg-white text-slate-700 border border-slate-200 hover:bg-blue-50'
+                  }`}
+                >
+                  {type}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {filteredInsurance.map((item) => (
+              <div
+                key={item.id}
+                className="bg-white rounded-2xl border border-slate-200 hover:border-blue-400 hover:shadow-lg transition-all duration-200 flex flex-col justify-between overflow-hidden"
+              >
+                <div className="p-5 space-y-3.5">
+                  <div className="flex items-start justify-between gap-2">
+                    <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg text-[11px] font-bold bg-blue-50 text-blue-950 border border-blue-200">
+                      <span>{item.insuranceType}</span>
+                    </span>
+                    {item.recommendedTag && (
+                      <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-900 border border-emerald-300">
+                        <Award className="w-3 h-3 text-emerald-600" />
+                        <span>{item.recommendedTag}</span>
+                      </span>
+                    )}
+                  </div>
+
+                  <div>
+                    <h3 className="font-bold text-slate-900 text-base leading-snug">{item.companyName}</h3>
+                    <p className="text-xs text-blue-950 font-semibold mt-0.5">{item.planName}</p>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 bg-slate-50 p-3 rounded-xl border border-slate-100 text-xs">
+                    <div>
+                      <span className="text-slate-500 font-medium block">Starting Premium:</span>
+                      <span className="font-bold text-emerald-700">{item.startingPremiumMonthly}</span>
+                    </div>
+                    <div>
+                      <span className="text-slate-500 font-medium block">Claim Ratio (CSR):</span>
+                      <span className="font-bold text-blue-950">{item.claimSettlementRatio}</span>
+                    </div>
+                    <div>
+                      <span className="text-slate-500 font-medium block">Sum Insured:</span>
+                      <span className="font-semibold text-slate-800">{item.sumInsuredRange}</span>
+                    </div>
+                    <div>
+                      <span className="text-slate-500 font-medium block">Network:</span>
+                      <span className="font-semibold text-slate-800 line-clamp-1">{item.networkHospitalsOrGarages}</span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Plan Highlights:</p>
+                    <ul className="space-y-1">
+                      {item.keyHighlights.map((hl, i) => (
+                        <li key={i} className="text-xs text-slate-600 flex items-start space-x-1.5">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 shrink-0 mt-0.5" />
+                          <span>{hl}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <p className="text-[11px] text-slate-500 bg-amber-50/80 p-2 rounded-lg border border-amber-200/60 font-medium">
+                    🏛️ <strong>Tax Saving:</strong> {item.taxExemption}
+                  </p>
+                </div>
+
+                <div className="px-5 py-3.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between gap-2">
+                  <a
+                    href={item.applyUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 py-2 px-3 bg-blue-950 hover:bg-blue-900 text-white rounded-xl text-xs font-bold transition flex items-center justify-center space-x-1.5 cursor-pointer shadow-xs"
+                  >
+                    <span>Get Instant Quote on Insurer Portal</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* 5. PM SURYA GHAR ROOFTOP SOLAR (₹78,000 SUBSIDY) TAB */}
+      {/* ========================================================================= */}
+      {activeMainTab === 'solar' && (
+        <div className="space-y-6">
+          <div className="bg-gradient-to-r from-amber-950 via-slate-900 to-yellow-950 text-white p-6 rounded-3xl border border-amber-500/30 shadow-xl space-y-4">
+            <div className="inline-flex items-center space-x-2 bg-amber-500/20 text-amber-300 border border-amber-400/30 px-3 py-1 rounded-full text-xs font-bold uppercase">
+              <Sun className="w-3.5 h-3.5 text-yellow-400" />
+              <span>₹75,000 Crore Central Government Mission</span>
+            </div>
+            <div className="max-w-2xl space-y-1.5">
+              <h2 className="text-xl sm:text-3xl font-extrabold">PM Surya Ghar: Muft Bijli Yojana (Rooftop Solar)</h2>
+              <p className="text-xs sm:text-sm text-slate-300">
+                Get up to <strong>₹78,000 direct bank cash subsidy</strong> to install solar panels on your house roof and reduce electricity bills to zero forever.
+              </p>
+            </div>
+          </div>
+
+          {/* Interactive Solar Calculator */}
+          <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-md space-y-6">
+            <div className="border-b border-slate-200 pb-4 flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h3 className="text-lg font-bold text-slate-900">Interactive Rooftop Solar Sizing & Subsidy Calculator</h3>
+                <p className="text-xs text-slate-500">Slide to select your home system size and see instant government subsidy and savings.</p>
+              </div>
+              <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-extrabold">
+                100% Free Solar Electricity
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+              {/* Controls */}
+              <div className="lg:col-span-6 space-y-6">
+                <div>
+                  <div className="flex justify-between items-center mb-2">
+                    <label className="text-xs font-bold text-slate-700 uppercase">Solar Capacity (kW):</label>
+                    <span className="text-sm font-extrabold text-blue-950 bg-blue-50 px-3 py-1 rounded-lg border border-blue-200">
+                      {solarCapacityKw} kW System
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    min={1}
+                    max={5}
+                    step={1}
+                    value={solarCapacityKw}
+                    onChange={(e) => setSolarCapacityKw(Number(e.target.value))}
+                    className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-950"
+                  />
+                  <div className="flex justify-between text-[11px] text-slate-400 mt-1 font-semibold">
+                    <span>1 kW (₹30k Subsidy)</span>
+                    <span>2 kW (₹60k Subsidy)</span>
+                    <span>3 kW+ (₹78k Max Subsidy)</span>
+                    <span>5 kW</span>
+                  </div>
+                </div>
+
+                <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2.5 text-xs">
+                  <div className="flex items-center justify-between text-slate-700">
+                    <span className="text-slate-500 font-medium">Estimated Gross Total Cost:</span>
+                    <span className="font-bold text-slate-900">₹{solarCalculation.estimatedTotalCost.toLocaleString()}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-emerald-700 bg-emerald-50/80 p-2 rounded-xl border border-emerald-200 font-semibold">
+                    <span>Direct Central DBT Subsidy:</span>
+                    <span className="font-extrabold text-sm">₹{solarCalculation.subsidy.toLocaleString()}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-slate-700">
+                    <span className="text-slate-500 font-medium">Net Cost to Citizen:</span>
+                    <span className="font-bold text-blue-950 text-sm">₹{solarCalculation.netCostToUser.toLocaleString()}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-slate-700">
+                    <span className="text-slate-500 font-medium">Unshaded Roof Space Needed:</span>
+                    <span className="font-bold text-slate-800">{solarCalculation.roofAreaSqFt} Sq. Ft.</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Results Display */}
+              <div className="lg:col-span-6 bg-gradient-to-br from-blue-950 to-slate-900 text-white p-6 rounded-2xl space-y-4 shadow-inner">
+                <h4 className="text-sm font-bold text-amber-300 uppercase tracking-wider">Your Financial Savings & ROI</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-white/10 p-3.5 rounded-xl border border-white/10">
+                    <p className="text-[11px] text-slate-300">Monthly Free Units:</p>
+                    <p className="text-xl font-extrabold text-white mt-1">{solarCalculation.monthlyUnitsGenerated} Units</p>
+                  </div>
+                  <div className="bg-white/10 p-3.5 rounded-xl border border-white/10">
+                    <p className="text-[11px] text-slate-300">Monthly Bill Saved:</p>
+                    <p className="text-xl font-extrabold text-emerald-400 mt-1">₹{solarCalculation.monthlySavingsRupees.toLocaleString()}</p>
+                  </div>
+                  <div className="bg-white/10 p-3.5 rounded-xl border border-white/10">
+                    <p className="text-[11px] text-slate-300">Annual Net Savings:</p>
+                    <p className="text-xl font-extrabold text-amber-300 mt-1">₹{solarCalculation.annualSavings.toLocaleString()}</p>
+                  </div>
+                  <div className="bg-white/10 p-3.5 rounded-xl border border-white/10">
+                    <p className="text-[11px] text-slate-300">Payback Period:</p>
+                    <p className="text-xl font-extrabold text-purple-300 mt-1">{solarCalculation.paybackPeriodYears} Years</p>
+                  </div>
+                </div>
+                <p className="text-[11px] text-slate-300 leading-relaxed">
+                  💡 <em>After {solarCalculation.paybackPeriodYears} years payback, you enjoy 100% free electricity for the remaining 20+ years of solar panel life!</em>
+                </p>
               </div>
             </div>
 
-            {/* Action Bar */}
-            <div className="pt-4 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
+              <a
+                href="https://pmsuryaghar.gov.in"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="py-3 px-6 bg-amber-500 hover:bg-amber-600 text-slate-950 rounded-xl text-xs sm:text-sm font-extrabold transition flex items-center space-x-2 shadow-md cursor-pointer"
+              >
+                <span>Apply for Solar Subsidy on pmsuryaghar.gov.in</span>
+                <ExternalLink className="w-4 h-4" />
+              </a>
+              <span className="text-xs text-slate-500 font-medium">
+                Helpline: <strong>15555 / 1800-180-3333</strong>
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* 6. TOP BANK FD & SAVINGS RATES TAB */}
+      {/* ========================================================================= */}
+      {activeMainTab === 'fd-rates' && (
+        <div className="space-y-6">
+          <div className="bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-purple-500/10 p-5 rounded-2xl border border-purple-200/80 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div className="space-y-1 max-w-2xl">
+              <h2 className="text-lg font-extrabold text-slate-900 flex items-center space-x-2">
+                <PiggyBank className="w-5 h-5 text-purple-600" />
+                <span>Highest Fixed Deposit (FD) & Post Office Rates in India (2026)</span>
+              </h2>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                Earn up to 9.50% guaranteed interest on Fixed Deposits. 100% protected up to ₹5 Lakhs per bank under RBI\'s DICGC Insurance Guarantee.
+              </p>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs sm:text-sm">
+                <thead className="bg-slate-100 text-slate-700 font-bold uppercase text-[11px] tracking-wider border-b border-slate-200">
+                  <tr>
+                    <th className="py-3.5 px-4">Bank / Institution</th>
+                    <th className="py-3.5 px-4">Category</th>
+                    <th className="py-3.5 px-4">General Citizen Rate</th>
+                    <th className="py-3.5 px-4">Senior Citizen Rate</th>
+                    <th className="py-3.5 px-4">Special Tenure</th>
+                    <th className="py-3.5 px-4 text-right">Apply Online</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-200 font-medium text-slate-800">
+                  {TOP_FD_RATES_DATA.map((fd, i) => (
+                    <tr key={i} className="hover:bg-slate-50 transition">
+                      <td className="py-3.5 px-4 font-bold text-slate-900">
+                        {fd.bankName}
+                        {fd.dicgcInsured && (
+                          <span className="block text-[10px] text-emerald-600 font-semibold">✓ DICGC ₹5 Lakh Insured</span>
+                        )}
+                      </td>
+                      <td className="py-3.5 px-4">
+                        <span className="px-2 py-0.5 rounded-md text-[11px] font-semibold bg-slate-100 text-slate-700">
+                          {fd.type}
+                        </span>
+                      </td>
+                      <td className="py-3.5 px-4 font-bold text-blue-950">{fd.generalRateMax}</td>
+                      <td className="py-3.5 px-4 font-extrabold text-emerald-700">{fd.seniorCitizenRateMax}</td>
+                      <td className="py-3.5 px-4 text-slate-600">{fd.specialTenure}</td>
+                      <td className="py-3.5 px-4 text-right">
+                        <a
+                          href={fd.applyUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center space-x-1 px-3 py-1.5 rounded-lg text-xs font-bold bg-purple-950 text-white hover:bg-purple-900 transition cursor-pointer"
+                        >
+                          <span>Open FD</span>
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* 7. FINANCIAL CALCULATORS SUITE */}
+      {/* ========================================================================= */}
+      {activeMainTab === 'calculators' && (
+        <div className="space-y-6">
+          {/* Calculator Selector Tabs */}
+          <div className="bg-white p-3 rounded-2xl border border-slate-200 shadow-xs">
+            <div className="flex items-center overflow-x-auto scrollbar-none gap-2">
+              {FINANCIAL_CALCULATORS_LIST.map((calc) => (
+                <button
+                  key={calc.id}
+                  onClick={() => setActiveCalculator(calc.id)}
+                  className={`px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition cursor-pointer flex items-center space-x-2 ${
+                    activeCalculator === calc.id
+                      ? 'bg-blue-950 text-white shadow-xs'
+                      : 'bg-slate-50 text-slate-700 hover:bg-slate-100'
+                  }`}
+                >
+                  <Calculator className="w-3.5 h-3.5" />
+                  <span>{calc.name}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* 1. Loan EMI Calculator */}
+          {activeCalculator === 'loan-emi' && (
+            <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-md space-y-6">
+              <div className="border-b border-slate-200 pb-4">
+                <h3 className="text-lg font-bold text-slate-900">Loan EMI & Repayment Calculator</h3>
+                <p className="text-xs text-slate-500">Calculate exact monthly EMI and total interest for Home, Education, Car or Personal loans.</p>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                <div className="lg:col-span-6 space-y-6">
+                  <div>
+                    <div className="flex justify-between items-center mb-1">
+                      <label className="text-xs font-bold text-slate-700 uppercase">Loan Amount (₹):</label>
+                      <span className="text-sm font-extrabold text-blue-950">₹{loanAmount.toLocaleString()}</span>
+                    </div>
+                    <input
+                      type="range"
+                      min={50000}
+                      max={10000000}
+                      step={50000}
+                      value={loanAmount}
+                      onChange={(e) => setLoanAmount(Number(e.target.value))}
+                      className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-950"
+                    />
+                  </div>
+
+                  <div>
+                    <div className="flex justify-between items-center mb-1">
+                      <label className="text-xs font-bold text-slate-700 uppercase">Interest Rate (% p.a.):</label>
+                      <span className="text-sm font-extrabold text-blue-950">{loanInterestRate}%</span>
+                    </div>
+                    <input
+                      type="range"
+                      min={1}
+                      max={20}
+                      step={0.1}
+                      value={loanInterestRate}
+                      onChange={(e) => setLoanInterestRate(Number(e.target.value))}
+                      className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-950"
+                    />
+                  </div>
+
+                  <div>
+                    <div className="flex justify-between items-center mb-1">
+                      <label className="text-xs font-bold text-slate-700 uppercase">Loan Tenure (Years):</label>
+                      <span className="text-sm font-extrabold text-blue-950">{loanTenureYears} Years</span>
+                    </div>
+                    <input
+                      type="range"
+                      min={1}
+                      max={30}
+                      step={1}
+                      value={loanTenureYears}
+                      onChange={(e) => setLoanTenureYears(Number(e.target.value))}
+                      className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-950"
+                    />
+                  </div>
+                </div>
+
+                <div className="lg:col-span-6 bg-gradient-to-br from-blue-950 to-slate-900 text-white p-6 rounded-2xl space-y-4 shadow-inner">
+                  <h4 className="text-sm font-bold text-slate-300 uppercase tracking-wider">Loan EMI Breakdown</h4>
+                  <div className="space-y-3">
+                    <div className="bg-white/10 p-4 rounded-xl border border-white/10">
+                      <p className="text-xs text-slate-300">Monthly EMI Payout:</p>
+                      <p className="text-2xl sm:text-3xl font-extrabold text-emerald-400 mt-1">
+                        ₹{emiCalculation.monthlyEmi.toLocaleString()}
+                      </p>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="bg-white/5 p-3 rounded-xl border border-white/10">
+                        <p className="text-[11px] text-slate-400">Total Interest:</p>
+                        <p className="text-base font-bold text-amber-300 mt-0.5">₹{emiCalculation.totalInterest.toLocaleString()}</p>
+                      </div>
+                      <div className="bg-white/5 p-3 rounded-xl border border-white/10">
+                        <p className="text-[11px] text-slate-400">Total Payment:</p>
+                        <p className="text-base font-bold text-white mt-0.5">₹{emiCalculation.totalAmount.toLocaleString()}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 2. SIP Wealth Calculator */}
+          {activeCalculator === 'sip-wealth' && (
+            <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-md space-y-6">
+              <div className="border-b border-slate-200 pb-4">
+                <h3 className="text-lg font-bold text-slate-900">SIP Mutual Fund Wealth & Compounding Multiplier</h3>
+                <p className="text-xs text-slate-500">Estimate how small monthly investments grow exponentially into Crores through market compounding.</p>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                <div className="lg:col-span-6 space-y-6">
+                  <div>
+                    <div className="flex justify-between items-center mb-1">
+                      <label className="text-xs font-bold text-slate-700 uppercase">Monthly SIP Amount (₹):</label>
+                      <span className="text-sm font-extrabold text-blue-950">₹{sipMonthly.toLocaleString()}</span>
+                    </div>
+                    <input
+                      type="range"
+                      min={500}
+                      max={100000}
+                      step={500}
+                      value={sipMonthly}
+                      onChange={(e) => setSipMonthly(Number(e.target.value))}
+                      className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-950"
+                    />
+                  </div>
+
+                  <div>
+                    <div className="flex justify-between items-center mb-1">
+                      <label className="text-xs font-bold text-slate-700 uppercase">Expected Return Rate (% p.a.):</label>
+                      <span className="text-sm font-extrabold text-blue-950">{sipReturnRate}%</span>
+                    </div>
+                    <input
+                      type="range"
+                      min={6}
+                      max={25}
+                      step={0.5}
+                      value={sipReturnRate}
+                      onChange={(e) => setSipReturnRate(Number(e.target.value))}
+                      className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-950"
+                    />
+                  </div>
+
+                  <div>
+                    <div className="flex justify-between items-center mb-1">
+                      <label className="text-xs font-bold text-slate-700 uppercase">Investment Duration (Years):</label>
+                      <span className="text-sm font-extrabold text-blue-950">{sipTenureYears} Years</span>
+                    </div>
+                    <input
+                      type="range"
+                      min={1}
+                      max={35}
+                      step={1}
+                      value={sipTenureYears}
+                      onChange={(e) => setSipTenureYears(Number(e.target.value))}
+                      className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-950"
+                    />
+                  </div>
+                </div>
+
+                <div className="lg:col-span-6 bg-gradient-to-br from-indigo-950 to-slate-900 text-white p-6 rounded-2xl space-y-4 shadow-inner">
+                  <h4 className="text-sm font-bold text-slate-300 uppercase tracking-wider">Maturity Corpus Projection</h4>
+                  <div className="space-y-3">
+                    <div className="bg-white/10 p-4 rounded-xl border border-white/10">
+                      <p className="text-xs text-slate-300">Expected Total Maturity Value:</p>
+                      <p className="text-2xl sm:text-3xl font-extrabold text-emerald-400 mt-1">
+                        ₹{sipCalculation.maturityValue.toLocaleString()}
+                      </p>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="bg-white/5 p-3 rounded-xl border border-white/10">
+                        <p className="text-[11px] text-slate-400">Total Invested:</p>
+                        <p className="text-base font-bold text-white mt-0.5">₹{sipCalculation.totalInvested.toLocaleString()}</p>
+                      </div>
+                      <div className="bg-white/5 p-3 rounded-xl border border-white/10">
+                        <p className="text-[11px] text-slate-400">Wealth Gained (Returns):</p>
+                        <p className="text-base font-bold text-amber-300 mt-0.5">₹{sipCalculation.wealthGained.toLocaleString()}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 3. ₹1 Crore Term Insurance Estimator */}
+          {activeCalculator === 'term-insurance-calc' && (
+            <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-md space-y-6">
+              <div className="border-b border-slate-200 pb-4">
+                <h3 className="text-lg font-bold text-slate-900">₹1 Crore Term Life Insurance Premium Estimator</h3>
+                <p className="text-xs text-slate-500">Estimate your monthly and yearly premium for 1 Crore life cover based on age, gender and habits.</p>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                <div className="lg:col-span-6 space-y-6">
+                  <div>
+                    <div className="flex justify-between items-center mb-1">
+                      <label className="text-xs font-bold text-slate-700 uppercase">Your Current Age:</label>
+                      <span className="text-sm font-extrabold text-blue-950">{termAge} Years</span>
+                    </div>
+                    <input
+                      type="range"
+                      min={18}
+                      max={60}
+                      step={1}
+                      value={termAge}
+                      onChange={(e) => setTermAge(Number(e.target.value))}
+                      className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-950"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-xs font-bold text-slate-700 uppercase block mb-1.5">Gender:</label>
+                      <div className="flex gap-2">
+                        {(['Male', 'Female'] as const).map((g) => (
+                          <button
+                            key={g}
+                            onClick={() => setTermGender(g)}
+                            className={`flex-1 py-2 text-xs font-bold rounded-xl border transition cursor-pointer ${
+                              termGender === g
+                                ? 'bg-blue-950 text-white border-blue-950'
+                                : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+                            }`}
+                          >
+                            {g}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-bold text-slate-700 uppercase block mb-1.5">Tobacco / Smoking:</label>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => setTermIsSmoker(false)}
+                          className={`flex-1 py-2 text-xs font-bold rounded-xl border transition cursor-pointer ${
+                            !termIsSmoker
+                              ? 'bg-emerald-700 text-white border-emerald-700'
+                              : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+                          }`}
+                        >
+                          Non-Smoker
+                        </button>
+                        <button
+                          onClick={() => setTermIsSmoker(true)}
+                          className={`flex-1 py-2 text-xs font-bold rounded-xl border transition cursor-pointer ${
+                            termIsSmoker
+                              ? 'bg-rose-700 text-white border-rose-700'
+                              : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+                          }`}
+                        >
+                          Smoker
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-slate-700 uppercase block mb-1.5">Sum Insured Life Cover:</label>
+                    <div className="grid grid-cols-3 gap-2">
+                      {[5000000, 10000000, 20000000].map((amt) => (
+                        <button
+                          key={amt}
+                          onClick={() => setTermSumInsured(amt)}
+                          className={`py-2 text-xs font-bold rounded-xl border transition cursor-pointer ${
+                            termSumInsured === amt
+                              ? 'bg-blue-950 text-white border-blue-950'
+                              : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+                          }`}
+                        >
+                          {amt === 10000000 ? '₹1 Crore' : amt === 20000000 ? '₹2 Crore' : '₹50 Lakh'}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="lg:col-span-6 bg-gradient-to-br from-slate-900 to-blue-950 text-white p-6 rounded-2xl space-y-4 shadow-inner">
+                  <h4 className="text-sm font-bold text-slate-300 uppercase tracking-wider">Estimated Premium ({termInsuranceCalculation.sumInsuredFormatted})</h4>
+                  <div className="space-y-3">
+                    <div className="bg-white/10 p-4 rounded-xl border border-white/10">
+                      <p className="text-xs text-slate-300">Starting Monthly Premium:</p>
+                      <p className="text-2xl sm:text-3xl font-extrabold text-emerald-400 mt-1">
+                        ₹{termInsuranceCalculation.monthlyPremium.toLocaleString()} / Month
+                      </p>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="bg-white/5 p-3 rounded-xl border border-white/10">
+                        <p className="text-[11px] text-slate-400">Yearly Premium:</p>
+                        <p className="text-base font-bold text-amber-300 mt-0.5">₹{termInsuranceCalculation.yearlyPremium.toLocaleString()}</p>
+                      </div>
+                      <div className="bg-white/5 p-3 rounded-xl border border-white/10">
+                        <p className="text-[11px] text-slate-400">Section 80C Tax Save:</p>
+                        <p className="text-base font-bold text-white mt-0.5">100% Tax Deductible</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 4. CIBIL & Loan Affordability Checker */}
+          {activeCalculator === 'cibil-estimator' && (
+            <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-md space-y-6">
+              <div className="border-b border-slate-200 pb-4">
+                <h3 className="text-lg font-bold text-slate-900">Free CIBIL Eligibility & Loan Borrowing Affordability</h3>
+                <p className="text-xs text-slate-500">Calculate your Debt-to-Income (DTI) ratio and maximum borrowing power across banks.</p>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                <div className="lg:col-span-6 space-y-6">
+                  <div>
+                    <div className="flex justify-between items-center mb-1">
+                      <label className="text-xs font-bold text-slate-700 uppercase">Monthly Net Salary (₹):</label>
+                      <span className="text-sm font-extrabold text-blue-950">₹{monthlySalary.toLocaleString()}</span>
+                    </div>
+                    <input
+                      type="range"
+                      min={15000}
+                      max={300000}
+                      step={5000}
+                      value={monthlySalary}
+                      onChange={(e) => setMonthlySalary(Number(e.target.value))}
+                      className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-950"
+                    />
+                  </div>
+
+                  <div>
+                    <div className="flex justify-between items-center mb-1">
+                      <label className="text-xs font-bold text-slate-700 uppercase">Existing Monthly EMIs (₹):</label>
+                      <span className="text-sm font-extrabold text-blue-950">₹{existingMonthlyEmi.toLocaleString()}</span>
+                    </div>
+                    <input
+                      type="range"
+                      min={0}
+                      max={150000}
+                      step={2000}
+                      value={existingMonthlyEmi}
+                      onChange={(e) => setExistingMonthlyEmi(Number(e.target.value))}
+                      className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-950"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-xs font-bold text-slate-700 uppercase block mb-1">Tenure (Years):</label>
+                      <input
+                        type="number"
+                        value={desiredLoanTenure}
+                        onChange={(e) => setDesiredLoanTenure(Number(e.target.value))}
+                        className="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs font-bold text-slate-700 uppercase block mb-1">Interest Rate (%):</label>
+                      <input
+                        type="number"
+                        step={0.1}
+                        value={expectedRate}
+                        onChange={(e) => setExpectedRate(Number(e.target.value))}
+                        className="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="lg:col-span-6 bg-gradient-to-br from-slate-900 to-blue-950 text-white p-6 rounded-2xl space-y-4 shadow-inner">
+                  <h4 className="text-sm font-bold text-slate-300 uppercase tracking-wider">Your Borrowing Capacity</h4>
+                  <div className="space-y-3">
+                    <div className="bg-white/10 p-4 rounded-xl border border-white/10">
+                      <p className="text-xs text-slate-300">Max Eligible Loan Sanction:</p>
+                      <p className="text-2xl sm:text-3xl font-extrabold text-emerald-400 mt-1">
+                        ₹{loanAffordabilityCalc.maxLoanAmount.toLocaleString()}
+                      </p>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="bg-white/5 p-3 rounded-xl border border-white/10">
+                        <p className="text-[11px] text-slate-400">Debt-to-Income (DTI):</p>
+                        <p className="text-base font-bold text-amber-300 mt-0.5">{loanAffordabilityCalc.dtiRatio}%</p>
+                      </div>
+                      <div className="bg-white/5 p-3 rounded-xl border border-white/10">
+                        <p className="text-[11px] text-slate-400">Available New EMI:</p>
+                        <p className="text-base font-bold text-white mt-0.5">₹{loanAffordabilityCalc.availableEmiForNewLoan.toLocaleString()}</p>
+                      </div>
+                    </div>
+                    <div className="bg-white/10 p-2.5 rounded-xl text-xs text-slate-200 font-medium">
+                      Status: <strong className="text-emerald-300">{loanAffordabilityCalc.cibilHealthStatus}</strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 5. Income Tax Comparison (New vs Old Regime) */}
+          {activeCalculator === 'income-tax' && (
+            <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-md space-y-6">
+              <div className="border-b border-slate-200 pb-4">
+                <h3 className="text-lg font-bold text-slate-900">Income Tax Calculator (New vs Old Tax Regime FY 2024-26)</h3>
+                <p className="text-xs text-slate-500">Compare tax payable under both regimes, ₹75,000 standard deduction, and Section 87A rebate.</p>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                <div className="lg:col-span-6 space-y-5">
+                  <div>
+                    <label className="text-xs font-bold text-slate-700 uppercase block mb-1">Annual Gross Income (₹):</label>
+                    <input
+                      type="number"
+                      step={50000}
+                      value={taxIncome}
+                      onChange={(e) => setTaxIncome(Number(e.target.value))}
+                      className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-extrabold text-blue-950"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-slate-700 uppercase block mb-1">80C Investments (PPF, EPF, ELSS, LIC, Home Principal):</label>
+                    <input
+                      type="number"
+                      step={10000}
+                      value={tax80CDeduction}
+                      onChange={(e) => setTax80CDeduction(Number(e.target.value))}
+                      className="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-slate-700 uppercase block mb-1">80D Health Insurance Premium (Self & Parents):</label>
+                    <input
+                      type="number"
+                      step={5000}
+                      value={tax80DDeduction}
+                      onChange={(e) => setTax80DDeduction(Number(e.target.value))}
+                      className="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold"
+                    />
+                  </div>
+                </div>
+
+                <div className="lg:col-span-6 bg-gradient-to-br from-slate-900 to-blue-950 text-white p-6 rounded-2xl space-y-4 shadow-inner">
+                  <h4 className="text-sm font-bold text-slate-300 uppercase tracking-wider">Regime Comparison</h4>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="bg-white/10 p-3.5 rounded-xl border border-white/10">
+                      <p className="text-[11px] text-slate-400 font-bold uppercase">New Regime Tax</p>
+                      <p className="text-xl font-extrabold text-emerald-400 mt-1">₹{taxCalculation.totalTaxNew.toLocaleString()}</p>
+                      <span className="text-[10px] text-slate-400 mt-1 block">Std Ded: ₹75,000</span>
+                    </div>
+                    <div className="bg-white/10 p-3.5 rounded-xl border border-white/10">
+                      <p className="text-[11px] text-slate-400 font-bold uppercase">Old Regime Tax</p>
+                      <p className="text-xl font-extrabold text-amber-300 mt-1">₹{taxCalculation.totalTaxOld.toLocaleString()}</p>
+                      <span className="text-[10px] text-slate-400 mt-1 block">With 80C + 80D</span>
+                    </div>
+                  </div>
+
+                  <div className="bg-emerald-500/20 border border-emerald-400/40 p-3 rounded-xl text-xs text-emerald-200 font-semibold">
+                    ⭐ <strong>Recommended:</strong> {taxCalculation.recommended} (Saves ₹{taxCalculation.savings.toLocaleString()})
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 6. PPF & SSY Calculator */}
+          {activeCalculator === 'ppf-ssy' && (
+            <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-md space-y-6">
+              <div className="border-b border-slate-200 pb-4">
+                <h3 className="text-lg font-bold text-slate-900">PPF & Sukanya Samriddhi (SSY) Tax-Free Calculator</h3>
+                <p className="text-xs text-slate-500">Calculate guaranteed 15-21 year returns on highest sovereign rate schemes with 100% EEE tax exemption.</p>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                <div className="lg:col-span-6 space-y-6">
+                  <div>
+                    <label className="text-xs font-bold text-slate-700 uppercase block mb-1.5">Select Scheme:</label>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => setPpfSsySchemeType('SSY')}
+                        className={`flex-1 py-2 text-xs font-bold rounded-xl border transition cursor-pointer ${
+                          ppfSsySchemeType === 'SSY'
+                            ? 'bg-blue-950 text-white border-blue-950'
+                            : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+                        }`}
+                      >
+                        Sukanya Samriddhi (8.2%)
+                      </button>
+                      <button
+                        onClick={() => setPpfSsySchemeType('PPF')}
+                        className={`flex-1 py-2 text-xs font-bold rounded-xl border transition cursor-pointer ${
+                          ppfSsySchemeType === 'PPF'
+                            ? 'bg-blue-950 text-white border-blue-950'
+                            : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+                        }`}
+                      >
+                        Public Provident Fund (7.1%)
+                      </button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="flex justify-between items-center mb-1">
+                      <label className="text-xs font-bold text-slate-700 uppercase">Annual Deposit (₹):</label>
+                      <span className="text-sm font-extrabold text-blue-950">₹{ppfSsyAnnualDeposit.toLocaleString()}</span>
+                    </div>
+                    <input
+                      type="range"
+                      min={1000}
+                      max={150000}
+                      step={5000}
+                      value={ppfSsyAnnualDeposit}
+                      onChange={(e) => setPpfSsyAnnualDeposit(Number(e.target.value))}
+                      className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-950"
+                    />
+                  </div>
+                </div>
+
+                <div className="lg:col-span-6 bg-gradient-to-br from-blue-950 to-slate-900 text-white p-6 rounded-2xl space-y-4 shadow-inner">
+                  <h4 className="text-sm font-bold text-slate-300 uppercase tracking-wider">Maturity Amount (100% Tax Free)</h4>
+                  <div className="space-y-3">
+                    <div className="bg-white/10 p-4 rounded-xl border border-white/10">
+                      <p className="text-xs text-slate-300">Total Tax-Free Maturity Corpus:</p>
+                      <p className="text-2xl sm:text-3xl font-extrabold text-emerald-400 mt-1">
+                        ₹{ppfSsyCalculation.maturityValue.toLocaleString()}
+                      </p>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="bg-white/5 p-3 rounded-xl border border-white/10">
+                        <p className="text-[11px] text-slate-400">Total Invested:</p>
+                        <p className="text-base font-bold text-white mt-0.5">₹{ppfSsyCalculation.totalInvested.toLocaleString()}</p>
+                      </div>
+                      <div className="bg-white/5 p-3 rounded-xl border border-white/10">
+                        <p className="text-[11px] text-slate-400">Total Interest Earned:</p>
+                        <p className="text-base font-bold text-amber-300 mt-0.5">₹{ppfSsyCalculation.totalInterest.toLocaleString()}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 7. APY Pension Calculator */}
+          {activeCalculator === 'apy-pension' && (
+            <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-md space-y-6">
+              <div className="border-b border-slate-200 pb-4">
+                <h3 className="text-lg font-bold text-slate-900">Atal Pension Yojana (APY) Monthly Contribution Calculator</h3>
+                <p className="text-xs text-slate-500">Calculate exact monthly auto-debit contribution required from your bank account for ₹1,000 to ₹5,000 guaranteed pension.</p>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                <div className="lg:col-span-6 space-y-6">
+                  <div>
+                    <div className="flex justify-between items-center mb-1">
+                      <label className="text-xs font-bold text-slate-700 uppercase">Your Entry Age (18 to 40 Years):</label>
+                      <span className="text-sm font-extrabold text-blue-950">{apyAge} Years Old</span>
+                    </div>
+                    <input
+                      type="range"
+                      min={18}
+                      max={40}
+                      step={1}
+                      value={apyAge}
+                      onChange={(e) => setApyAge(Number(e.target.value))}
+                      className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-950"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-slate-700 uppercase block mb-1.5">Desired Guaranteed Monthly Pension (After Age 60):</label>
+                    <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
+                      {[1000, 2000, 3000, 4000, 5000].map((amt) => (
+                        <button
+                          key={amt}
+                          onClick={() => setApyDesiredPension(amt)}
+                          className={`py-2 text-xs font-bold rounded-xl border transition cursor-pointer ${
+                            apyDesiredPension === amt
+                              ? 'bg-blue-950 text-white border-blue-950'
+                              : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+                          }`}
+                        >
+                          ₹{amt}/mo
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="lg:col-span-6 bg-gradient-to-br from-blue-950 to-slate-900 text-white p-6 rounded-2xl space-y-4 shadow-inner">
+                  <h4 className="text-sm font-bold text-slate-300 uppercase tracking-wider">Required Contribution</h4>
+                  <div className="space-y-3">
+                    <div className="bg-white/10 p-4 rounded-xl border border-white/10">
+                      <p className="text-xs text-slate-300">Monthly Bank Auto-Debit:</p>
+                      <p className="text-2xl sm:text-3xl font-extrabold text-emerald-400 mt-1">
+                        ₹{apyCalculation.monthlyContribution} / Month
+                      </p>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="bg-white/5 p-3 rounded-xl border border-white/10">
+                        <p className="text-[11px] text-slate-400">Total Contribution (till 60):</p>
+                        <p className="text-base font-bold text-white mt-0.5">₹{apyCalculation.totalContribution.toLocaleString()}</p>
+                      </div>
+                      <div className="bg-white/5 p-3 rounded-xl border border-white/10">
+                        <p className="text-[11px] text-slate-400">Nominee Corpus Return:</p>
+                        <p className="text-base font-bold text-amber-300 mt-0.5">₹{apyCalculation.corpusToNominee.toLocaleString()}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* 8. HIGH VALUE FINANCIAL & WEALTH GUIDES */}
+      {/* ========================================================================= */}
+      {activeMainTab === 'guides' && (
+        <div className="space-y-6">
+          <div className="bg-gradient-to-r from-indigo-500/10 via-blue-500/10 to-indigo-500/10 p-5 rounded-2xl border border-indigo-200/80 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div className="space-y-1 max-w-2xl">
+              <h2 className="text-lg font-extrabold text-slate-900 flex items-center space-x-2">
+                <BookOpen className="w-5 h-5 text-indigo-600" />
+                <span>Expert Financial Guides & Wealth Strategies</span>
+              </h2>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                Step-by-step verified tutorials to build a 750+ CIBIL score, claim maximum solar subsidies, and pick the right insurance without middlemen.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {HIGH_RPM_ARTICLES_GUIDES.map((guide) => (
+              <div
+                key={guide.id}
+                className="bg-white rounded-2xl border border-slate-200 hover:border-indigo-400 hover:shadow-lg transition flex flex-col justify-between overflow-hidden"
+              >
+                <div className="p-5 space-y-3">
+                  <div className="flex items-center justify-between text-[11px] font-bold text-indigo-900">
+                    <span className="bg-indigo-50 px-2.5 py-1 rounded-lg border border-indigo-200">{guide.category}</span>
+                    <span className="text-slate-400">{guide.readTime}</span>
+                  </div>
+                  <h3 className="font-bold text-slate-900 text-base leading-snug hover:text-indigo-950 transition">
+                    {guide.title}
+                  </h3>
+                  <p className="text-xs text-slate-600 line-clamp-3 leading-relaxed">{guide.summary}</p>
+                </div>
+
+                <div className="px-5 py-3.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+                  <button
+                    onClick={() => setSelectedGuideDetail(guide)}
+                    className="w-full py-2 px-3 bg-indigo-950 hover:bg-indigo-900 text-white rounded-xl text-xs font-bold transition flex items-center justify-center space-x-1.5 cursor-pointer"
+                  >
+                    <span>Read Complete Guide</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* HIGH COMMERCIAL INTENT FREQUENTLY ASKED QUESTIONS */}
+      {/* ========================================================================= */}
+      <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 space-y-5 shadow-xs">
+        <div className="flex items-center space-x-2.5">
+          <HelpCircle className="w-6 h-6 text-blue-950" />
+          <h2 className="text-xl font-bold text-slate-900">Frequently Asked Questions (High Intent Finance & Insurance)</h2>
+        </div>
+
+        <div className="divide-y divide-slate-200 space-y-2">
+          {GOOGLE_FINANCE_INSURANCE_FAQS.map((faq, index) => {
+            const isExpanded = expandedFaqIndex === index;
+            return (
+              <div key={index} className="pt-3">
+                <button
+                  onClick={() => setExpandedFaqIndex(isExpanded ? null : index)}
+                  className="w-full flex items-center justify-between py-2 text-left font-bold text-sm text-slate-900 hover:text-blue-950 transition cursor-pointer"
+                >
+                  <span className="pr-4">{faq.question}</span>
+                  {isExpanded ? <ChevronUp className="w-4 h-4 shrink-0 text-blue-950" /> : <ChevronDown className="w-4 h-4 shrink-0 text-slate-400" />}
+                </button>
+                {isExpanded && (
+                  <p className="text-xs sm:text-sm text-slate-600 leading-relaxed pb-3 pt-1 animate-fadeIn">
+                    {faq.answer}
+                  </p>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* ========================================================================= */}
+      {/* DETAIL MODAL: SCHEME APPLICATION GUIDE */}
+      {/* ========================================================================= */}
+      {selectedSchemeDetail && (
+        <div className="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5 overflow-y-auto animate-fadeIn">
+          <div className="bg-white w-full max-w-3xl rounded-3xl border border-slate-200 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="p-5 sm:p-6 bg-gradient-to-r from-blue-950 to-slate-900 text-white flex items-start justify-between gap-4">
+              <div className="space-y-1">
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-blue-500/30 text-blue-200 border border-blue-400/30 uppercase">
+                  {selectedSchemeDetail.category} • {selectedSchemeDetail.subCategory}
+                </span>
+                <h2 className="text-lg sm:text-2xl font-bold leading-tight">{selectedSchemeDetail.title}</h2>
+                {selectedSchemeDetail.hindiTitle && (
+                  <p className="text-xs text-slate-300 font-medium">{selectedSchemeDetail.hindiTitle}</p>
+                )}
+              </div>
+              <button
+                onClick={() => setSelectedSchemeDetail(null)}
+                className="p-2 text-slate-400 hover:text-white bg-white/10 hover:bg-white/20 rounded-full transition cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-5 sm:p-6 space-y-6 overflow-y-auto">
+              <div className="space-y-2">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">Scheme Overview:</h3>
+                <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">{selectedSchemeDetail.overview}</p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-200 text-xs">
+                <div>
+                  <span className="text-slate-500 font-medium block">Key Benefit:</span>
+                  <span className="font-bold text-slate-900">{selectedSchemeDetail.keyBenefit}</span>
+                </div>
+                <div>
+                  <span className="text-slate-500 font-medium block">Eligibility:</span>
+                  <span className="font-bold text-slate-900">{selectedSchemeDetail.eligibility}</span>
+                </div>
+                <div>
+                  <span className="text-slate-500 font-medium block">Age Limit:</span>
+                  <span className="font-semibold text-slate-800">{selectedSchemeDetail.ageLimit}</span>
+                </div>
+                <div>
+                  <span className="text-slate-500 font-medium block">Premium / Deposit:</span>
+                  <span className="font-bold text-emerald-700">{selectedSchemeDetail.premiumOrDeposit || 'Free / As Applicable'}</span>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">Step-by-Step How to Apply:</h3>
+                <ol className="space-y-2">
+                  {selectedSchemeDetail.howToApply.map((step, index) => (
+                    <li key={index} className="text-xs sm:text-sm text-slate-700 flex items-start space-x-2.5">
+                      <span className="w-5 h-5 rounded-full bg-blue-950 text-white flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
+                        {index + 1}
+                      </span>
+                      <span>{step}</span>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+
+              <div className="space-y-2">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">Required Documents Checklist:</h3>
+                <div className="flex flex-wrap gap-2">
+                  {selectedSchemeDetail.requiredDocuments.map((doc, index) => (
+                    <span key={index} className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-blue-50 text-blue-950 border border-blue-200 text-xs font-medium">
+                      <FileText className="w-3.5 h-3.5 text-blue-700" />
+                      <span>{doc}</span>
+                    </span>
+                  ))}
+                </div>
+              </div>
+
               {selectedSchemeDetail.helplineNumber && (
-                <div className="text-xs text-slate-500 font-bold flex items-center gap-1.5">
-                  <PhoneCall className="w-4 h-4 text-emerald-600" />
-                  <span>Helpline: {selectedSchemeDetail.helplineNumber}</span>
+                <div className="p-3 bg-amber-50 rounded-2xl border border-amber-200 text-xs flex items-center justify-between text-amber-900 font-medium">
+                  <div className="flex items-center space-x-2">
+                    <PhoneCall className="w-4 h-4 text-amber-700" />
+                    <span>Official Citizen Helpline:</span>
+                  </div>
+                  <strong className="font-bold text-amber-950">{selectedSchemeDetail.helplineNumber}</strong>
                 </div>
               )}
+            </div>
+
+            <div className="p-4 sm:p-5 bg-slate-50 border-t border-slate-200 flex items-center justify-between gap-3">
+              <button
+                onClick={() => handleCopyLink(selectedSchemeDetail.title, selectedSchemeDetail.officialPortalUrl)}
+                className="py-2.5 px-4 bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 rounded-xl text-xs font-bold transition flex items-center space-x-1.5 cursor-pointer"
+              >
+                <Share2 className="w-3.5 h-3.5" />
+                <span>Share Link</span>
+              </button>
 
               <a
                 href={selectedSchemeDetail.officialPortalUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full sm:w-auto px-6 py-3 bg-emerald-800 hover:bg-emerald-900 text-white rounded-2xl text-xs font-extrabold flex items-center justify-center gap-2 transition shadow-md cursor-pointer"
+                className="py-2.5 px-6 bg-blue-950 hover:bg-blue-900 text-white rounded-xl text-xs sm:text-sm font-bold transition flex items-center space-x-2 cursor-pointer shadow-md"
               >
-                <span>Visit Official Government Portal</span>
+                <span>Go to Official Portal</span>
                 <ExternalLink className="w-4 h-4" />
               </a>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* DETAIL MODAL: GUIDE ARTICLE READER */}
+      {/* ========================================================================= */}
+      {selectedGuideDetail && (
+        <div className="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5 overflow-y-auto animate-fadeIn">
+          <div className="bg-white w-full max-w-3xl rounded-3xl border border-slate-200 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="p-5 sm:p-6 bg-gradient-to-r from-indigo-950 to-slate-900 text-white flex items-start justify-between gap-4">
+              <div className="space-y-1">
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-indigo-500/30 text-indigo-200 border border-indigo-400/30 uppercase">
+                  {selectedGuideDetail.category} • {selectedGuideDetail.readTime}
+                </span>
+                <h2 className="text-lg sm:text-xl font-bold leading-tight">{selectedGuideDetail.title}</h2>
+              </div>
+              <button
+                onClick={() => setSelectedGuideDetail(null)}
+                className="p-2 text-slate-400 hover:text-white bg-white/10 hover:bg-white/20 rounded-full transition cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-5 sm:p-6 space-y-6 overflow-y-auto">
+              <p className="text-xs sm:text-sm text-slate-700 bg-slate-50 p-4 rounded-2xl border border-slate-200 leading-relaxed font-medium">
+                {selectedGuideDetail.summary}
+              </p>
+
+              {selectedGuideDetail.sections.map((sec, i) => (
+                <div key={i} className="space-y-3">
+                  <h3 className="text-sm sm:text-base font-bold text-slate-900">{sec.heading}</h3>
+                  <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">{sec.body}</p>
+
+                  {sec.tableData && (
+                    <div className="overflow-x-auto rounded-xl border border-slate-200 mt-2">
+                      <table className="w-full text-left text-xs">
+                        <thead className="bg-slate-100 font-bold text-slate-700 border-b border-slate-200">
+                          <tr>
+                            {sec.tableData.headers.map((h, hi) => (
+                              <th key={hi} className="p-2.5">{h}</th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-200">
+                          {sec.tableData.rows.map((row, ri) => (
+                            <tr key={ri} className="hover:bg-slate-50">
+                              {row.map((cell, ci) => (
+                                <td key={ci} className="p-2.5 font-medium text-slate-800">{cell}</td>
+                              ))}
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+
+                  {sec.bulletPoints && (
+                    <ul className="space-y-1.5 pl-2">
+                      {sec.bulletPoints.map((bp, bpi) => (
+                        <li key={bpi} className="text-xs sm:text-sm text-slate-700 flex items-start space-x-2">
+                          <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                          <span>{bp}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            <div className="p-4 bg-slate-50 border-t border-slate-200 flex justify-end">
+              <button
+                onClick={() => setSelectedGuideDetail(null)}
+                className="py-2 px-6 bg-slate-900 text-white rounded-xl text-xs font-bold hover:bg-slate-800 transition"
+              >
+                Close Guide
+              </button>
             </div>
           </div>
         </div>

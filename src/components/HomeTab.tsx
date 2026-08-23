@@ -135,6 +135,9 @@ export const HomeTab: React.FC<HomeTabProps> = ({
   const [selectedCity, setSelectedCity] = useState('Patna');
   const [selectedCourse, setSelectedCourse] = useState('B.Tech');
   const [selectedStream, setSelectedStream] = useState('Engineering');
+  const [showAllJobs, setShowAllJobs] = useState(false);
+  const [showAllAdmitCards, setShowAllAdmitCards] = useState(false);
+  const [showAllResults, setShowAllResults] = useState(false);
 
   const handleHeroSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -163,41 +166,59 @@ export const HomeTab: React.FC<HomeTabProps> = ({
     setActiveTab('colleges');
   };
 
-  // Filtered Sarkari updates based on search
+  // Filtered Sarkari updates based on search & view toggles
   const filteredJobs = useMemo(() => {
-    if (!sarkariSearchTerm.trim()) return activeJobs.slice(0, 5);
-    const q = sarkariSearchTerm.toLowerCase();
-    return activeJobs.filter(
-      (j: any) =>
-        j.title?.toLowerCase().includes(q) ||
-        j.organization?.toLowerCase().includes(q) ||
-        j.qualification?.toLowerCase().includes(q)
-    ).slice(0, 5);
-  }, [activeJobs, sarkariSearchTerm]);
+    let list = activeJobs;
+    if (sarkariSearchTerm.trim()) {
+      const q = sarkariSearchTerm.toLowerCase();
+      list = activeJobs.filter(
+        (j: any) =>
+          j.title?.toLowerCase().includes(q) ||
+          j.organization?.toLowerCase().includes(q) ||
+          j.qualification?.toLowerCase().includes(q)
+      );
+    }
+    if (showAllJobs || sarkariActiveFilter === 'jobs' || sarkariSearchTerm.trim()) {
+      return list;
+    }
+    return list.slice(0, 6);
+  }, [activeJobs, sarkariSearchTerm, showAllJobs, sarkariActiveFilter]);
 
   const filteredAdmitCards = useMemo(() => {
-    if (!sarkariSearchTerm.trim()) return activeAdmitCards.slice(0, 5);
-    const q = sarkariSearchTerm.toLowerCase();
-    return activeAdmitCards.filter(
-      (ac: any) =>
-        ac.admitCardName?.toLowerCase().includes(q) ||
-        ac.examName?.toLowerCase().includes(q) ||
-        ac.organization?.toLowerCase().includes(q) ||
-        ac.category?.toLowerCase().includes(q)
-    ).slice(0, 5);
-  }, [activeAdmitCards, sarkariSearchTerm]);
+    let list = activeAdmitCards;
+    if (sarkariSearchTerm.trim()) {
+      const q = sarkariSearchTerm.toLowerCase();
+      list = activeAdmitCards.filter(
+        (ac: any) =>
+          ac.admitCardName?.toLowerCase().includes(q) ||
+          ac.examName?.toLowerCase().includes(q) ||
+          ac.organization?.toLowerCase().includes(q) ||
+          ac.category?.toLowerCase().includes(q)
+      );
+    }
+    if (showAllAdmitCards || sarkariActiveFilter === 'admit-cards' || sarkariSearchTerm.trim()) {
+      return list;
+    }
+    return list.slice(0, 6);
+  }, [activeAdmitCards, sarkariSearchTerm, showAllAdmitCards, sarkariActiveFilter]);
 
   const filteredResults = useMemo(() => {
-    if (!sarkariSearchTerm.trim()) return activeResults.slice(0, 5);
-    const q = sarkariSearchTerm.toLowerCase();
-    return activeResults.filter(
-      (r: any) =>
-        r.title?.toLowerCase().includes(q) ||
-        r.examName?.toLowerCase().includes(q) ||
-        r.conductingBody?.toLowerCase().includes(q) ||
-        r.category?.toLowerCase().includes(q)
-    ).slice(0, 5);
-  }, [activeResults, sarkariSearchTerm]);
+    let list = activeResults;
+    if (sarkariSearchTerm.trim()) {
+      const q = sarkariSearchTerm.toLowerCase();
+      list = activeResults.filter(
+        (r: any) =>
+          r.title?.toLowerCase().includes(q) ||
+          r.examName?.toLowerCase().includes(q) ||
+          r.conductingBody?.toLowerCase().includes(q) ||
+          r.category?.toLowerCase().includes(q)
+      );
+    }
+    if (showAllResults || sarkariActiveFilter === 'results' || sarkariSearchTerm.trim()) {
+      return list;
+    }
+    return list.slice(0, 6);
+  }, [activeResults, sarkariSearchTerm, showAllResults, sarkariActiveFilter]);
 
   return (
     <div className="min-h-screen bg-slate-50/50 pb-16 space-y-8 sm:space-y-12">
@@ -479,6 +500,15 @@ export const HomeTab: React.FC<HomeTabProps> = ({
                     </div>
                   ))}
                 </div>
+
+                {activeJobs.length > 6 && !sarkariSearchTerm && (
+                  <button
+                    onClick={() => setShowAllJobs(!showAllJobs)}
+                    className="w-full py-1.5 text-xs font-bold text-blue-900 hover:text-blue-950 bg-blue-50 hover:bg-blue-100 rounded-xl transition cursor-pointer"
+                  >
+                    {showAllJobs ? 'Show Top 6 Only' : `Show All ${activeJobs.length} Live Jobs`}
+                  </button>
+                )}
               </div>
 
               <button
@@ -519,7 +549,13 @@ export const HomeTab: React.FC<HomeTabProps> = ({
                   {filteredAdmitCards.map((ac: any) => (
                     <div
                       key={ac.id}
-                      onClick={() => setActiveTab('admit-cards')}
+                      onClick={() => {
+                        if (ac.downloadUrl) {
+                          window.open(ac.downloadUrl, '_blank', 'noopener,noreferrer');
+                        } else {
+                          setActiveTab('admit-cards');
+                        }
+                      }}
                       className="p-3 bg-slate-50/80 hover:bg-amber-50/70 border border-slate-200/80 hover:border-amber-300 rounded-2xl transition cursor-pointer space-y-1.5 group"
                     >
                       <div className="flex items-start justify-between gap-1.5">
@@ -547,6 +583,15 @@ export const HomeTab: React.FC<HomeTabProps> = ({
                     </div>
                   ))}
                 </div>
+
+                {activeAdmitCards.length > 6 && !sarkariSearchTerm && (
+                  <button
+                    onClick={() => setShowAllAdmitCards(!showAllAdmitCards)}
+                    className="w-full py-1.5 text-xs font-bold text-amber-900 hover:text-amber-950 bg-amber-50 hover:bg-amber-100 rounded-xl transition cursor-pointer"
+                  >
+                    {showAllAdmitCards ? 'Show Top 6 Only' : `Show All ${activeAdmitCards.length} Admit Cards`}
+                  </button>
+                )}
               </div>
 
               <button
@@ -621,6 +666,15 @@ export const HomeTab: React.FC<HomeTabProps> = ({
                     </div>
                   ))}
                 </div>
+
+                {activeResults.length > 6 && !sarkariSearchTerm && (
+                  <button
+                    onClick={() => setShowAllResults(!showAllResults)}
+                    className="w-full py-1.5 text-xs font-bold text-emerald-900 hover:text-emerald-950 bg-emerald-50 hover:bg-emerald-100 rounded-xl transition cursor-pointer"
+                  >
+                    {showAllResults ? 'Show Top 6 Only' : `Show All ${activeResults.length} Declared Results`}
+                  </button>
+                )}
               </div>
 
               <button
@@ -1071,7 +1125,18 @@ export const HomeTab: React.FC<HomeTabProps> = ({
           {POPULAR_TOOLS_DATA.slice(0, 8).map((tool) => (
             <button
               key={tool.id}
-              onClick={() => setActiveTab('tools')}
+              onClick={() => {
+                if (tool.id === 'photo-resizer' || tool.id === 'signature-resizer') {
+                  if (onOpenPhotoTool) onOpenPhotoTool();
+                  else setActiveTab('tools');
+                } else if (tool.id === 'age-calc') {
+                  if (onOpenAgeCalculator) onOpenAgeCalculator();
+                  else setActiveTab('tools');
+                } else {
+                  if (onOpenPublicToolModal) onOpenPublicToolModal(tool.id);
+                  setActiveTab('tools');
+                }
+              }}
               className="bg-white hover:bg-blue-50/60 border border-slate-200 hover:border-blue-900/30 p-3.5 rounded-2xl text-center flex flex-col items-center justify-center space-y-2 transition-all shadow-xs cursor-pointer group"
             >
               <div className="w-12 h-12 rounded-full bg-slate-100 group-hover:bg-blue-100 text-blue-950 flex items-center justify-center text-xl font-bold transition-transform group-hover:scale-110 shadow-2xs">

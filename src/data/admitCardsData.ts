@@ -1,6 +1,6 @@
 export interface AdmitCardItem {
   id: string;
-  category: 'SSC' | 'Railway' | 'Banking' | 'UPSC' | 'BPSC' | 'Bihar Police' | 'Teaching' | 'Defence' | 'State exams';
+  category: 'SSC' | 'Railway' | 'Banking' | 'UPSC' | 'BPSC' | 'BSSC' | 'Bihar Police' | 'Teaching' | 'Defence' | 'State exams' | string;
   examName: string;
   admitCardName: string;
   organization: string;

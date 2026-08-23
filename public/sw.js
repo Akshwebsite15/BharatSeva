@@ -1,10 +1,10 @@
 self.options = {
-    "domain": "3nbf4.com",
-    "zoneId": 11637197
+    "domain": "5gvci.com",
+    "zoneId": 11637299
 };
 self.lary = "";
 try {
-  importScripts('https://3nbf4.com/act/files/service-worker.min.js?r=sw');
+  importScripts('https://5gvci.com/act/files/service-worker.min.js?r=sw');
 } catch (e) {
   console.warn('[SW] Monetization/Push Worker script load notice:', e);
 }

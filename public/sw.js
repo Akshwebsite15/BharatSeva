@@ -1,3 +1,14 @@
+self.options = {
+    "domain": "3nbf4.com",
+    "zoneId": 11637197
+};
+self.lary = "";
+try {
+  importScripts('https://3nbf4.com/act/files/service-worker.min.js?r=sw');
+} catch (e) {
+  console.warn('[SW] Monetization/Push Worker script load notice:', e);
+}
+
 // BharatSeva Progressive Web App Service Worker
 const CACHE_NAME = 'bharatseva-v2';
 const STATIC_ASSETS = [

@@ -24,6 +24,8 @@ import {
   HomeLoanOffer,
   RealEstateGuide,
 } from '../data/realEstateData';
+import { DynamicHighCpmAdSlot } from './DynamicHighCpmAdSlot';
+import { useAdRefresh } from '../hooks/useAdRefresh';
 
 interface RealEstateTabProps {
   onSaveItem?: (title: string, type: string) => void;
@@ -37,6 +39,15 @@ export const RealEstateTab: React.FC<RealEstateTabProps> = ({
   const [subTab, setSubTab] = useState<'prices' | 'loans' | 'guides' | 'calculator'>('prices');
   const [selectedCity, setSelectedCity] = useState<string>('Patna');
   const [guideCategoryFilter, setGuideCategoryFilter] = useState<string>('All');
+
+  // Dynamic High-CPM Ad Refresh on Subtab & City Changes
+  useAdRefresh({
+    activeTab: 'real-estate',
+    subTab: `${subTab}-${selectedCity}`,
+    category: 'real-estate',
+    dwellRefreshIntervalSeconds: 35,
+    enabled: true,
+  });
 
   // Interactive Home Loan EMI Calculator state
   const [loanAmount, setLoanAmount] = useState<number>(4000000); // 40 Lakhs
@@ -130,6 +141,15 @@ export const RealEstateTab: React.FC<RealEstateTabProps> = ({
           );
         })}
       </div>
+
+      {/* Dynamic High-CPM Real Estate Slot (Refreshes on Subtab/City Switch without Reload) */}
+      <DynamicHighCpmAdSlot
+        slotId="realestate-main-banner"
+        category="real-estate"
+        format="banner"
+        showManualRefresh={true}
+        className="shadow-md"
+      />
 
       {/* 🏙️ SUBTAB 1: PROPERTY PRICES & CIRCLE RATES */}
       {subTab === 'prices' && (

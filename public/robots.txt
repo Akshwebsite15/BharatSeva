@@ -1,0 +1,11 @@
+# BharatSeva Citizen Portal Robots.txt
+# High-speed search engine indexing for Googlebot, Bingbot, and web crawlers
+
+User-agent: *
+Allow: /
+Allow: /api/live-updates
+Allow: /api/chat
+
+# Host & Sitemap Directives
+Host: bharatseva.in
+Sitemap: https://bharatseva.in/sitemap.xml

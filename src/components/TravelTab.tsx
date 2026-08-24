@@ -21,6 +21,8 @@ import {
   TravelDestination,
   TravelServiceGuide,
 } from '../data/travelData';
+import { DynamicHighCpmAdSlot } from './DynamicHighCpmAdSlot';
+import { useAdRefresh } from '../hooks/useAdRefresh';
 
 interface TravelTabProps {
   onSaveItem?: (title: string, type: string) => void;
@@ -29,6 +31,15 @@ interface TravelTabProps {
 export const TravelTab: React.FC<TravelTabProps> = ({ onSaveItem }) => {
   const [activeSubTab, setActiveSubTab] = useState<'destinations' | 'irctc' | 'digiyatra' | 'passport'>('destinations');
   const [destinationFilter, setDestinationFilter] = useState<string>('All');
+
+  // Dynamic High-CPM Ad Refresh on Subtab Switch
+  useAdRefresh({
+    activeTab: 'travel',
+    subTab: activeSubTab,
+    category: 'travel',
+    dwellRefreshIntervalSeconds: 35,
+    enabled: true,
+  });
 
   const filteredDestinations =
     destinationFilter === 'All'
@@ -96,6 +107,15 @@ export const TravelTab: React.FC<TravelTabProps> = ({ onSaveItem }) => {
           );
         })}
       </div>
+
+      {/* Dynamic High-CPM Travel & IRCTC Slot */}
+      <DynamicHighCpmAdSlot
+        slotId="travel-main-banner"
+        category="travel"
+        format="banner"
+        showManualRefresh={true}
+        className="shadow-md"
+      />
 
       {/* 🗺️ SUBTAB 1: DESTINATIONS */}
       {activeSubTab === 'destinations' && (

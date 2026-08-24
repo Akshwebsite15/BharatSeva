@@ -22,6 +22,8 @@ import {
   BusinessIdea,
   BusinessSchemeGuide,
 } from '../data/businessData';
+import { DynamicHighCpmAdSlot } from './DynamicHighCpmAdSlot';
+import { useAdRefresh } from '../hooks/useAdRefresh';
 
 interface BusinessHubTabProps {
   onSaveItem?: (title: string, type: string) => void;
@@ -29,6 +31,15 @@ interface BusinessHubTabProps {
 
 export const BusinessHubTab: React.FC<BusinessHubTabProps> = ({ onSaveItem }) => {
   const [activeSection, setActiveSection] = useState<'ideas' | 'schemes' | 'gst' | 'software'>('ideas');
+
+  // Dynamic High-CPM Ad Refresh on Subtab Switch
+  useAdRefresh({
+    activeTab: 'business-msme',
+    subTab: activeSection,
+    category: 'business-msme',
+    dwellRefreshIntervalSeconds: 35,
+    enabled: true,
+  });
 
   return (
     <div className="space-y-8 animate-in fade-in duration-300">
@@ -91,6 +102,15 @@ export const BusinessHubTab: React.FC<BusinessHubTabProps> = ({ onSaveItem }) =>
           );
         })}
       </div>
+
+      {/* Dynamic High-CPM MSME & Startup Enterprise Slot */}
+      <DynamicHighCpmAdSlot
+        slotId="business-main-banner"
+        category="business-msme"
+        format="banner"
+        showManualRefresh={true}
+        className="shadow-md"
+      />
 
       {/* 📈 SECTION 1: BUSINESS IDEAS */}
       {activeSection === 'ideas' && (

@@ -63,6 +63,7 @@ import {
 import { initialCMSResults, initialCMSAdmitCards, initialCMSJobs } from '../data/cmsInitialData';
 import { BharatSevaPlusModal } from './BharatSevaPlusModal';
 import { ArticleReaderModal } from './ArticleReaderModal';
+import { DynamicHighCpmAdSlot } from './DynamicHighCpmAdSlot';
 
 interface HomeTabProps {
   setActiveTab: (tab: string) => void;
@@ -541,6 +542,17 @@ export const HomeTab: React.FC<HomeTabProps> = ({
         </div>
       </section>
 
+      {/* Dynamic High-CPM Sponsored Banner (Refreshes on Navigation & Visibility Change) */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <DynamicHighCpmAdSlot
+          slotId="home-mid-banner"
+          category="education-jobs"
+          format="banner"
+          showManualRefresh={true}
+          className="shadow-md"
+        />
+      </section>
+
       {/* ──────────────────────────────────────────────────────────────────────────
           2. TOP PROMINENT SARKARI LIVE UPDATES HUB (Latest Govt Jobs, Results, Admit Cards)
       ────────────────────────────────────────────────────────────────────────── */}
@@ -606,40 +618,7 @@ export const HomeTab: React.FC<HomeTabProps> = ({
           </div>
         </div>
 
-        {/* ⚡ High-CPM Featured Fast-Track Candidate Access Banner */}
-        <div className="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 rounded-3xl p-4 sm:p-5 text-white shadow-md border border-blue-700/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div className="flex items-start space-x-3">
-            <div className="w-10 h-10 rounded-2xl bg-amber-400 text-slate-950 flex items-center justify-center font-black shrink-0 shadow-xs">
-              <Zap className="w-5 h-5 fill-slate-950" />
-            </div>
-            <div className="space-y-0.5">
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-black uppercase tracking-wider text-amber-300">
-                  Featured Fast-Track Portal
-                </span>
-                <span className="bg-emerald-500 text-slate-950 text-[10px] font-extrabold px-2 py-0.5 rounded-full">
-                  High-Speed Server 1
-                </span>
-              </div>
-              <h3 className="text-sm sm:text-base font-extrabold text-white">
-                Direct Candidate Verification & High-Value Educational/Career Grants
-              </h3>
-              <p className="text-xs text-slate-300">
-                Instant one-click portal access for government career alerts, special schemes, and official registration assistance.
-              </p>
-            </div>
-          </div>
 
-          <a
-            href="https://omg10.com/4/11640571"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-full sm:w-auto px-5 py-2.5 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-black rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition hover:scale-105 shrink-0"
-          >
-            <span>Open Direct Portal</span>
-            <ExternalLink className="w-3.5 h-3.5" />
-          </a>
-        </div>
 
         {/* 3-Column Sarkari Updates Grid (The Sarkari Classic Triad) */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-start">

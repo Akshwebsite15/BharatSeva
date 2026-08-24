@@ -219,6 +219,14 @@ export const Footer: React.FC<FooterProps> = ({
           <button onClick={() => onOpenLegalModal('disclaimer')} className="hover:text-slate-300 cursor-pointer">
             Disclaimer
           </button>
+          <a
+            href="/sitemap.xml"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-amber-400 text-slate-400 transition"
+          >
+            XML Sitemap
+          </a>
         </div>
       </div>
     </footer>

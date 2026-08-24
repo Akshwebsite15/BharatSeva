@@ -19,6 +19,8 @@ import {
   PARIVAHAN_SERVICES,
   VehicleItem,
 } from '../data/automobilesData';
+import { DynamicHighCpmAdSlot } from './DynamicHighCpmAdSlot';
+import { useAdRefresh } from '../hooks/useAdRefresh';
 
 interface AutomobilesTabProps {
   onSaveItem?: (title: string, type: string) => void;
@@ -27,6 +29,15 @@ interface AutomobilesTabProps {
 export const AutomobilesTab: React.FC<AutomobilesTabProps> = ({ onSaveItem }) => {
   const [vehicleTypeFilter, setVehicleTypeFilter] = useState<string>('All');
   const [activeSubTab, setActiveSubTab] = useState<'vehicles' | 'insurance' | 'parivahan' | 'ev-calc'>('vehicles');
+
+  // Dynamic High-CPM Ad Refresh on Subtab Switch
+  useAdRefresh({
+    activeTab: 'automobiles',
+    subTab: activeSubTab,
+    category: 'automobiles',
+    dwellRefreshIntervalSeconds: 35,
+    enabled: true,
+  });
 
   // EV vs Petrol Monthly Savings Calculator state
   const [monthlyKm, setMonthlyKm] = useState<number>(1200); // 1,200 km per month
@@ -105,6 +116,15 @@ export const AutomobilesTab: React.FC<AutomobilesTabProps> = ({ onSaveItem }) =>
           );
         })}
       </div>
+
+      {/* Dynamic High-CPM Automobiles & Insurance Slot */}
+      <DynamicHighCpmAdSlot
+        slotId="automobiles-main-banner"
+        category="automobiles"
+        format="banner"
+        showManualRefresh={true}
+        className="shadow-md"
+      />
 
       {/* 🚗 SUBTAB 1: VEHICLES */}
       {activeSubTab === 'vehicles' && (

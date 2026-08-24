@@ -56,6 +56,8 @@ import {
   BankFdRateItem,
   HighRpmGuideArticle,
 } from '../data/financeInsuranceData';
+import { DynamicHighCpmAdSlot } from './DynamicHighCpmAdSlot';
+import { useAdRefresh } from '../hooks/useAdRefresh';
 
 interface FinanceInsuranceTabProps {
   onSaveItem?: (title: string, type: string) => void;
@@ -70,6 +72,15 @@ export const FinanceInsuranceTab: React.FC<FinanceInsuranceTabProps> = ({
   const [activeMainTab, setActiveMainTab] = useState<
     'schemes' | 'credit-cards' | 'loans' | 'insurance' | 'fd-rates' | 'solar' | 'calculators' | 'guides'
   >('schemes');
+
+  // Dynamic High-CPM Ad Refresh on Subtab Navigation
+  useAdRefresh({
+    activeTab: 'finance-insurance',
+    subTab: activeMainTab,
+    category: 'finance-insurance',
+    dwellRefreshIntervalSeconds: 35,
+    enabled: true,
+  });
 
   // Search & Filter States
   const [searchQuery, setSearchQuery] = useState('');
@@ -584,6 +595,15 @@ export const FinanceInsuranceTab: React.FC<FinanceInsuranceTabProps> = ({
           </button>
         </div>
       </div>
+
+      {/* Dynamic High-CPM Sponsored Banner (Refreshes on Subtab Switch without Page Reload) */}
+      <DynamicHighCpmAdSlot
+        slotId="finance-main-banner"
+        category="finance-insurance"
+        format="banner"
+        showManualRefresh={true}
+        className="shadow-md"
+      />
 
       {/* ========================================================================= */}
       {/* 1. GOVERNMENT & COMMERCIAL SCHEMES TAB */}

@@ -20,6 +20,8 @@ import {
   HospitalItem,
   GenericMedicineComparison,
 } from '../data/healthData';
+import { DynamicHighCpmAdSlot } from './DynamicHighCpmAdSlot';
+import { useAdRefresh } from '../hooks/useAdRefresh';
 
 interface HealthTabProps {
   onSaveItem?: (title: string, type: string) => void;
@@ -28,6 +30,15 @@ interface HealthTabProps {
 export const HealthTab: React.FC<HealthTabProps> = ({ onSaveItem }) => {
   const [activeSubTab, setActiveSubTab] = useState<'ayushman' | 'medicines' | 'hospitals' | 'surgeries' | 'bmi'>('ayushman');
   const [searchMedicine, setSearchMedicine] = useState<string>('');
+
+  // Dynamic High-CPM Ad Refresh on Subtab Switch
+  useAdRefresh({
+    activeTab: 'health',
+    subTab: activeSubTab,
+    category: 'health',
+    dwellRefreshIntervalSeconds: 35,
+    enabled: true,
+  });
 
   // Interactive BMI Calculator state
   const [weightKg, setWeightKg] = useState<number>(68);
@@ -120,6 +131,15 @@ export const HealthTab: React.FC<HealthTabProps> = ({ onSaveItem }) => {
           );
         })}
       </div>
+
+      {/* Dynamic High-CPM Healthcare & Ayushman Slot */}
+      <DynamicHighCpmAdSlot
+        slotId="health-main-banner"
+        category="health"
+        format="banner"
+        showManualRefresh={true}
+        className="shadow-md"
+      />
 
       {/* 🏥 SUBTAB 1: AYUSHMAN BHARAT & ABHA */}
       {activeSubTab === 'ayushman' && (

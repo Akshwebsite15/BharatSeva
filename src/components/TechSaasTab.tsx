@@ -20,6 +20,8 @@ import {
   TechToolItem,
   TechBuyingGuide,
 } from '../data/techSaasData';
+import { DynamicHighCpmAdSlot } from './DynamicHighCpmAdSlot';
+import { useAdRefresh } from '../hooks/useAdRefresh';
 
 interface TechSaasTabProps {
   onSaveItem?: (title: string, type: string) => void;
@@ -28,6 +30,15 @@ interface TechSaasTabProps {
 export const TechSaasTab: React.FC<TechSaasTabProps> = ({ onSaveItem }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [pricingFilter, setPricingFilter] = useState<string>('All');
+
+  // Dynamic High-CPM Ad Refresh on Category Filtering
+  useAdRefresh({
+    activeTab: 'tech-saas',
+    subTab: selectedCategory,
+    category: 'tech-saas',
+    dwellRefreshIntervalSeconds: 35,
+    enabled: true,
+  });
 
   const categories = [
     'All',
@@ -114,6 +125,15 @@ export const TechSaasTab: React.FC<TechSaasTabProps> = ({ onSaveItem }) => {
           </select>
         </div>
       </div>
+
+      {/* Dynamic High-CPM Tech & SaaS Slot */}
+      <DynamicHighCpmAdSlot
+        slotId="tech-saas-main-banner"
+        category="tech-saas"
+        format="banner"
+        showManualRefresh={true}
+        className="shadow-md"
+      />
 
       {/* Tools Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

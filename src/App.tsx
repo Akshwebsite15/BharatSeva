@@ -57,6 +57,7 @@ const DailyStudyPlannerModal = lazy(() => import('./components/DailyStudyPlanner
 const CitizenPublicToolsHubModal = lazy(() => import('./components/CitizenPublicToolsHubModal').then(m => ({ default: m.CitizenPublicToolsHubModal })));
 
 import { SEOPageMeta } from './types';
+import { useAdRefresh } from './hooks/useAdRefresh';
 
 import {
   JurisdictionState,
@@ -105,6 +106,13 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<string>('home');
   const [selectedJurisdiction, setSelectedJurisdiction] =
     useState<JurisdictionState>('Bihar');
+
+  // Dynamic High-CPM Ad Slot Refresh on Tab Switching & Background Dwell
+  useAdRefresh({
+    activeTab,
+    dwellRefreshIntervalSeconds: 40,
+    enabled: true,
+  });
 
   // Admin CMS Portal State
   const [adminCmsOpen, setAdminCmsOpen] = useState(false);

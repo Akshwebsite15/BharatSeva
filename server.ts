@@ -1,8 +1,10 @@
 import express from "express";
 import path from "path";
+import fs from "fs";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
 import dotenv from "dotenv";
+import { generateSitemapXml, writeSitemapFiles } from "./scripts/generate-sitemap";
 
 dotenv.config();
 
@@ -30,6 +32,73 @@ function getGenAI() {
 // Health Check API
 app.get("/api/health", (_req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });
+});
+
+// Dynamic & High-Speed Sitemap XML Route
+app.get("/sitemap.xml", (req, res) => {
+  try {
+    const publicSitemap = path.join(process.cwd(), "public", "sitemap.xml");
+    const distSitemap = path.join(process.cwd(), "dist", "sitemap.xml");
+
+    let sitemapXml = "";
+    if (fs.existsSync(distSitemap)) {
+      sitemapXml = fs.readFileSync(distSitemap, "utf8");
+    } else if (fs.existsSync(publicSitemap)) {
+      sitemapXml = fs.readFileSync(publicSitemap, "utf8");
+    } else {
+      const host = req.get("host") || "bharatseva.in";
+      const protocol = req.protocol === "https" || req.headers["x-forwarded-proto"] === "https" ? "https" : "http";
+      const siteUrl = `${protocol}://${host}`;
+      const gen = generateSitemapXml(siteUrl);
+      sitemapXml = gen.xml;
+    }
+
+    res.setHeader("Content-Type", "application/xml; charset=utf-8");
+    res.setHeader("Cache-Control", "public, max-age=3600, s-maxage=3600");
+    res.send(sitemapXml);
+  } catch (err) {
+    console.error("Error serving /sitemap.xml:", err);
+    res.status(500).send("<?xml version=\"1.0\" encoding=\"UTF-8\"?><error>Failed to generate sitemap</error>");
+  }
+});
+
+// Robots.txt Route
+app.get("/robots.txt", (req, res) => {
+  try {
+    const publicRobots = path.join(process.cwd(), "public", "robots.txt");
+    if (fs.existsSync(publicRobots)) {
+      res.setHeader("Content-Type", "text/plain; charset=utf-8");
+      res.sendFile(publicRobots);
+      return;
+    }
+
+    const host = req.get("host") || "bharatseva.in";
+    const protocol = req.protocol === "https" || req.headers["x-forwarded-proto"] === "https" ? "https" : "http";
+    const content = `User-agent: *\nAllow: /\nAllow: /api/live-updates\nAllow: /api/chat\n\nHost: ${host}\nSitemap: ${protocol}://${host}/sitemap.xml\n`;
+    res.setHeader("Content-Type", "text/plain; charset=utf-8");
+    res.send(content);
+  } catch (err) {
+    res.status(500).send("User-agent: *\nAllow: /\n");
+  }
+});
+
+// Sitemap Stats API (For Dashboard & Admin Monitoring)
+app.get("/api/sitemap/stats", (req, res) => {
+  try {
+    const host = req.get("host") || "bharatseva.in";
+    const protocol = req.protocol === "https" || req.headers["x-forwarded-proto"] === "https" ? "https" : "http";
+    const siteUrl = `${protocol}://${host}`;
+    const result = generateSitemapXml(siteUrl);
+    res.json({
+      status: "ok",
+      siteUrl,
+      totalUrls: result.totalUrls,
+      breakdown: result.breakdown,
+      generatedAt: new Date().toISOString(),
+    });
+  } catch (err: any) {
+    res.status(500).json({ status: "error", message: err?.message });
+  }
 });
 
 // AI Assistant Chat API

@@ -24,6 +24,10 @@ import {
   Hourglass,
   CalendarCheck,
   BookOpen,
+  Home,
+  Cpu,
+  Car,
+  HeartPulse,
 } from 'lucide-react';
 import { JurisdictionState } from '../types';
 
@@ -66,18 +70,18 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
   ];
 
   const exploreCategories = [
+    { id: 'finance-insurance', label: '🥇 Finance & Loans', icon: TrendingUp, desc: 'Personal, Home, FD & Tax' },
+    { id: 'jobs', label: '🥈 Govt Jobs & Exams', icon: Briefcase, desc: 'BPSC, CSBC, SSC & Alerts' },
+    { id: 'colleges', label: '🥉 Education & Admissions', icon: GraduationCap, desc: 'NIRF Colleges & Cutoffs' },
+    { id: 'real-estate', label: 'Real Estate & Land', icon: Home, desc: 'BhuNaksha, Dakhil Kharij' },
+    { id: 'tech-saas', label: 'Tech, AI & SaaS', icon: Cpu, desc: 'AI Tools, Hosting, VPNs' },
+    { id: 'business-hub', label: 'Business & MSME', icon: Building, desc: 'Udyam, PMEGP ₹50L, GST' },
+    { id: 'automobiles', label: 'Cars, EVs & Parivahan', icon: Car, desc: 'EV Savings, DL, Insurance' },
+    { id: 'health', label: 'Health & Ayushman', icon: HeartPulse, desc: '₹5L Card, Jan Aushadhi 90% Off' },
+    { id: 'travel', label: 'Travel & IRCTC Tatkal', icon: Compass, desc: 'Tatkal Hacks, Flights, PSK' },
     { id: 'schemes', label: 'Government Schemes', icon: Landmark, desc: 'Central & State DBT Welfare' },
-    { id: 'scholarships', label: 'Scholarships', icon: GraduationCap, desc: 'NSP, Post-Matric & Private' },
-    { id: 'colleges', label: 'Colleges & Institutes', icon: Building2, desc: 'Engineering, Medical, Arts' },
-    { id: 'universities', label: 'Universities', icon: Building, desc: 'Central, State & Private' },
-    { id: 'exams', label: 'Exams & Mock Tests', icon: PenSquare, desc: 'UPSC, SSC, BPSC, GATE, NEET' },
-    { id: 'jobs', label: 'Career & Govt Jobs', icon: Briefcase, desc: 'Active Vacancies & Notifications' },
-    { id: 'finance', label: 'Finance & Loans', icon: TrendingUp, desc: 'FD, RD, Mudra, Personal Loans' },
-    { id: 'insurance', label: 'Insurance & Health', icon: ShieldCheck, desc: 'Ayushman, PMJJBY, PMSBY' },
-    { id: 'business', label: 'Business & MSME', icon: Building, desc: 'Startups, Mudra, PMEGP' },
-    { id: 'admissions', label: 'Admissions 2026', icon: CalendarCheck, desc: 'Central University UG/PG' },
-    { id: 'courses', label: 'Courses & Degrees', icon: BookOpen, desc: 'Top In-demand Career Tracks' },
-    { id: 'deadlines', label: 'Closing Soon 🚨', icon: Hourglass, desc: 'Expiring Application Deadlines' },
+    { id: 'exams', label: 'Exams & Admit Cards', icon: PenSquare, desc: 'Live Admit Cards & Results' },
+    { id: 'tools', label: 'Calculators & Tools', icon: Calculator, desc: '500+ Financial & Age Calculators' },
   ];
 
   const handleNavClick = (item: typeof bottomNavItems[0]) => {

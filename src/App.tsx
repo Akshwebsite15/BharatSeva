@@ -30,6 +30,12 @@ const CourseDirectory = lazy(() => import('./components/CourseDirectory').then(m
 const AdmissionDirectory = lazy(() => import('./components/AdmissionDirectory').then(m => ({ default: m.AdmissionDirectory })));
 const AdmitCardsTab = lazy(() => import('./components/AdmitCardsTab').then(m => ({ default: m.AdmitCardsTab })));
 const FinanceInsuranceTab = lazy(() => import('./components/FinanceInsuranceTab').then(m => ({ default: m.FinanceInsuranceTab })));
+const RealEstateTab = lazy(() => import('./components/RealEstateTab').then(m => ({ default: m.RealEstateTab })));
+const TechSaasTab = lazy(() => import('./components/TechSaasTab').then(m => ({ default: m.TechSaasTab })));
+const BusinessHubTab = lazy(() => import('./components/BusinessHubTab').then(m => ({ default: m.BusinessHubTab })));
+const AutomobilesTab = lazy(() => import('./components/AutomobilesTab').then(m => ({ default: m.AutomobilesTab })));
+const HealthTab = lazy(() => import('./components/HealthTab').then(m => ({ default: m.HealthTab })));
+const TravelTab = lazy(() => import('./components/TravelTab').then(m => ({ default: m.TravelTab })));
 const ToolsHubTab = lazy(() => import('./components/ToolsHubTab').then(m => ({ default: m.ToolsHubTab })));
 const AiUtilitiesTab = lazy(() => import('./components/AiUtilitiesTab').then(m => ({ default: m.AiUtilitiesTab })));
 
@@ -814,6 +820,43 @@ export default function App() {
             <FinanceInsuranceTab
               onSaveItem={(title, type) => handleSaveItem(title, type as any)}
               onOpenPublicToolModal={handleOpenPublicToolModal}
+            />
+          )}
+
+          {activeTab === 'real-estate' && (
+            <RealEstateTab
+              onSaveItem={(title, type) => handleSaveItem(title, type as any)}
+              onOpenPublicToolModal={handleOpenPublicToolModal}
+            />
+          )}
+
+          {activeTab === 'tech-saas' && (
+            <TechSaasTab
+              onSaveItem={(title, type) => handleSaveItem(title, type as any)}
+            />
+          )}
+
+          {(activeTab === 'business' || activeTab === 'business-hub') && (
+            <BusinessHubTab
+              onSaveItem={(title, type) => handleSaveItem(title, type as any)}
+            />
+          )}
+
+          {activeTab === 'automobiles' && (
+            <AutomobilesTab
+              onSaveItem={(title, type) => handleSaveItem(title, type as any)}
+            />
+          )}
+
+          {activeTab === 'health' && (
+            <HealthTab
+              onSaveItem={(title, type) => handleSaveItem(title, type as any)}
+            />
+          )}
+
+          {activeTab === 'travel' && (
+            <TravelTab
+              onSaveItem={(title, type) => handleSaveItem(title, type as any)}
             />
           )}
 

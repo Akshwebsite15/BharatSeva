@@ -36,6 +36,10 @@ import {
   FileSpreadsheet,
   Calendar,
   Layers,
+  Car,
+  Compass,
+  Cpu,
+  Home as HomeIcon,
 } from 'lucide-react';
 import {
   JurisdictionState,
@@ -375,6 +379,169 @@ export const HomeTab: React.FC<HomeTabProps> = ({
       </section>
 
       {/* ──────────────────────────────────────────────────────────────────────────
+          ⭐ 9 CORE HIGH-VALUE CATEGORY HUBS (Direct Navigation & Yield Overview)
+      ────────────────────────────────────────────────────────────────────────── */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
+        <div className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-xs space-y-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
+            <div>
+              <div className="inline-flex items-center gap-1.5 text-xs font-black text-blue-900 uppercase tracking-wider">
+                <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                <span>India’s Primary Intelligence Verticals</span>
+              </div>
+              <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                9 High-Impact Knowledge & Public Utility Hubs
+              </h2>
+            </div>
+            <div className="text-xs text-slate-500 font-semibold bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200">
+              Verified 2026 Portals & Calculators
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4">
+            {[
+              {
+                id: 'finance-insurance',
+                title: '🥇 Finance & Insurance',
+                subtitle: 'Personal & Home Loans, Credit Cards, Tax & FD Rates',
+                icon: TrendingUp,
+                cpmTag: 'Highest Yield',
+                bgColor: 'from-blue-50 to-indigo-50/50',
+                borderColor: 'border-blue-200',
+                iconColor: 'text-blue-900 bg-blue-100',
+                buttonLabel: 'Explore Finance & Loans',
+              },
+              {
+                id: 'jobs',
+                title: '🥈 Jobs & Careers',
+                subtitle: 'Sarkari Recruitments, BPSC/CSBC/SSC, Salary & Syllabus',
+                icon: Briefcase,
+                cpmTag: 'High Traffic',
+                bgColor: 'from-amber-50 to-orange-50/50',
+                borderColor: 'border-amber-200',
+                iconColor: 'text-amber-900 bg-amber-100',
+                buttonLabel: 'Explore Govt Jobs',
+              },
+              {
+                id: 'colleges',
+                title: '🥉 Education & Admissions',
+                subtitle: 'NIRF Colleges, Cutoffs, JEE/NEET & Free Courses',
+                icon: GraduationCap,
+                cpmTag: 'High Demand',
+                bgColor: 'from-emerald-50 to-teal-50/50',
+                borderColor: 'border-emerald-200',
+                iconColor: 'text-emerald-900 bg-emerald-100',
+                buttonLabel: 'Explore Colleges & Courses',
+              },
+              {
+                id: 'real-estate',
+                title: '4. Real Estate & Land',
+                subtitle: 'BhuNaksha, Dakhil Kharij, RERA Prices & Home Loan Calculator',
+                icon: HomeIcon,
+                cpmTag: 'High Value',
+                bgColor: 'from-purple-50 to-indigo-50/50',
+                borderColor: 'border-purple-200',
+                iconColor: 'text-purple-900 bg-purple-100',
+                buttonLabel: 'Explore Land & Property',
+              },
+              {
+                id: 'tech-saas',
+                title: '5. Technology & SaaS',
+                subtitle: 'AI Tools, Cloud Hosting, VPNs & Dev Benchmarks',
+                icon: Cpu,
+                cpmTag: 'Tech Vertical',
+                bgColor: 'from-cyan-50 to-blue-50/50',
+                borderColor: 'border-cyan-200',
+                iconColor: 'text-cyan-900 bg-cyan-100',
+                buttonLabel: 'Explore Tech & AI Tools',
+              },
+              {
+                id: 'business-hub',
+                title: '6. Business & MSME Hub',
+                subtitle: 'Udyam Registration, PMEGP ₹50L Subsidy, GST Rates',
+                icon: Building,
+                cpmTag: 'Enterprise',
+                bgColor: 'from-amber-50 to-yellow-50/50',
+                borderColor: 'border-amber-200',
+                iconColor: 'text-amber-900 bg-amber-100',
+                buttonLabel: 'Explore Business & GST',
+              },
+              {
+                id: 'automobiles',
+                title: '7. Automobiles & Mobility',
+                subtitle: 'Cars, Bikes, EV Savings Calculator, Parivahan & IDV Insurance',
+                icon: Car,
+                cpmTag: 'Automotive',
+                bgColor: 'from-rose-50 to-red-50/50',
+                borderColor: 'border-rose-200',
+                iconColor: 'text-rose-900 bg-rose-100',
+                buttonLabel: 'Explore Cars & EVs',
+              },
+              {
+                id: 'health',
+                title: '8. Health & Ayushman',
+                subtitle: 'Ayushman ₹5L Card, Jan Aushadhi 90% Off Drugs, Hospitals',
+                icon: HeartPulse,
+                cpmTag: 'Healthcare',
+                bgColor: 'from-teal-50 to-emerald-50/50',
+                borderColor: 'border-teal-200',
+                iconColor: 'text-teal-900 bg-teal-100',
+                buttonLabel: 'Explore Health & ABHA',
+              },
+              {
+                id: 'travel',
+                title: '9. Travel & Pilgrimage',
+                subtitle: 'IRCTC Tatkal Booking Hacks, Flights, DigiYatra, Passport',
+                icon: Compass,
+                cpmTag: 'Tourism',
+                bgColor: 'from-sky-50 to-blue-50/50',
+                borderColor: 'border-sky-200',
+                iconColor: 'text-sky-900 bg-sky-100',
+                buttonLabel: 'Explore Travel & Tatkal',
+              },
+            ].map((hub) => {
+              const HubIcon = hub.icon;
+              return (
+                <div
+                  key={hub.id}
+                  onClick={() => {
+                    setActiveTab(hub.id);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className={`bg-gradient-to-br ${hub.bgColor} p-5 rounded-2xl border ${hub.borderColor} shadow-2xs hover:shadow-md transition-all cursor-pointer flex flex-col justify-between space-y-3 group`}
+                >
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div className={`w-9 h-9 rounded-xl ${hub.iconColor} flex items-center justify-center font-bold shrink-0`}>
+                        <HubIcon className="w-5 h-5" />
+                      </div>
+                      <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/80 border border-slate-200/80 text-slate-700">
+                        {hub.cpmTag}
+                      </span>
+                    </div>
+
+                    <div>
+                      <h3 className="text-base font-extrabold text-slate-900 group-hover:text-blue-900 transition-colors">
+                        {hub.title}
+                      </h3>
+                      <p className="text-xs text-slate-600 leading-relaxed mt-0.5">
+                        {hub.subtitle}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="pt-1 flex items-center text-xs font-bold text-blue-900 group-hover:translate-x-1 transition-transform">
+                    <span>{hub.buttonLabel}</span>
+                    <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ──────────────────────────────────────────────────────────────────────────
           2. TOP PROMINENT SARKARI LIVE UPDATES HUB (Latest Govt Jobs, Results, Admit Cards)
       ────────────────────────────────────────────────────────────────────────── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
@@ -437,6 +604,41 @@ export const HomeTab: React.FC<HomeTabProps> = ({
               Updated daily with official notifications
             </div>
           </div>
+        </div>
+
+        {/* ⚡ High-CPM Featured Fast-Track Candidate Access Banner */}
+        <div className="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 rounded-3xl p-4 sm:p-5 text-white shadow-md border border-blue-700/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-start space-x-3">
+            <div className="w-10 h-10 rounded-2xl bg-amber-400 text-slate-950 flex items-center justify-center font-black shrink-0 shadow-xs">
+              <Zap className="w-5 h-5 fill-slate-950" />
+            </div>
+            <div className="space-y-0.5">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-black uppercase tracking-wider text-amber-300">
+                  Featured Fast-Track Portal
+                </span>
+                <span className="bg-emerald-500 text-slate-950 text-[10px] font-extrabold px-2 py-0.5 rounded-full">
+                  High-Speed Server 1
+                </span>
+              </div>
+              <h3 className="text-sm sm:text-base font-extrabold text-white">
+                Direct Candidate Verification & High-Value Educational/Career Grants
+              </h3>
+              <p className="text-xs text-slate-300">
+                Instant one-click portal access for government career alerts, special schemes, and official registration assistance.
+              </p>
+            </div>
+          </div>
+
+          <a
+            href="https://omg10.com/4/11640571"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full sm:w-auto px-5 py-2.5 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-black rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition hover:scale-105 shrink-0"
+          >
+            <span>Open Direct Portal</span>
+            <ExternalLink className="w-3.5 h-3.5" />
+          </a>
         </div>
 
         {/* 3-Column Sarkari Updates Grid (The Sarkari Classic Triad) */}

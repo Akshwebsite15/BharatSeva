@@ -26,6 +26,13 @@ import {
   Hourglass,
   Ticket,
   Coins,
+  ExternalLink,
+  Zap,
+  Car,
+  HeartPulse,
+  Compass,
+  Cpu,
+  Home,
 } from 'lucide-react';
 import { JurisdictionState } from '../types';
 
@@ -70,18 +77,21 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
   const [headerSearchQuery, setHeaderSearchQuery] = useState('');
 
-  // Primary 11 Navigation items matching the reference design layout exactly
+  // Primary High-Value Hub Navigation items
   const navItems = [
     { id: 'home', label: 'Home', icon: House },
-    { id: 'schemes', label: 'Government Schemes', icon: Landmark },
-    { id: 'scholarships', label: 'Scholarships', icon: GraduationCap },
-    { id: 'colleges', label: 'Colleges', icon: Building2 },
-    { id: 'exams', label: 'Exams', icon: PenSquare },
-    { id: 'jobs', label: 'Career Tools', icon: Briefcase },
-    { id: 'finance', label: 'Finance', icon: TrendingUp },
-    { id: 'insurance', label: 'Insurance', icon: ShieldCheck },
-    { id: 'business', label: 'Business', icon: Building },
-    { id: 'tools', label: 'Tools', icon: Calculator },
+    { id: 'finance-insurance', label: '🥇 Finance & Insurance', icon: TrendingUp },
+    { id: 'jobs', label: '🥈 Jobs & Careers', icon: Briefcase },
+    { id: 'colleges', label: '🥉 Education & Admissions', icon: GraduationCap },
+    { id: 'real-estate', label: 'Real Estate & Land', icon: Home },
+    { id: 'tech-saas', label: 'Tech, AI & SaaS', icon: Cpu },
+    { id: 'business-hub', label: 'Business & MSME', icon: Building },
+    { id: 'automobiles', label: 'Automobiles & EVs', icon: Car },
+    { id: 'health', label: 'Health & Ayushman', icon: HeartPulse },
+    { id: 'travel', label: 'Travel & IRCTC', icon: Compass },
+    { id: 'schemes', label: 'Govt Schemes', icon: Landmark },
+    { id: 'exams', label: 'Exams & Admit Cards', icon: PenSquare },
+    { id: 'tools', label: 'Calculators', icon: Calculator },
     { id: 'ai-utilities', label: 'AI Utilities', icon: Bot, isSpecial: true },
   ];
 
@@ -97,10 +107,17 @@ export const Navbar: React.FC<NavbarProps> = ({
       onOpenUnifiedSearch();
     } else if (headerSearchQuery.trim()) {
       const q = headerSearchQuery.toLowerCase();
-      if (q.includes('scheme') || q.includes('kisan') || q.includes('yojana')) setActiveTab('schemes');
+      if (q.includes('property') || q.includes('flat') || q.includes('land') || q.includes('registry') || q.includes('dakhil') || q.includes('rera')) setActiveTab('real-estate');
+      else if (q.includes('saas') || q.includes('chatgpt') || q.includes('hosting') || q.includes('vpn') || q.includes('software')) setActiveTab('tech-saas');
+      else if (q.includes('business') || q.includes('gst') || q.includes('msme') || q.includes('udyam') || q.includes('pmegp') || q.includes('startup')) setActiveTab('business-hub');
+      else if (q.includes('car') || q.includes('bike') || q.includes('vehicle') || q.includes('ev') || q.includes('parivahan') || q.includes('challan') || q.includes('licence') || q.includes('dl')) setActiveTab('automobiles');
+      else if (q.includes('health') || q.includes('hospital') || q.includes('ayushman') || q.includes('medicine') || q.includes('abha') || q.includes('doctor') || q.includes('bmi')) setActiveTab('health');
+      else if (q.includes('travel') || q.includes('irctc') || q.includes('tatkal') || q.includes('train') || q.includes('flight') || q.includes('hotel') || q.includes('passport') || q.includes('digiyatra')) setActiveTab('travel');
+      else if (q.includes('finance') || q.includes('loan') || q.includes('credit') || q.includes('insurance') || q.includes('fd') || q.includes('mutual')) setActiveTab('finance-insurance');
+      else if (q.includes('scheme') || q.includes('kisan') || q.includes('yojana')) setActiveTab('schemes');
       else if (q.includes('scholarship')) setActiveTab('scholarships');
-      else if (q.includes('college') || q.includes('university')) setActiveTab('colleges');
-      else if (q.includes('exam') || q.includes('gate') || q.includes('upsc') || q.includes('neet')) setActiveTab('exams');
+      else if (q.includes('college') || q.includes('university') || q.includes('admission') || q.includes('course')) setActiveTab('colleges');
+      else if (q.includes('exam') || q.includes('gate') || q.includes('upsc') || q.includes('neet') || q.includes('bpsc')) setActiveTab('exams');
       else if (q.includes('calc') || q.includes('emi') || q.includes('tax')) setActiveTab('tools');
       else if (q.includes('ai') || q.includes('resume')) setActiveTab('ai-utilities');
       else setActiveTab('jobs');
@@ -142,6 +159,34 @@ export const Navbar: React.FC<NavbarProps> = ({
             <span>Install App</span>
           </button>
         </div>
+      </div>
+
+      {/* 🚀 High-CPM Direct Monetization Opportunity Ribbon */}
+      <div className="bg-gradient-to-r from-amber-500 via-rose-500 to-indigo-600 text-white text-[11px] sm:text-xs py-1.5 px-3 sm:px-6 shadow-xs font-semibold flex items-center justify-between gap-2">
+        <a
+          href="https://omg10.com/4/11640571"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-2 hover:underline w-full justify-center sm:justify-start"
+        >
+          <span className="bg-white text-rose-600 text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1 shrink-0 animate-pulse shadow-xs">
+            <Zap className="w-3 h-3 fill-rose-600" />
+            Special Alert
+          </span>
+          <span className="truncate">
+            ⚡ <strong>Candidate Career & Educational Grant 2026:</strong> Direct Fast-Track Server & Verified Opportunities Portal
+          </span>
+          <ExternalLink className="w-3.5 h-3.5 shrink-0 hidden sm:inline opacity-90" />
+        </a>
+        <a
+          href="https://omg10.com/4/11640571"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="bg-white/20 hover:bg-white/30 text-white text-[10px] font-extrabold px-2.5 py-0.5 rounded-lg shrink-0 hidden md:flex items-center gap-1 transition"
+        >
+          <span>Open Portal</span>
+          <ExternalLink className="w-3 h-3" />
+        </a>
       </div>
 
       {/* Main Top Header Bar: Logo + Global Search + Language + Bell + Login/Signup */}

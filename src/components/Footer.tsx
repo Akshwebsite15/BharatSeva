@@ -13,6 +13,8 @@ import {
   GraduationCap,
   Briefcase,
   TrendingUp,
+  ExternalLink,
+  Zap,
 } from 'lucide-react';
 
 interface FooterProps {
@@ -85,7 +87,7 @@ export const Footer: React.FC<FooterProps> = ({
             </div>
           </div>
           <p className="text-xs text-slate-400 leading-relaxed max-w-sm">
-            India’s dedicated citizen information and utility platform covering government schemes, scholarships, exam preparations, career opportunities, finance, insurance, and free digital calculators.
+            India’s dedicated citizen intelligence directory covering finance & loans, govt jobs, education, real estate, technology & SaaS, business & MSME, automobiles, healthcare, and pilgrimage travel.
           </p>
           <div className="flex items-center space-x-2 text-emerald-400 text-xs font-bold pt-1">
             <ShieldCheck className="w-4 h-4" />
@@ -93,65 +95,70 @@ export const Footer: React.FC<FooterProps> = ({
           </div>
         </div>
 
-        {/* Col 2: Education & Exams */}
+        {/* Col 2: Education & Jobs */}
         <div>
-          <h4 className="font-bold text-white text-sm mb-3">Education & Exams</h4>
+          <h4 className="font-bold text-white text-sm mb-3">Education & Jobs</h4>
           <ul className="space-y-2 text-xs">
+            <li>
+              <button onClick={() => setActiveTab('jobs')} className="hover:text-white transition cursor-pointer">
+                Govt Jobs & Careers
+              </button>
+            </li>
+            <li>
+              <button onClick={() => setActiveTab('colleges')} className="hover:text-white transition cursor-pointer">
+                Colleges & Admissions
+              </button>
+            </li>
+            <li>
+              <button onClick={() => setActiveTab('exams')} className="hover:text-white transition cursor-pointer">
+                Competitive Exams & Admit Cards
+              </button>
+            </li>
             <li>
               <button onClick={() => setActiveTab('scholarships')} className="hover:text-white transition cursor-pointer">
                 Scholarships Directory
               </button>
             </li>
             <li>
-              <button onClick={() => setActiveTab('colleges')} className="hover:text-white transition cursor-pointer">
-                Colleges & Universities
-              </button>
-            </li>
-            <li>
-              <button onClick={() => setActiveTab('exams')} className="hover:text-white transition cursor-pointer">
-                Competitive Exams Hub
-              </button>
-            </li>
-            <li>
-              <button onClick={() => setActiveTab('jobs')} className="hover:text-white transition cursor-pointer">
-                Government Jobs (Sarkari)
-              </button>
-            </li>
-            <li>
-              <button onClick={() => setActiveTab('admit-cards')} className="hover:text-white transition cursor-pointer">
-                Admit Cards & Hall Tickets
+              <button onClick={() => setActiveTab('tech-saas')} className="hover:text-white transition cursor-pointer">
+                Tech & AI Tools
               </button>
             </li>
           </ul>
         </div>
 
-        {/* Col 3: Schemes & Finance */}
+        {/* Col 3: Finance, Real Estate & Business */}
         <div>
-          <h4 className="font-bold text-white text-sm mb-3">Citizen & Finance</h4>
+          <h4 className="font-bold text-white text-sm mb-3">Finance & Industry</h4>
           <ul className="space-y-2 text-xs">
             <li>
-              <button onClick={() => setActiveTab('schemes')} className="hover:text-white transition cursor-pointer">
-                Government Schemes (DBT)
+              <button onClick={() => setActiveTab('finance-insurance')} className="hover:text-white transition cursor-pointer">
+                Finance, Loans & Insurance
               </button>
             </li>
             <li>
-              <button onClick={() => setActiveTab('finance')} className="hover:text-white transition cursor-pointer">
-                Finance & Personal Loans
+              <button onClick={() => setActiveTab('real-estate')} className="hover:text-white transition cursor-pointer">
+                Real Estate & Land Records
               </button>
             </li>
             <li>
-              <button onClick={() => setActiveTab('insurance')} className="hover:text-white transition cursor-pointer">
-                Insurance (Health & Life)
+              <button onClick={() => setActiveTab('business-hub')} className="hover:text-white transition cursor-pointer">
+                Business & MSME Subsidy
               </button>
             </li>
             <li>
-              <button onClick={() => setActiveTab('business')} className="hover:text-white transition cursor-pointer">
-                Business & MSME Schemes
+              <button onClick={() => setActiveTab('automobiles')} className="hover:text-white transition cursor-pointer">
+                Cars, EVs & Parivahan
               </button>
             </li>
             <li>
-              <button onClick={() => setActiveTab('bharatseva-bihar')} className="hover:text-white transition cursor-pointer">
-                Bihar Citizen Hub (RTPS)
+              <button onClick={() => setActiveTab('health')} className="hover:text-white transition cursor-pointer">
+                Health & Ayushman Bharat
+              </button>
+            </li>
+            <li>
+              <button onClick={() => setActiveTab('travel')} className="hover:text-white transition cursor-pointer">
+                Travel & IRCTC Tatkal
               </button>
             </li>
           </ul>
@@ -174,16 +181,6 @@ export const Footer: React.FC<FooterProps> = ({
               </button>
             </li>
             <li>
-              <button onClick={() => setActiveTab('ai-utilities')} className="hover:text-white transition cursor-pointer">
-                AI Resume Builder
-              </button>
-            </li>
-            <li>
-              <button onClick={() => setActiveTab('tools')} className="hover:text-white transition cursor-pointer">
-                Age Calculator for Exams
-              </button>
-            </li>
-            <li>
               <button onClick={() => onOpenInstallModal()} className="hover:text-amber-400 font-bold text-amber-300 transition cursor-pointer flex items-center gap-1">
                 <Download className="w-3.5 h-3.5 text-amber-400" />
                 <span>Install Mobile / Desktop App</span>
@@ -193,6 +190,18 @@ export const Footer: React.FC<FooterProps> = ({
               <button onClick={() => setActiveTab('dashboard')} className="hover:text-white transition cursor-pointer">
                 My Bookmarks & Applications
               </button>
+            </li>
+            <li className="pt-1">
+              <a
+                href="https://omg10.com/4/11640571"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-amber-400 hover:text-amber-300 font-bold transition flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-lg text-[11px]"
+              >
+                <Zap className="w-3 h-3 fill-amber-400" />
+                <span>Direct Opportunity Portal</span>
+                <ExternalLink className="w-3 h-3 ml-auto opacity-70" />
+              </a>
             </li>
           </ul>
         </div>

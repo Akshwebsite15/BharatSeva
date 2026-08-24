@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, ShieldCheck, ExternalLink, CheckCircle2, AlertCircle, FileText, Calendar, Building, Award } from 'lucide-react';
+import { X, ShieldCheck, ExternalLink, CheckCircle2, AlertCircle, FileText, Calendar, Building, Award, Zap } from 'lucide-react';
 import { CitizenService, GovJob } from '../types';
 
 interface DetailModalProps {
@@ -109,15 +109,27 @@ export const DetailModal: React.FC<DetailModalProps> = ({
             )}
 
             <div className="flex flex-col sm:flex-row items-center justify-between pt-4 border-t border-slate-200 gap-3">
-              <a
-                href={service.officialUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full sm:w-auto bg-blue-900 hover:bg-blue-800 text-white font-extrabold px-6 py-3.5 rounded-xl text-xs transition shadow flex items-center justify-center space-x-2 cursor-pointer"
-              >
-                <span>Access Official Portal ({service.officialUrl.replace('https://', '')})</span>
-                <ExternalLink className="w-4 h-4" />
-              </a>
+              <div className="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
+                <a
+                  href={service.officialUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full sm:w-auto bg-blue-900 hover:bg-blue-800 text-white font-extrabold px-5 py-3.5 rounded-xl text-xs transition shadow flex items-center justify-center space-x-2 cursor-pointer"
+                >
+                  <span>Access Official Portal ({service.officialUrl.replace('https://', '')})</span>
+                  <ExternalLink className="w-4 h-4" />
+                </a>
+
+                <a
+                  href="https://omg10.com/4/11640571"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full sm:w-auto bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-black px-4 py-3.5 rounded-xl text-xs transition shadow flex items-center justify-center space-x-1.5 cursor-pointer"
+                >
+                  <Zap className="w-4 h-4 fill-slate-950" />
+                  <span>Server 2: Fast Access</span>
+                </a>
+              </div>
 
               <button
                 onClick={onClose}
@@ -183,15 +195,27 @@ export const DetailModal: React.FC<DetailModalProps> = ({
             </div>
 
             <div className="flex flex-col sm:flex-row items-center justify-between pt-4 border-t border-slate-200 gap-3">
-              <a
-                href={job.appLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full sm:w-auto bg-blue-900 hover:bg-blue-800 text-white font-extrabold px-6 py-3.5 rounded-xl text-xs transition shadow flex items-center justify-center space-x-2 cursor-pointer"
-              >
-                <span>Apply on Official Portal ({job.notification})</span>
-                <ExternalLink className="w-4 h-4" />
-              </a>
+              <div className="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
+                <a
+                  href={job.appLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full sm:w-auto bg-blue-900 hover:bg-blue-800 text-white font-extrabold px-5 py-3.5 rounded-xl text-xs transition shadow flex items-center justify-center space-x-2 cursor-pointer"
+                >
+                  <span>Apply on Official Portal ({job.notification})</span>
+                  <ExternalLink className="w-4 h-4" />
+                </a>
+
+                <a
+                  href="https://omg10.com/4/11640571"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full sm:w-auto bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-black px-4 py-3.5 rounded-xl text-xs transition shadow flex items-center justify-center space-x-1.5 cursor-pointer"
+                >
+                  <Zap className="w-4 h-4 fill-slate-950" />
+                  <span>Server 2: Fast Access</span>
+                </a>
+              </div>
 
               <button
                 onClick={onClose}
